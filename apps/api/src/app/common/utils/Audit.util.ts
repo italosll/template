@@ -1,5 +1,5 @@
 import { BeforeInsert, BeforeRecover, BeforeSoftRemove, BeforeUpdate, Column } from "typeorm";
-import { AuditContract } from "../contracts/Audit.contract";
+import { AuditContract } from "../contracts/audit.contract";
 
 export class Audit implements AuditContract {
 

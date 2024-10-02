@@ -1,5 +1,5 @@
-import { GetQueryContract } from "../../common/contracts/GetQuery.contract";
-import { AuditContract } from "../contracts/Audit.contract";
+import { GetQueryContract } from "../contracts/get-query.contract";
+import { AuditContract } from "../contracts/audit.contract";
 
 
 export const getAuditQuerys =(entity:Partial<AuditContract>):GetQueryContract<AuditContract> =>( {

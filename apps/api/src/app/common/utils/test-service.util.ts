@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 import { Repository } from 'typeorm';
 import { Type } from '@nestjs/common';
-import { QueryParameterContract } from '../contracts/QueryParameters.contract';
+import { QueryParameterContract } from '../contracts/query-parameters.contract';
 import { EncryptionService } from '../services/encryption.service';
 import { HashService } from '../services/hash.service';
 const TEST_DEFAULT_HARD_DELETE_ONE_RESPONSE = { raw: {}, affected: 1 , generatedMaps:[]};

@@ -6,7 +6,7 @@ import { DeleteDefaultResponseDTO } from "../common/dto/delete-default-response.
 import { UsersService } from "./users.service";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { UserContract } from "@template/interfaces";
-import { AuditContract } from "../common/contracts/Audit.contract";
+import { AuditContract } from "../common/contracts/audit.contract";
 
 @Controller("users")
 export class UsersController{

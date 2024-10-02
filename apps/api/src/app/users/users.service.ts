@@ -6,9 +6,9 @@ import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
-import { HTTP_ERROR_MESSAGES } from "../common/utils/HttpErrorMessages.util";
-import { getQuerys } from "./utils/GetQuery.util";
-import { AuditContract } from "../common/contracts/Audit.contract";
+import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
+import { getQuerys } from "./utils/get-query.util";
+import { AuditContract } from "../common/contracts/audit.contract";
 import { UserContract } from "@template/interfaces";
 import { UsersServiceContract } from "./contracts/users.service.contract";
 import { HashService } from "../common/services/hash.service";

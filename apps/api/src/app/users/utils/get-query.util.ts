@@ -1,8 +1,8 @@
 import { UserContract } from "@template/interfaces";
-import { GetQueryContract } from "../../common/contracts/GetQuery.contract";
-import { getAuditQuerys } from "../../common/utils/GetQuery.util";
+import { GetQueryContract } from "../../common/contracts/get-query.contract";
+import { getAuditQuerys } from "../../common/utils/get-query.util";
 import { User } from "../entities/user.entity";
-import { AuditContract } from "../../common/contracts/Audit.contract";
+import { AuditContract } from "../../common/contracts/audit.contract";
 
 export const getQuerys =(entity:Partial<UserContract & AuditContract>):GetQueryContract<User> =>( {
   filterableEmail:{

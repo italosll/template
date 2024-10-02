@@ -4,7 +4,7 @@ import { Repository } from "typeorm";
 import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
 
 import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
-import { HTTP_ERROR_MESSAGES } from "../common/utils/HttpErrorMessages.util";
+import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
 import { Product } from "./entities/product.entity";
 import { CreateProductDTO } from "./dto/create-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";

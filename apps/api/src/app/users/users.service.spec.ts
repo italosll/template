@@ -1,9 +1,9 @@
-import { TestServiceUtil } from './../common/utils/TestService.util';
+import { TestServiceUtil } from '../common/utils/test-service.util';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UserContract } from '@template/interfaces';
 import { UserFactory } from './factories/user.factory';
-import { getQuerys } from './utils/GetQuery.util';
+import { getQuerys } from './utils/get-query.util';
 
 const user1 = new UserFactory({id:1}).fullUser();
 const user2 = new UserFactory({id:2}).fullUser();

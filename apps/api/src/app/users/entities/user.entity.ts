@@ -1,6 +1,6 @@
 import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {UserContract} from "@template/interfaces"
-import { Audit } from "../../common/utils/Audit.util";
+import { Audit } from "../../common/utils/audit.util";
 import { EncryptionService } from "../../common/services/encryption.service";
 
 
