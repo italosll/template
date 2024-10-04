@@ -3,10 +3,4 @@ export interface UserContract{
   email:string;
   filterableEmail:string;
   password:string;
-
-  createdAt?:Date;
-  updatedAt?:Date;
-  deletedAt?:Date;
-  recoveredAt?:Date;
-
 }

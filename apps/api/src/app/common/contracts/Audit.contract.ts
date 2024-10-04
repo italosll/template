@@ -3,5 +3,4 @@ export interface AuditContract{
   updatedAt:Date;
   deletedAt:Date;
   recoveredAt:Date;
-
 }

@@ -1,14 +1,19 @@
-import { IProduct } from "@template/interfaces";
+import { ProductContract } from "@template/interfaces";
 
-export class CreateProductDTO implements Omit<IProduct, "id">{
-  constructor (
-    public name: string,
-    public code: string,
-    public description: string,
-    public amount: number,
-    public cost: number,
-    public sellingPrice: number,
-    public maxDiscountPercentage: number,
-    public imageURls: string[]
-  ){}
+export class CreateProductDTO implements Omit<ProductContract, "id">{
+
+  public name: string;
+  public code: string;
+  public description: string;
+  public image:{
+    name:string;
+    url:string;
+  };
+
+  constructor (createProductDTO:CreateProductDTO ){
+    this. name = createProductDTO.name;
+    this. code = createProductDTO.code;
+    this. description = createProductDTO.description;
+    this. image = createProductDTO.image;
+  }
 }

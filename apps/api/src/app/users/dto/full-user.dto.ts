@@ -11,14 +11,14 @@ export class FullUserDTO implements UserContract, AuditContract{
   public deletedAt: Date;
   public recoveredAt: Date;
 
-  constructor(updateUserDTO:FullUserDTO){
-    this.id = updateUserDTO.id;
-    this.email = updateUserDTO.email;
-    this.password = updateUserDTO.password;
-    this.filterableEmail = updateUserDTO.filterableEmail;
-    this.createdAt = updateUserDTO?.createdAt;
-    this.updatedAt = updateUserDTO?.updatedAt;
-    this.deletedAt = updateUserDTO?.deletedAt;
-    this.recoveredAt = updateUserDTO?.recoveredAt;
+  constructor(fullUserDTO:FullUserDTO){
+    this.id = fullUserDTO.id;
+    this.email = fullUserDTO.email;
+    this.password = fullUserDTO.password;
+    this.filterableEmail = fullUserDTO.filterableEmail;
+    this.createdAt = fullUserDTO?.createdAt;
+    this.updatedAt = fullUserDTO?.updatedAt;
+    this.deletedAt = fullUserDTO?.deletedAt;
+    this.recoveredAt = fullUserDTO?.recoveredAt;
   }
 }

@@ -5,10 +5,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
     UsersModule,
+    ProductsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject:[ConfigService],

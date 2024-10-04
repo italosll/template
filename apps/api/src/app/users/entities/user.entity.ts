@@ -1,7 +1,7 @@
 import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {UserContract} from "@template/interfaces"
 import { Audit } from "../../common/utils/audit.util";
-import { EncryptionService } from "../../common/services/encryption.service";
+import { EncryptionService } from "../../common/encryption/encryption.service";
 
 
 @Entity()
@@ -18,8 +18,6 @@ export class User extends Audit implements UserContract{
   @Column({ select: false })
   password:string;
 
-  // @BeforeInsert()
-  // @BeforeUpdate()
   public static encrypt(userData: Partial<UserContract>, encryptionService:EncryptionService): User{
     const user = new User();
     user.filterableEmail = userData.email.slice(0,4);
@@ -29,7 +27,7 @@ export class User extends Audit implements UserContract{
     return user;
   }
 
-  public static decrypt(usersData:UserContract[], encryptionService:EncryptionService): User[]{
+  public static decrypt(usersData:Partial<(UserContract & Audit)>[], encryptionService:EncryptionService): User[]{
 
     const users: User[] = [];
 

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
 
 import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
@@ -8,22 +8,19 @@ import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
 import { Product } from "./entities/product.entity";
 import { CreateProductDTO } from "./dto/create-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";
+import { EntityService } from "../common/services/entity.service";
 
 
 @Injectable()
-export class ProductsService{
+export class ProductsService implements EntityService<Product, CreateProductDTO, UpdateProductDTO>{
 
   constructor(@InjectRepository(Product) private _productRepository:Repository<Product> ){}
 
   async findAll(product?:Partial<UpdateProductDTO>): Promise<Product[]>{
     const queryBuilder = this._productRepository.createQueryBuilder();
     if(product?.id) queryBuilder.andWhere(`id LIKE :id`, { id: `%${product.id}%`});
-    if(product?.amount) queryBuilder.andWhere(`amount LIKE :amount`, { amount: `%${product.amount}%`});
-    if(product?.cost) queryBuilder.andWhere(`cost LIKE :cost`, { cost: `%${product.cost}%`});
-    if(product?.sellingPrice) queryBuilder.andWhere(`sellingPrice LIKE :sellingPrice`, { sellingPrice: `%${product.sellingPrice}%`});
-    if(product?.maxDiscountPercentage) queryBuilder.andWhere(`maxDiscountPercentage LIKE :maxDiscountPercentage`, { maxDiscountPercentage: `%${product.maxDiscountPercentage}%`});
     if(product?.code) queryBuilder.andWhere(`code LIKE :code`, { code: `%${product.code}%`});
-    if(product?.name) queryBuilder.andWhere(`name LIKE :name`, { name: `%${product.name}%`});
+    if(product?.name) queryBuilder.andWhere(`LOWER(name) LIKE LOWER(:name)`, { name: `%${product.name}%`});
 
     const products =  await queryBuilder.getMany();
     return products;
@@ -52,20 +49,27 @@ export class ProductsService{
     return response;
   }
 
-  async delete(id:number) {
-    const registeredProduct = await this._productRepository.findOneBy({id});
-    if(!registeredProduct) throw new HttpException(HTTP_ERROR_MESSAGES.notFound(), HttpStatus.NOT_FOUND);
+  async delete(ids:number[]) {
+    const products = await this._productRepository.find();
 
-    await this._productRepository.softDelete({ id });
-    return { id };
+    ids.forEach(async (id)=>{
+      const registeredProduct = products?.find((user)=> user.id === id);
+      if(!registeredProduct) throw new HttpException(HTTP_ERROR_MESSAGES.notFound(), HttpStatus.NOT_FOUND);
+    })
+
+    await this._productRepository.softDelete({id: In(ids)});
+    return { ids };
   }
 
-  async hardDelete(id:number) {
-    const registeredProduct = await this._productRepository.findOneBy({id});
+  async hardDelete(ids:number[]) {
+    const products = await this._productRepository.find();
 
-    if(!registeredProduct) throw new HttpException(HTTP_ERROR_MESSAGES.notFound(), HttpStatus.NOT_FOUND);
+    ids.forEach(async (id)=>{
+      const registeredProduct = products?.find((user)=> user.id === id);
+      if(!registeredProduct) throw new HttpException(HTTP_ERROR_MESSAGES.notFound(), HttpStatus.NOT_FOUND);
+    })
 
-    await this._productRepository.delete({ id });
-    return { id };
+    await this._productRepository.delete({id: In(ids)});
+    return { ids };
   }
 }

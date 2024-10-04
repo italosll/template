@@ -1,10 +1,10 @@
-import { IProduct } from '@template/interfaces';
+import { ProductContract } from '@template/interfaces';
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Audit } from "../../common/utils/audit.util";
 
 
 @Entity()
-export class Product extends Audit implements IProduct {
+export class Product extends Audit implements ProductContract {
 
   @PrimaryGeneratedColumn()
   id:number;
@@ -33,7 +33,10 @@ export class Product extends Audit implements IProduct {
   @Column({default:0})
   maxDiscountPercentage:number
 
-  @Column()
-  imageURls:string[];
+  @Column({ type: 'simple-json', nullable:true})
+  image:{
+    name:string;
+    url:string;
+  }
 
 }

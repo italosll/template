@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { HashingService } from './hashing.service';
 
 @Injectable()
-export class HashService{
+export class BcryptService implements HashingService{
 
   constructor(private _configService: ConfigService){}
 

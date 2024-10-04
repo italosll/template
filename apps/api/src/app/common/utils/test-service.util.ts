@@ -5,8 +5,8 @@ import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-clas
 import { Repository } from 'typeorm';
 import { Type } from '@nestjs/common';
 import { QueryParameterContract } from '../contracts/query-parameters.contract';
-import { EncryptionService } from '../services/encryption.service';
-import { HashService } from '../services/hash.service';
+import { EncryptionService } from '../encryption/encryption.service';
+import { HashingService } from '../../iam/hashing/hashing.service';
 const TEST_DEFAULT_HARD_DELETE_ONE_RESPONSE = { raw: {}, affected: 1 , generatedMaps:[]};
 const TEST_DEFAULT_DELETE_ONE_RESPONSE = { raw: {}, affected: 1 };
 
@@ -16,8 +16,7 @@ export class TestServiceUtil{
   public static async setup<ServiceType>(serviceClass:Type<any>, entity:EntityClassOrSchema, mockEntities:any[]){
     const module: TestingModule = await Test.createTestingModule({
       providers:[
-        // UsersService,
-        {provide: UsersService, useClass: serviceClass },
+        serviceClass,
         {
           provide: getRepositoryToken(entity),
           useClass: Repository
@@ -30,10 +29,10 @@ export class TestServiceUtil{
           }
         },
         {
-          provide:HashService,
+          provide:HashingService,
           useValue:{
-generate: (param) => Promise.resolve(param),
-isMatch: (param) => Promise.resolve(true)
+            generate: (param) => Promise.resolve(param),
+            isMatch: (param) => Promise.resolve(true)
           }
         }
       ]
@@ -55,10 +54,10 @@ isMatch: (param) => Promise.resolve(true)
     jest.spyOn(repository,"findOneBy").mockImplementation((i)=> Promise.resolve(mockEntities?.find((j)=> (i as any).id === j.id )));
     jest.spyOn(repository,"merge").mockImplementation((_, updateUser) => (updateUser as any));
 
-    jest.spyOn(repository, "softDelete").mockImplementation(()=> Promise.resolve(TEST_DEFAULT_HARD_DELETE_ONE_RESPONSE));
-    jest.spyOn(repository, "delete").mockImplementation(()=> Promise.resolve(TEST_DEFAULT_DELETE_ONE_RESPONSE));
+    const softDeleteMock = jest.spyOn(repository, "softDelete").mockImplementation(()=> Promise.resolve(TEST_DEFAULT_HARD_DELETE_ONE_RESPONSE));
+    const deleteMock = jest.spyOn(repository, "delete").mockImplementation(()=> Promise.resolve(TEST_DEFAULT_DELETE_ONE_RESPONSE));
 
-    return { serviceInstance, repository, andWhere}
+    return { serviceInstance, repository, andWhere, softDeleteMock, deleteMock}
   };
 
 

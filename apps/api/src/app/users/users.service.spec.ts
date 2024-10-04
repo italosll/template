@@ -4,6 +4,7 @@ import { User } from './entities/user.entity';
 import { UserContract } from '@template/interfaces';
 import { UserFactory } from './factories/user.factory';
 import { getQuerys } from './utils/get-query.util';
+import { In } from 'typeorm';
 
 const user1 = new UserFactory({id:1}).fullUser();
 const user2 = new UserFactory({id:2}).fullUser();
@@ -67,14 +68,16 @@ describe("users.service",()=>{
     {
       serviceMethodName:"delete",
       repositoryMethodName:"softDelete",
-      serviceParameter: 1,
-      repositoryParameter: 1
+      serviceParameter: [1],
+      repositoryParameter: {id: In([1])}
+
     },
     {
       serviceMethodName:"hardDelete",
       repositoryMethodName:"delete",
-      serviceParameter: 1,
-      repositoryParameter: 1
+      serviceParameter: [1],
+      repositoryParameter: {id: In([1])}
+
     }
   ]
 

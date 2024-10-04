@@ -7,6 +7,7 @@ import { UsersService } from "./users.service";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { UserContract } from "@template/interfaces";
 import { AuditContract } from "../common/contracts/audit.contract";
+import { HardDeleteDefaultResponseDTO } from "../common/dto/hard-delete-default-response.dto";
 
 @Controller("users")
 export class UsersController{
@@ -29,12 +30,12 @@ export class UsersController{
   }
 
   @Delete()
-  delete(@Query("id") id: number): Promise<DeleteDefaultResponseDTO>{
-    return this._usersService.delete(id);
+  delete(@Query("ids") ids: number[]): Promise<DeleteDefaultResponseDTO>{
+    return this._usersService.delete(ids);
   }
 
   @Delete("/hardDelete")
-  hardDelete(@Query("id") id: number): Promise<DeleteDefaultResponseDTO>{
+  hardDelete(@Query("id") id: number): Promise<HardDeleteDefaultResponseDTO>{
     return this._usersService.hardDelete(id);
   }
 }
