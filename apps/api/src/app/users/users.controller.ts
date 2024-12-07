@@ -16,6 +16,9 @@ export class UsersController{
 
   @Post()
   async create(@Body() createUserDTO: CreateUserDTO): Promise<CreateDefaultResponseDTO>{
+
+    console.log("----------")
+    console.log(createUserDTO)
     return this._usersService.create(createUserDTO);
   }
 
@@ -35,7 +38,7 @@ export class UsersController{
   }
 
   @Delete("/hardDelete")
-  hardDelete(@Query("id") id: number): Promise<HardDeleteDefaultResponseDTO>{
-    return this._usersService.hardDelete(id);
+  hardDelete(@Query("ids") ids: number[]): Promise<HardDeleteDefaultResponseDTO>{
+    return this._usersService.hardDelete(ids);
   }
 }

@@ -1,6 +1,8 @@
 import { ProductContract } from '@template/interfaces';
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Audit } from "../../common/utils/audit.util";
+import { Category } from "../../categories/entities/category.entity";
+
 
 
 @Entity()
@@ -15,8 +17,9 @@ export class Product extends Audit implements ProductContract {
   @Column({unique:true})
   code:string;
 
-  // @Column()
-  // category:string; implement the category resource
+  @ManyToMany(()=> Category, { nullable:false })
+  @JoinTable()
+  categories: Category[];
 
   @Column()
   description:string;

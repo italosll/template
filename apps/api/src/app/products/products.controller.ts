@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Post, Put, Query, ValidationPipe } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { AuditContract } from "../common/contracts/audit.contract";
 import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
@@ -8,6 +8,7 @@ import { CreateProductDTO } from "./dto/create-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";
 import { HardDeleteDefaultResponseDTO } from "../common/dto/hard-delete-default-response.dto";
 import { ProductContract } from "@template/interfaces";
+import { Product } from "./entities/product.entity";
 
 @Controller("products")
 export class ProductsController{
@@ -15,12 +16,12 @@ export class ProductsController{
   constructor(@Inject(ProductsService) private _productsService: ProductsService){}
 
   @Post()
-  async create(@Body() createProductDTO: CreateProductDTO): Promise<CreateDefaultResponseDTO>{
+  async create(@Body(new ValidationPipe({ transform: true })) createProductDTO: CreateProductDTO): Promise<CreateDefaultResponseDTO>{
     return this._productsService.create(createProductDTO);
   }
 
   @Get()
-  async findAll(@Query() query: ProductContract & AuditContract): Promise<UpdateProductDTO[]>{
+  async findAll(@Query() query: ProductContract & AuditContract): Promise<Product[]>{
     return this._productsService.findAll(query);
   }
 
@@ -35,7 +36,8 @@ export class ProductsController{
   }
 
   @Delete("/hardDelete")
-  hardDelete(@Query("id") id: number): Promise<HardDeleteDefaultResponseDTO>{
-    return this._productsService.hardDelete(id);
+  hardDelete(@Query("ids") ids: number[]): Promise<HardDeleteDefaultResponseDTO>{
+
+    return this._productsService.hardDelete(ids);
   }
 }

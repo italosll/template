@@ -1,11 +1,15 @@
 import { UserContract } from "@template/interfaces";
+import { IsString } from "class-validator";
 
 export class CreateUserDTO implements Omit<UserContract, "id" | "filterableEmail">{
+
+  @IsString()
   public email: string;
+
+  @IsString()
   public password: string;
 
-  constructor(createUserDTO:CreateUserDTO){
-    this.email = createUserDTO.email;
-    this.password = createUserDTO.password;
+  constructor(partial: Partial<CreateUserDTO>) {
+    Object.assign(this, partial);
   }
 }

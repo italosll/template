@@ -11,11 +11,11 @@ type MethodInfo<T> = {
 describe("users.controller", ()=>{
   const createdResponse = { id: 1 };
   const updatedResponse = { id: 1 };
-  const deletedResponse = { id: 1 };
+  const deletedResponse = { ids: [1] };
   const findAllResponse = [];
 
   const setup = () => {
-    const service = new UsersService(null);
+    const service = new UsersService(null,null,null);
 
     jest.spyOn(service,"findAll").mockImplementation(()=> Promise.resolve(findAllResponse));
     jest.spyOn(service,"create").mockImplementation(()=> Promise.resolve(createdResponse));

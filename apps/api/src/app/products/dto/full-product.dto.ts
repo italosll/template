@@ -1,21 +1,16 @@
 import { ProductContract } from "@template/interfaces"
+import { CreateProductDTO } from "./create-product.dto";
+import { AuditContract } from "../../common/contracts/audit.contract";
 
-export class FullProductDTO implements ProductContract{
-
+export class FullProductDTO extends CreateProductDTO implements ProductContract, AuditContract{
   public id: number
-  public name: string
-  public code: string
-  public description: string
-  public image:{
-    name:string;
-    url:string;
-  };
+  public createdAt: Date;
+  public updatedAt: Date;
+  public deletedAt: Date;
+  public recoveredAt: Date;
 
-  constructor (fullProductDTO:FullProductDTO){
-    this.id= fullProductDTO?.id;
-    this.name= fullProductDTO?.name;
-    this.code= fullProductDTO?.code;
-    this.description= fullProductDTO?.description;
-    this.image= fullProductDTO?.image;
+  constructor(fullProductDTO:FullProductDTO){
+    super(fullProductDTO);
+    Object.assign(this, fullProductDTO);
   }
 }

@@ -1,20 +1,11 @@
-import { ProductContract } from "@template/interfaces";
+import { CategoryContract } from "@template/interfaces";
+import { CreateProductDTO } from "./create-product.dto";
 
-export class UpdateProductDTO implements ProductContract{
-  public id: number;
-  public name: string;
-  public code: string;
-  public description: string;
-  public image:{
-    name:string;
-    url:string;
-  };
+export class UpdateProductDTO extends CreateProductDTO implements CategoryContract{
+  id:number;
 
-  constructor (updateProductDTO:UpdateProductDTO){
-    this.id = updateProductDTO.id;
-    this.name = updateProductDTO.name;
-    this.code = updateProductDTO.code;
-    this.description = updateProductDTO.description;
-    this.image = updateProductDTO.image;
+  constructor(updateProductDTO:UpdateProductDTO){
+    super(updateProductDTO)
+    Object.assign(this, updateProductDTO);
   }
 }

@@ -45,7 +45,9 @@ export class UsersService implements EntityService<User, CreateUserDTO, UpdateUs
 
     const encryptedUsers = await this._userRepository.find();
     const decryptedUsers = User.decrypt(encryptedUsers, this._encryptionService);
-
+    console.log("----------")
+    console.log(decryptedUsers)
+    // console.log(hash)
     const registeredUser = decryptedUsers?.find(({email})=> email === createEntity.email);
     if(registeredUser) throw new HttpException(HTTP_ERROR_MESSAGES.alreadyExists(), HttpStatus.CONFLICT);
 

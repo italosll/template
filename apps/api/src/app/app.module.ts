@@ -6,40 +6,40 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductsModule } from './products/products.module';
+import { IamModule } from './iam/iam.module';
+import databaseConfig from './core/config/database.config';
+import { DatabaseConfigContract } from './core/contracts/database.config.contract';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
     UsersModule,
     ProductsModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+    CategoriesModule,
+    IamModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load:[
+        databaseConfig
+      ]
+    }),
     TypeOrmModule.forRootAsync({
+      imports:[ConfigModule],
       inject:[ConfigService],
-      useFactory: (configService:ConfigService) => ({
+      useFactory: (configService:ConfigService) => {
+        const dbConfig = configService.get<DatabaseConfigContract>('database');
+        return {
         type: "mysql",
-        host: configService.get<string>('DATABASE_HOST'),
-        port: configService.get<number>('DATABASE_PORT'),
-        username: configService.get<string>('DATABASE_USERNAME'),
-        password: configService.get<string>('DATABASE_PASSWORD'),
-        database: configService.get<string>('DATABASE_DATABASE'),
+        host: dbConfig.host,
+        port: dbConfig.port,
+        username: dbConfig.username,
+        password: dbConfig.password,
+        database: dbConfig.database,
         entities: [],
         synchronize: true, // precisa ser desabilitado em produção
         autoLoadEntities: true
-      })
+      }}
     })
-
-    // TypeOrmModule.forRoot({
-    //   type: 'mysql',
-    //   host: "localhost",
-    //   port: 3306,
-    //   username: "root",
-    //   password: "template",
-    //   database: "template",
-    //   entities: [],
-    //   synchronize: true, // precisa ser desabilitado em produção
-    //   autoLoadEntities: true
-    // })
-
-
   ],
   controllers: [AppController],
   providers: [AppService],

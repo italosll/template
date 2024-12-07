@@ -1,3 +1,3 @@
 export class HardDeleteDefaultResponseDTO{
-  id:number;
+  ids:number[];
 }
