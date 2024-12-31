@@ -8,18 +8,24 @@ import { In, Repository } from "typeorm"
 import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
 import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
 import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
+import { FullCategoryDTO } from "./dto/full-category.dto";
 
 @Injectable()
 export class CategoriesService implements EntityService<Category, CreateCategoryDTO, UpdateCategoryDTO >{
 
   constructor(@InjectRepository(Category) private _categoryRepository: Repository<Category>){}
 
-  async findAll(category?: Partial<UpdateCategoryDTO>): Promise<Category[]> {
+  async findAll(category?: Partial<FullCategoryDTO>): Promise<Category[]> {
 
     const queryBuilder = this._categoryRepository.createQueryBuilder();
     if(category?.id) queryBuilder.andWhere(`id LIKE :id`, {id: `%${category.id}%`});
-    if(category?.name) queryBuilder.andWhere(`name LIKE :name`, {name: `%${category.name}%`});
+    if(category?.name) queryBuilder.andWhere(`LOWER(name) LIKE LOWER(:name)`, {name: `%${category.name}%`});
     if(category?.code) queryBuilder.andWhere(`code LIKE :code`, {code: `%${category.code}%`});
+
+    if(category?.createdAt) queryBuilder.andWhere(`createdAt LIKE :createdAt`, { createdAt: `%${category.createdAt}%`});
+    if(category?.updatedAt) queryBuilder.andWhere(`updatedAt LIKE :updatedAt`, { updatedAt: `%${category.updatedAt}%`});
+    if(category?.deletedAt) queryBuilder.andWhere(`deletedAt LIKE :deletedAt`, { deletedAt: `%${category.deletedAt}%`});
+    if(category?.recoveredAt) queryBuilder.andWhere(`recoveredAt LIKE :recoveredAt`, { recoveredAt: `%${category.recoveredAt}%`});
 
     const categories = await queryBuilder.getMany();
     return categories;

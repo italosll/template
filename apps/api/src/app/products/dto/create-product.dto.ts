@@ -13,6 +13,10 @@ export class CreateProductDTO implements Omit<ProductContract, "id">{
   public categoryIds: number[];
 
   constructor (createProductDTO:CreateProductDTO ){
-    Object.assign(this, createProductDTO);
+     this.name = createProductDTO.name;
+     this.code = createProductDTO.code;
+     this.description = createProductDTO.description;
+     this.image = createProductDTO.image;
+     this.categoryIds = createProductDTO.categoryIds;
   }
 }

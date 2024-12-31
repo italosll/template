@@ -4,7 +4,7 @@ export class UpdateCategoryDTO extends CreateCategoryDTO{
   id:number;
 
   constructor(updateCategoryDTO:UpdateCategoryDTO){
-    super(updateCategoryDTO)
-    Object.assign(this, updateCategoryDTO);
+    super(updateCategoryDTO);
+    this.id = updateCategoryDTO.id;
   }
 }

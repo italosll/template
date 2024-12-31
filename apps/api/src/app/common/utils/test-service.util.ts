@@ -11,14 +11,41 @@ const TEST_DEFAULT_HARD_DELETE_ONE_RESPONSE = { raw: {}, affected: 1 , generated
 const TEST_DEFAULT_DELETE_ONE_RESPONSE = { raw: {}, affected: 1 };
 
 const TEST_DEFAULT_CREATED_ID = 1;
+
+interface ExtraEntity{
+  entity:EntityClassOrSchema,
+  spies?: {
+    repositoryMethod:never,
+    implementation:(...args: never) => never
+  }[]
+}
+
+
+interface Entities{
+  main: EntityClassOrSchema,
+  extraEntities?:ExtraEntity[]
+}
+
 export class TestServiceUtil{
 
-  public static async setup<ServiceType>(serviceClass:Type<any>, entity:EntityClassOrSchema, mockEntities:any[]){
+  public static async setup<ServiceType>(
+    serviceClass:Type<any>, 
+    mockEntities:any[], 
+    entities:Entities
+  ){
+   
+   
+    const repositories = entities?.extraEntities?.map(({entity})=>({
+      provide: getRepositoryToken(entity),
+      useClass: Repository
+    })) ?? []
+   
     const module: TestingModule = await Test.createTestingModule({
       providers:[
         serviceClass,
+        ...repositories,
         {
-          provide: getRepositoryToken(entity),
+          provide: getRepositoryToken(entities.main),
           useClass: Repository
         },
         {
@@ -39,13 +66,26 @@ export class TestServiceUtil{
     }).compile();
 
     const serviceInstance  = module.get<ServiceType>(serviceClass );
-    const repository = module.get<Repository<any>>(getRepositoryToken(entity));
+    const repository = module.get<Repository<any>>(getRepositoryToken(entities.main));
 
-    // Hash.generate = jest.fn((text)=> Promise.resolve( `hashed_${text}`));
+    const extraRepositories = entities?.extraEntities?.map(({entity, spies})=> [module.get<Repository<any>>(getRepositoryToken(entity)), spies] as const);
+
+    extraRepositories?.forEach(([repo,spies])=>{
+      spies?.forEach((spy)=>{
+        jest?.spyOn(repo, spy.repositoryMethod as never).mockImplementation(spy.implementation);
+      })
+    })
 
     const andWhere = jest.fn();
+    const getMany = ()=> Promise.resolve(mockEntities)as any
+    const leftJoinAndSelect = jest.fn(()=> ({ getMany }));
+
     jest.spyOn(repository, "find").mockImplementation(() => Promise.resolve(mockEntities));
-    jest.spyOn(repository, "createQueryBuilder").mockImplementation(() => ({ andWhere, getMany: ()=> Promise.resolve(mockEntities)} as any));
+    jest.spyOn(repository, "createQueryBuilder").mockImplementation(() => ({ 
+      andWhere, 
+      getMany, 
+      leftJoinAndSelect
+      } as any))
 
     // For test purpouses create and save methods just return the object received.
     jest.spyOn(repository, "create").mockImplementation((createUser) => (createUser));

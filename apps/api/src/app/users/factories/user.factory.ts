@@ -3,8 +3,10 @@ import { AuditContract } from "../../common/contracts/audit.contract";
 import { CreateUserDTO } from "../dto/create-user.dto";
 import { UpdateUserDTO } from "../dto/update-user.dto";
 import { FullUserDTO } from "../dto/full-user.dto";
+import { bindAuditProperties } from "../../products/utils/bind-audit-properties.util";
+import { FactoryContract } from "../../common/contracts/factory.contract";
 
-export class UserFactory{
+export class UserFactory implements UserContract, AuditContract, FactoryContract{
   public id: number;
   public email: string;
   public filterableEmail: string;
@@ -16,19 +18,17 @@ export class UserFactory{
 
   constructor(user?: Partial<UserContract & AuditContract>){
     this.id = user?.id ?? 1;
-    this.email = this?.email ?? "email@email.com";
-    this.filterableEmail = this?.filterableEmail ?? "emai";
-    this.password = this?.password ?? "password";
-    this.createdAt = this?.createdAt ?? new Date();
-    this.updatedAt = this?.updatedAt ?? new Date();
-    this.deletedAt = this?.deletedAt ?? new Date();
-    this.recoveredAt = this?.recoveredAt ?? new Date();
+    this.email = user?.email ?? "email@email.com";
+    this.filterableEmail = user?.filterableEmail ?? "emai";
+    this.password = user?.password ?? "password";
+    bindAuditProperties(this, user);
+
   }
 
-  createUser = () =>  new CreateUserDTO(this);
+  createData = (params?) =>  new CreateUserDTO({...this, ...params});
 
-  updateUser = () =>  new UpdateUserDTO(this);
+  updateData = (params?) =>  new UpdateUserDTO({...this, ...params});
 
-  fullUser = () => new FullUserDTO(this);
+  fullData = (params?) => new FullUserDTO({...this, ...params});
 }
 

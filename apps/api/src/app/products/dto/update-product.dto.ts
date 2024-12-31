@@ -6,6 +6,6 @@ export class UpdateProductDTO extends CreateProductDTO implements CategoryContra
 
   constructor(updateProductDTO:UpdateProductDTO){
     super(updateProductDTO)
-    Object.assign(this, updateProductDTO);
+    this.id = updateProductDTO.id;
   }
 }

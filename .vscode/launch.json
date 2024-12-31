@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach",
+      "port": 9229,
+      "request": "attach",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.(m|c|)js",
+        "!**/node_modules/**"
+      ],
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "cwd": "${workspaceFolder}",
+      "restart": true
+    }
+  ]
+}

@@ -12,8 +12,8 @@ export const getAuditQuerys =(entity:Partial<AuditContract>):GetQueryContract<Au
     parameters:{ updatedAt: `%${entity?.updatedAt}%`},
   },
   deletedAt:{
-    where:`deletetedAt LIKE :deletetedAt`,
-    parameters:{ deletetedAt: `%${entity?.deletedAt}%`},
+    where:`deletedAt LIKE :deletedAt`,
+    parameters:{ deletedAt: `%${entity?.deletedAt}%`},
   },
   recoveredAt:{
     where:`recoveredAt LIKE :recoveredAt`,

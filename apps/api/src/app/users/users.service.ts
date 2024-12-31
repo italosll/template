@@ -45,9 +45,7 @@ export class UsersService implements EntityService<User, CreateUserDTO, UpdateUs
 
     const encryptedUsers = await this._userRepository.find();
     const decryptedUsers = User.decrypt(encryptedUsers, this._encryptionService);
-    console.log("----------")
-    console.log(decryptedUsers)
-    // console.log(hash)
+
     const registeredUser = decryptedUsers?.find(({email})=> email === createEntity.email);
     if(registeredUser) throw new HttpException(HTTP_ERROR_MESSAGES.alreadyExists(), HttpStatus.CONFLICT);
 
@@ -63,6 +61,7 @@ export class UsersService implements EntityService<User, CreateUserDTO, UpdateUs
   }
 
   async update(updateEntity?:UpdateUserDTO): Promise<UpdateDefaultResponseDTO>{
+    console.log(updateEntity)
 
     const encryptedUsers = await this._userRepository.find({
       select:["createdAt","deletedAt","email","filterableEmail","id","recoveredAt","updatedAt","password"]
@@ -77,6 +76,8 @@ export class UsersService implements EntityService<User, CreateUserDTO, UpdateUs
     if(updateEntity.password){
       updateEntity.password = await this._hasingService.generate(updateEntity.password);
     }
+
+    console.log(registeredUser)
 
     registeredUser = User.encrypt(registeredUser, this._encryptionService);
 

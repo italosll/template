@@ -11,6 +11,11 @@ export class FullProductDTO extends CreateProductDTO implements ProductContract,
 
   constructor(fullProductDTO:FullProductDTO){
     super(fullProductDTO);
-    Object.assign(this, fullProductDTO);
+    this.id = fullProductDTO.id;
+    this.createdAt = fullProductDTO.createdAt;
+    this.updatedAt = fullProductDTO.updatedAt;
+    this.deletedAt = fullProductDTO.deletedAt;
+    this.recoveredAt = fullProductDTO.recoveredAt;
+
   }
 }

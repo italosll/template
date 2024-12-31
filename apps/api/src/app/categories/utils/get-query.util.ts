@@ -1,25 +1,21 @@
+import { CategoryContract } from "@template/interfaces";
 import { GetQueryContract } from "../../common/contracts/get-query.contract";
 import { getAuditQuerys } from "../../common/utils/get-query.util";
 import { AuditContract } from "../../common/contracts/audit.contract";
-import { Product } from "../entities/product.entity";
-import { ProductContract } from "@template/interfaces";
+import { Category } from "../entities/category.entity";
 
-export const getQuerys =(entity:Partial<ProductContract & AuditContract>):GetQueryContract<Product> =>( {
+export const getQuerys =(entity:Partial<CategoryContract & AuditContract>):GetQueryContract<Category> =>( {
   name:{
     where:`LOWER(name) LIKE LOWER(:name)`,
     parameters:{ name: `%${entity?.name}%`},
-  },
-  code:{
-    where:`code LIKE :code`,
-    parameters:{ code: `%${entity?.code}%`},
   },
   id:{
     where:`id LIKE :id`,
     parameters:{ id: `%${entity?.id}%`},
   },
-  description:{
-    where:`description LIKE :description`,
-    parameters:{ description: `%${entity?.description}%`},
+  code:{
+    where:`code LIKE :code`,
+    parameters:{ code: `%${entity?.code}%`},
   },
   ...getAuditQuerys(entity)
 })

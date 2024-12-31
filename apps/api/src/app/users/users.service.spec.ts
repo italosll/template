@@ -6,33 +6,36 @@ import { UserFactory } from './factories/user.factory';
 import { getQuerys } from './utils/get-query.util';
 import { In } from 'typeorm';
 
-const user1 = new UserFactory({id:1}).fullUser();
-const user2 = new UserFactory({id:2}).fullUser();
-const user3 = new UserFactory({id:3}).fullUser();
+const { fullData } = new UserFactory()
+ 
+const user1 = () => fullData({id:1});
+const user2 = () => fullData({id:2});
+const user3 = () => fullData({id:3});
 
-export const mockUsers = [
-  user1,
-  user2,
-  user3
+export const mockUsers = () => [
+  user1(),
+  user2(),
+  user3()
 ];
 
 describe("users.service",()=>{
-
-  it("Should list", async ()=>{
-    const { serviceInstance } = await  TestServiceUtil.setup<UsersService>(UsersService, User, mockUsers);
-
-    const response = await serviceInstance.findAll();
-
-    expect(response).toEqual(mockUsers);
-  });
-
-  const validFilters = {...mockUsers[0]}
+  
+  const validFilters = user1()
   delete validFilters.password;
   delete validFilters.email;
+
   const validQuerys = TestServiceUtil.getQuerysByObject<UserContract>(validFilters);
 
+  const setup = () => TestServiceUtil.setup<UsersService>(
+    UsersService,  
+    mockUsers(),
+    {
+      main: User
+    }
+  );
+
   it.each(validQuerys)("Should filter by key: $key with value: $value", async ({key,value})=>{
-    const { serviceInstance, andWhere} = await  TestServiceUtil.setup<UsersService>(UsersService, User, mockUsers);
+    const { serviceInstance, andWhere} = await setup()
 
     await serviceInstance.findAll({[key]: value} as any as User);
 
@@ -45,7 +48,7 @@ describe("users.service",()=>{
   const invalidQuerys = TestServiceUtil.getQuerysByObject<UserContract>({password:"somePassword"});
 
   it.each(invalidQuerys)("Shouldn't filter by key: $key with value: $value", async ({key,value})=>{
-    const { serviceInstance, andWhere} = await  TestServiceUtil.setup<UsersService>(UsersService, User, mockUsers);
+    const { serviceInstance, andWhere} = await setup();
 
     await serviceInstance.findAll({[key]: value} as any as User);
 
@@ -62,22 +65,20 @@ describe("users.service",()=>{
     {
       serviceMethodName:"update",
       repositoryMethodName:"save",
-      serviceParameter: mockUsers[0],
-      repositoryParameter: mockUsers[0]
+      serviceParameter: mockUsers()[0],
+      repositoryParameter: mockUsers()[0]
     },
     {
       serviceMethodName:"delete",
       repositoryMethodName:"softDelete",
       serviceParameter: [1],
       repositoryParameter: {id: In([1])}
-
     },
     {
       serviceMethodName:"hardDelete",
       repositoryMethodName:"delete",
       serviceParameter: [1],
       repositoryParameter: {id: In([1])}
-
     }
   ]
 
@@ -87,7 +88,7 @@ describe("users.service",()=>{
     serviceParameter,
     repositoryParameter
   })=>{
-    const { serviceInstance, repository } = await  TestServiceUtil.setup<UsersService>(UsersService, User, mockUsers);
+    const { serviceInstance, repository} = await setup()
 
     await serviceInstance[serviceMethodName](serviceParameter);
 

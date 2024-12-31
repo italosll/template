@@ -3,6 +3,8 @@ import { CreateProductDTO } from "../dto/create-product.dto";
 import { FullProductDTO } from "../dto/full-product.dto";
 import { UpdateProductDTO } from "../dto/update-product.dto";
 import { AuditContract } from "../../common/contracts/audit.contract";
+import { ProductWithCategoriesDTO } from "../dto/product-with-categories.dto";
+import { bindAuditProperties } from "../utils/bind-audit-properties.util";
 
 export class ProductFactory implements ProductContract, AuditContract{
   public id: number;
@@ -20,19 +22,22 @@ export class ProductFactory implements ProductContract, AuditContract{
   public recoveredAt: Date;
   public categoryIds: number[];
 
-  constructor(product?: Partial<ProductContract>) {
+  constructor(product?: Partial<ProductContract & AuditContract>) {
     this.id = product?.id ?? 1;
     this.name = product?.name ?? "Default Product Name";
     this.code = product?.code ?? "PRD123";
     this.description = product?.description ?? "Default product description";
     this.image = product?.image ?? { name: "default-image.jpg", url: "https://example.com/default-image.jpg" };
-    this.createdAt = new Date(2020,0,1);
+    // this.categoryIds = [1,2,3]
+    bindAuditProperties(this, product);
   }
 
 
-  createProduct = () => new CreateProductDTO(this);
+  createData = (params?) => new CreateProductDTO({...this, ...params});
 
-  updateProduct = () => new UpdateProductDTO(this);
+  fullDataWithRelations = (params?) => new ProductWithCategoriesDTO({...this, ...params});
 
-  fullProduct = () => new FullProductDTO(this);
+  updateData = (params?) => new UpdateProductDTO({...this, ...params});
+
+  fullData = (params?) => new FullProductDTO({...this, params});
 }

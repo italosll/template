@@ -5,6 +5,7 @@ export class CreateCategoryDTO implements Omit<CategoryContract, "id">{
   public code: string;
 
   constructor (createCategoryDTO:CreateCategoryDTO ){
-    Object.assign(this, createCategoryDTO);
+    this.name = createCategoryDTO.name;
+    this.code = createCategoryDTO.name;
   }
 }

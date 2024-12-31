@@ -1,19 +1,20 @@
-import { TestControllerUtil } from './../common/utils/test-controller.util';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { UserFactory } from './factories/user.factory';
+import { ProductsController } from './products.controller';
+import { TestControllerUtil } from '../common/utils/test-controller.util';
+import { ProductsService } from './products.service';
+import { ProductFactory } from './factories/product.factory';
 
-describe("users.controller", ()=>{
+
+describe("categories.controller", ()=>{
 
   const setup = () => {
-    const service = new UsersService(null,null,null);
+    const service = new ProductsService(null,null);
     TestControllerUtil.setSpies(service)
-    const controller = new UsersController(service);
+    const controller = new ProductsController(service);
 
     return {controller, service};
   }
 
-  const methods = TestControllerUtil.getControllerMethods(new UserFactory())
+  const methods = TestControllerUtil.getControllerMethods(new ProductFactory())
 
 
   it.each(methods)("Should call service.$methodName with parameter: $parameter", async ({

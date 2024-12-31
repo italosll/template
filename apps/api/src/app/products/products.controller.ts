@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Post, Put, Query, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, ParseArrayPipe, Post, Put, Query, ValidationPipe } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { AuditContract } from "../common/contracts/audit.contract";
 import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
@@ -31,12 +31,17 @@ export class ProductsController{
   }
 
   @Delete()
-  delete(@Query("ids") ids: number[]): Promise<DeleteDefaultResponseDTO>{
+  async delete(
+    @Query(
+      "ids", 
+      new ParseArrayPipe({ items:Number, separator:","})
+    ) ids: number[]
+    ): Promise<DeleteDefaultResponseDTO>{
     return this._productsService.delete(ids);
   }
 
   @Delete("/hardDelete")
-  hardDelete(@Query("ids") ids: number[]): Promise<HardDeleteDefaultResponseDTO>{
+  async hardDelete(@Query("ids") ids: number[]): Promise<HardDeleteDefaultResponseDTO>{
 
     return this._productsService.hardDelete(ids);
   }
