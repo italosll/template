@@ -1,4 +1,4 @@
-import { ProductContract } from '@template/interfaces';
+import { ProductContract } from '@interfaces/product.contract';
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Audit } from "../../common/utils/audit.util";
 import { Category } from "../../categories/entities/category.entity";

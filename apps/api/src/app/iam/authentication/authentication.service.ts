@@ -1,5 +1,7 @@
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { ActiveUserContract, UserContract } from '@template/interfaces';
+import { UserContract } from '@interfaces/user.contract';
+import { ActiveUserContract } from '@interfaces/active-user.contract';
+
 import { SignUpDTO } from './dto/sign-up.dto';
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "../../users/entities/user.entity";

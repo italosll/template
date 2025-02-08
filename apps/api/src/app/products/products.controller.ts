@@ -7,7 +7,7 @@ import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.
 import { CreateProductDTO } from "./dto/create-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";
 import { HardDeleteDefaultResponseDTO } from "../common/dto/hard-delete-default-response.dto";
-import { ProductContract } from "@template/interfaces";
+import { ProductContract } from "@interfaces/product.contract";
 import { Product } from "./entities/product.entity";
 
 @Controller("products")

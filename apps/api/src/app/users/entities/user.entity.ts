@@ -1,5 +1,5 @@
 import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import {UserContract} from "@template/interfaces"
+import {UserContract} from "@interfaces/user.contract"
 import { Audit } from "../../common/utils/audit.util";
 import { EncryptionService } from "../../common/encryption/encryption.service";
 

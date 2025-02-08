@@ -1,4 +1,4 @@
-import { CategoryContract } from "@template/interfaces";
+import { CategoryContract } from "@interfaces/category.contract";
 import { GetQueryContract } from "../../common/contracts/get-query.contract";
 import { getAuditQuerys } from "../../common/utils/get-query.util";
 import { AuditContract } from "../../common/contracts/audit.contract";

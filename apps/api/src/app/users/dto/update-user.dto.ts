@@ -1,4 +1,4 @@
-import { UserContract } from "@template/interfaces";
+import { UserContract } from "@interfaces/user.contract";
 
 export class UpdateUserDTO implements Partial<UserContract>{
   id:number;

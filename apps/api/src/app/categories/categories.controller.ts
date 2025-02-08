@@ -1,3 +1,4 @@
+import { ProductContract } from '@interfaces/product.contract';
 import { Body, Controller, Delete, Get, Inject, Post, Put, Query, ValidationPipe } from "@nestjs/common";
 import { AuditContract } from "../common/contracts/audit.contract";
 import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
@@ -5,7 +6,6 @@ import { DeleteDefaultResponseDTO } from "../common/dto/delete-default-response.
 import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
 
 import { HardDeleteDefaultResponseDTO } from "../common/dto/hard-delete-default-response.dto";
-import { ProductContract } from "@template/interfaces";
 import { CategoriesService } from "./categories.service";
 import { UpdateCategoryDTO } from "./dto/update-category.dto";
 import { CreateCategoryDTO } from "./dto/create-category.dto";

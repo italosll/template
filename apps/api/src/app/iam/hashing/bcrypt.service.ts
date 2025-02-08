@@ -16,11 +16,6 @@ export class BcryptService implements HashingService{
   }
 
   public async isMatch(text:string, hash:string){
-
-    console.log("isMatch----------")
-    console.log(text)
-    console.log(hash)
-
     return await bcrypt.compare(text,hash);
   }
 }

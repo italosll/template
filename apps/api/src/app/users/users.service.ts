@@ -9,7 +9,7 @@ import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.
 import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
 import { getQuerys } from "./utils/get-query.util";
 import { AuditContract } from "../common/contracts/audit.contract";
-import { UserContract } from "@template/interfaces";
+import { UserContract } from "@interfaces/user.contract";
 import { EncryptionService } from "../common/encryption/encryption.service";
 import { HashingService } from "../iam/hashing/hashing.service";
 import { EntityService } from "../common/services/entity.service";

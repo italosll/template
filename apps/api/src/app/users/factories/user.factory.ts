@@ -1,4 +1,4 @@
-import { UserContract } from "@template/interfaces";
+import { UserContract } from "@interfaces/user.contract";
 import { AuditContract } from "../../common/contracts/audit.contract";
 import { CreateUserDTO } from "../dto/create-user.dto";
 import { UpdateUserDTO } from "../dto/update-user.dto";

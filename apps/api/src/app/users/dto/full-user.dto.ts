@@ -1,4 +1,4 @@
-import { UserContract } from "@template/interfaces";
+import { UserContract } from "@interfaces/user.contract";
 import { AuditContract } from "../../common/contracts/audit.contract";
 
 export class FullUserDTO implements UserContract, AuditContract{

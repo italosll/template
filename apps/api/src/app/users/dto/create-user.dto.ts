@@ -1,4 +1,4 @@
-import { UserContract } from "@template/interfaces";
+import { UserContract } from "@interfaces/user.contract";
 import { IsString } from "class-validator";
 
 export class CreateUserDTO implements Omit<UserContract, "id" | "filterableEmail">{

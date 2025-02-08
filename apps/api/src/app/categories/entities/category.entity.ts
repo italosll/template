@@ -1,4 +1,4 @@
-import { CategoryContract } from '@template/interfaces';
+import { CategoryContract } from '@interfaces/category.contract';
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Audit } from '../../common/utils/audit.util';
 

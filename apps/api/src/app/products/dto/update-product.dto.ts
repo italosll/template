@@ -1,4 +1,4 @@
-import { CategoryContract } from "@template/interfaces";
+import { CategoryContract } from "@interfaces/category.contract";
 import { CreateProductDTO } from "./create-product.dto";
 
 export class UpdateProductDTO extends CreateProductDTO implements CategoryContract{

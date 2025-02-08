@@ -5,7 +5,7 @@ import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.
 import { DeleteDefaultResponseDTO } from "../common/dto/delete-default-response.dto";
 import { UsersService } from "./users.service";
 import { CreateUserDTO } from "./dto/create-user.dto";
-import { UserContract } from "@template/interfaces";
+import { UserContract } from "@interfaces/user.contract";
 import { AuditContract } from "../common/contracts/audit.contract";
 import { HardDeleteDefaultResponseDTO } from "../common/dto/hard-delete-default-response.dto";
 
@@ -17,8 +17,6 @@ export class UsersController{
   @Post()
   async create(@Body() createUserDTO: CreateUserDTO): Promise<CreateDefaultResponseDTO>{
 
-    console.log("----------")
-    console.log(createUserDTO)
     return this._usersService.create(createUserDTO);
   }
 

@@ -1,4 +1,4 @@
-import { UserContract } from "@template/interfaces";
+import { UserContract } from "@interfaces/user.contract";
 import { GetQueryContract } from "../../common/contracts/get-query.contract";
 import { getAuditQuerys } from "../../common/utils/get-query.util";
 import { User } from "../entities/user.entity";

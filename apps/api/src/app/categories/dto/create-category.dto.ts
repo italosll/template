@@ -1,4 +1,4 @@
-import { CategoryContract } from "@template/interfaces";
+import { CategoryContract } from '@interfaces/category.contract';
 
 export class CreateCategoryDTO implements Omit<CategoryContract, "id">{
   public name: string;

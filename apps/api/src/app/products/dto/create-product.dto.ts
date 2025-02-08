@@ -1,4 +1,4 @@
-import { ProductContract } from "@template/interfaces";
+import { ProductContract } from "@interfaces/product.contract";
 
 export class CreateProductDTO implements Omit<ProductContract, "id">{
 

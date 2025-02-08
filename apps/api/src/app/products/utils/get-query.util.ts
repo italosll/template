@@ -2,7 +2,7 @@ import { GetQueryContract } from "../../common/contracts/get-query.contract";
 import { getAuditQuerys } from "../../common/utils/get-query.util";
 import { AuditContract } from "../../common/contracts/audit.contract";
 import { Product } from "../entities/product.entity";
-import { ProductContract } from "@template/interfaces";
+import { ProductContract } from "@interfaces/product.contract";
 
 export const getQuerys =(entity:Partial<ProductContract & AuditContract>):GetQueryContract<Product> =>( {
   name:{

@@ -1,4 +1,4 @@
-import { ProductContract } from "@template/interfaces";
+import { ProductContract } from "@interfaces/product.contract";
 import { CreateProductDTO } from "../dto/create-product.dto";
 import { FullProductDTO } from "../dto/full-product.dto";
 import { UpdateProductDTO } from "../dto/update-product.dto";

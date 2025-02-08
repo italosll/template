@@ -1,1 +1,36 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap');
+ 
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html,body{
+  width: auto;
+  height: 100%
+}
+
+@layer utilities {
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+}
+
+@layer components{
+  .button-primary {
+    @apply bg-primary/10 text-primary p-2 rounded-lg transition-all;
+    @apply hover:bg-primary/20;
+    @apply active:bg-primary/30;
+  }
+
+  .title {
+    @apply text-gray-300 font-extrabold text-5xl;
+  }
+}
+
+ 

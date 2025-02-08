@@ -1,4 +1,4 @@
-import { CategoryContract } from "@template/interfaces";
+import { CategoryContract } from "@interfaces/category.contract";
  
 import { AuditContract } from "../../common/contracts/audit.contract";
 import { CreateCategoryDTO } from "../dto/create-category.dto";

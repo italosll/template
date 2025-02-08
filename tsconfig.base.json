@@ -15,7 +15,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@template/interfaces": ["libs/interfaces/src/index.ts"]
+      "@client/common/*": ["apps/client/src/app/modules/common/*"],
+      "@client/iam/*": ["apps/client/src/app/modules/iam/*"],
+      "@client/products/*": ["apps/client/src/app/modules/products/*"],
+      "@client/users/*": ["apps/client/src/app/modules/users/*"],
+      "@client/theme": ["apps/client/src/theme.scss"],
+      "@interfaces/*": ["libs/interfaces/src/lib/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

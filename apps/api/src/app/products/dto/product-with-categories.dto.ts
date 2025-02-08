@@ -1,4 +1,4 @@
-import { CategoryContract } from "@template/interfaces";
+import { CategoryContract } from "@interfaces/category.contract";
 import { Category } from "../../categories/entities/category.entity";
 import { CreateProductDTO } from "./create-product.dto";
 import { UpdateProductDTO } from "./update-product.dto";
