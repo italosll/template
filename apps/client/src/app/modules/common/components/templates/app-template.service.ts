@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { TemplateComponent } from "./app-template.component";
 import { Route, Router } from "@angular/router";
-import * as Product from "@client/products/index.routes";
+import * as Product from "@client/products/app-index.routes";
 import * as Users from "@client/users/index.routes";
 
 import { NavigationItemModel } from "@client/common/model/app-navigation-item";
