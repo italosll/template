@@ -1,7 +1,12 @@
 {
   "/api": {
     "target": "http://localhost:3000",
-    "secure": false,
-    "http": true
+    "secure": true,
+    "http": true,
+    "withCredentials": true,
+    "changeOrigin": true,
+    "headers": {
+      "Connection": "keep-alive"
+    }
   }
 }

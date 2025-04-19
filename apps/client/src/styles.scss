@@ -1,13 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+@use '@angular/material' as mat;
+@use "./styles/theme.scss";
 @import url('https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap');
- 
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+}
+
+html{
+}
+
+ 
+:root{
+  --mdc-outlined-card-container-shape:12px;
 }
 
 html,body{
@@ -15,22 +21,17 @@ html,body{
   height: 100%
 }
 
-@layer utilities {
-  .flex-center {
-    @apply flex justify-center items-center;
-  }
-}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-@layer components{
-  .button-primary {
-    @apply bg-primary/10 text-primary p-2 rounded-lg transition-all;
-    @apply hover:bg-primary/20;
-    @apply active:bg-primary/30;
+
+ 
+.mat-mdc-unelevated-button {
+    border-radius: 25px !important;
   }
 
-  .title {
-    @apply text-gray-300 font-extrabold text-5xl;
+  mat-dialog-actions{
+    display: flex !important;
+    justify-content: flex-end !important;
   }
-}
-
  

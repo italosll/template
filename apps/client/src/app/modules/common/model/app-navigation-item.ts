@@ -1,5 +1,6 @@
 export class  NavigationItemModel {
     public title:string;
+    public icon?:string;
     public path:string;
     public active:boolean;
     public visible:boolean;
@@ -8,11 +9,13 @@ export class  NavigationItemModel {
     constructor(
          title:string,
          path:string,
-         active = true,
+         icon?:string,
+         active = false,
          visible = true,
          enabled = true,
     ){
        this.title = title;
+       this.icon = icon;
        this.path = path;
        this.active = active;
        this.visible = visible;

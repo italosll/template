@@ -1,38 +1,65 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, HostBinding, inject, input } from "@angular/core";
 import { FormsModule } from "@angular/forms"
-import { TemplateService } from "../templates/app-template.service";
+import { TemplateService } from "../templates/app.template.service";
 import { RouterLink, RouterLinkActive } from "@angular/router";
+import { AccessService } from "@client/iam/services/app-access.service";
+import { MatIcon, MatIconModule } from "@angular/material/icon";
+import { MatSidenav, MatSidenavModule } from "@angular/material/sidenav";
+import { NavigationItemModel } from "@client/common/model/app-navigation-item";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
     changeDetection:ChangeDetectionStrategy.OnPush,
     standalone:true,
-    selector:"app-sidenav",
+    // eslint-disable-next-line @angular-eslint/component-selector
+    selector: 'app-sidenav',  
     providers:[
         TemplateService,
+        AccessService
     ],
     imports:[
         CommonModule,
         FormsModule,
         RouterLink,
-        RouterLinkActive
+        RouterLinkActive,
+        MatIconModule,
+        MatSidenavModule,
+        MatButtonModule
+    ],
+    styles:[
+        
+        `     
+            :host{
+                display:block;
+                padding:0.5rem
+
+        }
+        a{
+                display:flex;
+                justify-content: flex-start;                
+            }
+        
+        `
     ],
     template:`
-        <div class="w-52 flex flex-col h-full bg-primary-dark p-3">
-            <img
-                class="rounded-lg h-20 opacity-90 w-full"
-                [src]="templateServico.companyRectangularLogo()"
-            />
-            @for(item of templateServico.navigationItems(); track item.path){
+            @for(navigationItem of navigationItems(); track navigationItem.path ){
                 <a
-                    class="text-white"
-                    [routerLink]="item.path"
+                    [style]="{color: navigationItem.active ? 'var(--primary-color)' : 'black'}"
+                    mat-flat-button 
+                    [routerLink]="navigationItem.path"
                     routerLinkActive="active"
-                >{{item.title}}</a>
+                    >
+                    <mat-icon>{{navigationItem.icon}}</mat-icon>    
+                    <span>
+                        {{navigationItem.title}}
+                    </span>
+                
+                </a>
             }
-        </div>
     `,
 })
 export class SidenavComponent{
-    protected templateServico = inject(TemplateService);
+    private _templateServico = inject(TemplateService);
+    protected navigationItems =computed(()=> this._templateServico.navigationItems());
 }

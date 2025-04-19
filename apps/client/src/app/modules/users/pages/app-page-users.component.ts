@@ -1,16 +1,14 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, signal, ViewEncapsulation } from "@angular/core";
-import { InputTextComponent } from "@client/common/components/app-input-text.component";
 import { TableComponent } from "@client/common/components/app-table/app-table.component";
 
 @Component({
-    changeDetection:ChangeDetectionStrategy.OnPush,
-    standalone:true,
-    selector:"app-page-users",
-    encapsulation:ViewEncapsulation.None,
-    imports:[
-      CommonModule,
-      TableComponent
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: "app-page-users",
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        CommonModule,
+        TableComponent
     ],
     // styles:[`
     //     :host{
@@ -18,14 +16,14 @@ import { TableComponent } from "@client/common/components/app-table/app-table.co
     //         height:100%;
     //     }`
     // ],
-    template:`
+    template: `
     <div class="flex flex-col h-full bg-green-200 flex-center">
       Users
 
 
     <app-table [items]="items()"/>
 
-    </div>`    
+    </div>`
 })
 export class PageUsersComponent {
 

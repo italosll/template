@@ -14,6 +14,7 @@ import { MYSQL_VIOLATION_ERROR_CODES } from '../../common/utils/mysql-violation-
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { JwtConfigContract } from '../contracts/jwt.config.contract';
+import { CookieToken } from '@interfaces/cookie-tokens.contract';
 
 export class AuthenticationService{
 
@@ -126,8 +127,8 @@ export class AuthenticationService{
     const refreshTokenExpDate = new Date(refreshTokenExpInMilliseconds);
 
     return {
-      accessToken,
-      refreshToken,
+      [CookieToken.AccessToken]:accessToken,
+      [CookieToken.RefreshToken]:refreshToken,
       refreshTokenExpDate,
       accessTokenExpDate
     }

@@ -5,7 +5,7 @@ import { SignInDTO } from "./dto/sign-in.dto";
 import { Response } from "express"
 import { Auth } from "./decorators/auth.decorator";
 import { AuthType } from "./enums/auth-type.enum";
-import { RefreshTokenDto } from "./dto/refresh-token.dto";
+import { CookieToken } from '@interfaces/cookie-tokens.contract';
 
 @Auth(AuthType.None)
 @Controller('authentication')
@@ -32,13 +32,13 @@ export class AuthenticationController{
     } = (await this._authenticationService.signIn(SignInDTO));
 
     response
-    .cookie('accessToken', accessToken, {
+    .cookie(CookieToken.AccessToken, accessToken, {
       secure: true,
       httpOnly: true,
       sameSite: true,
       expires: accessTokenExpDate
     })
-    .cookie('refreshToken', refreshToken, {
+    .cookie(CookieToken.RefreshToken, refreshToken, {
       secure:true,
       httpOnly:true,
       sameSite:true,

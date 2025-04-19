@@ -1,5 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 
-export const routes = {
-    product:"/products",
+import { environment } from "apps/client/src/environments/environment";
+
+export const apiRoutesProducts = {
+    product:`${environment.apiUrl}/products`,
 }

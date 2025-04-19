@@ -18,6 +18,7 @@ export class AccesTokenGuard implements CanActivate{
     const token = this.extractAccessTokenFromCookie(request);
 
     if(!token){
+      console.log(request?.cookies);
       throw new UnauthorizedException("undefined token");
     }
     try{

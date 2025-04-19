@@ -7,7 +7,10 @@ export class BaseHttpService <T>{
 
     constructor(public _url:string){}
 
-    public get = () => this.httpClient.get<T>(this._url);
+public get = () => this.httpClient.get<T[]>(this._url,{
+    responseType: 'json',
+    withCredentials: true
+});
 
     public post = (body:T) => this.httpClient.post<T>(this._url, body);
 
