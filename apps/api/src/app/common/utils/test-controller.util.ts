@@ -9,10 +9,10 @@ const deletedResponse = { ids: [1] };
 const findAllResponse = [];
 
 
-export class TestControllerUtil {
+export class TestControllerUtil<CreateDTO, UpdateDTO, GetDTO> {
 
         
-    public static setSpies(service){
+    public setSpies(service){
         
         jest.spyOn(service,"findAll").mockImplementation(()=> Promise.resolve(findAllResponse));
         jest.spyOn(service,"create").mockImplementation(()=> Promise.resolve(createdResponse));
@@ -22,7 +22,7 @@ export class TestControllerUtil {
  
     }
     
-    public static getControllerMethods(factory: FactoryContract){
+    public getControllerMethods(factory: FactoryContract<CreateDTO, UpdateDTO, GetDTO>){
         const methods: TestControllerMethodContract<EntityService<any, any, any>>[] = [
             {
                 methodName: "findAll",
@@ -31,12 +31,12 @@ export class TestControllerUtil {
             },
             {
                 methodName: "create",
-                parameter: factory.createData(),
+                parameter: factory.create(null,false),
                 expectedResponse: createdResponse
             },
             {
                 methodName: "update",
-                parameter: factory.updateData(),
+                parameter: factory.update(null,false),
                 expectedResponse: createdResponse
             },
             {

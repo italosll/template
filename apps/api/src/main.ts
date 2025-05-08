@@ -8,9 +8,13 @@ import { NestFactory } from '@nestjs/core';
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger"
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module';
+import { json } from 'express';
+import "./app/common/extended/index.extended"
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(json({ limit: '25mb' }));
   app.use(cookieParser());
 
   app.useGlobalPipes( new ValidationPipe({

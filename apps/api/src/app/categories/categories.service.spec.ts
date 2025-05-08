@@ -1,10 +1,10 @@
 import { CategoryFactory } from './../categories/factories/category.factory';
 import { TestServiceUtil } from '../common/utils/test-service.util';
-import { CategoryContract } from '@template/interfaces';
 import { In } from 'typeorm';
 import { Category } from '../categories/entities/category.entity';
 import { CategoriesService } from './categories.service';
 import { getQuerys } from './utils/get-query.util';
+import { CategoryContract } from '@interfaces/category.contract';
 
 const {createData, updateData, fullData} = new CategoryFactory()
 

@@ -7,7 +7,9 @@ import { FullCategoryDTO } from "../dto/full-category.dto";
 import { FactoryContract } from "../../common/contracts/factory.contract";
 import { bindAuditProperties } from "../../products/utils/bind-audit-properties.util";
 
-export class CategoryFactory implements FactoryContract, CategoryContract, AuditContract{
+export class CategoryFactory implements 
+// FactoryContract,
+ CategoryContract, AuditContract{
   public id: number;
   public name: string;
   public code: string;

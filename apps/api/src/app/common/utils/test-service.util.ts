@@ -7,6 +7,8 @@ import { Type } from '@nestjs/common';
 import { QueryParameterContract } from '../contracts/query-parameters.contract';
 import { EncryptionService } from '../encryption/encryption.service';
 import { HashingService } from '../../iam/hashing/hashing.service';
+import { S3FilesService } from '../files/s3-files.service';
+import { TestCrudTypesEnum } from '../enums/test-crud-types.enum';
 const TEST_DEFAULT_HARD_DELETE_ONE_RESPONSE = { raw: {}, affected: 1 , generatedMaps:[]};
 const TEST_DEFAULT_DELETE_ONE_RESPONSE = { raw: {}, affected: 1 };
 
@@ -31,7 +33,8 @@ export class TestServiceUtil{
   public static async setup<ServiceType>(
     serviceClass:Type<any>, 
     mockEntities:any[], 
-    entities:Entities
+    entities:Entities,
+    testType?:TestCrudTypesEnum
   ){
    
    
@@ -61,6 +64,14 @@ export class TestServiceUtil{
             generate: (param) => Promise.resolve(param),
             isMatch: (param) => Promise.resolve(true)
           }
+        },
+        {
+          provide: S3FilesService,
+          useValue: {
+            upload: jest.fn(),
+            getUrlByKey: jest.fn(),
+            getFileInfoByS3FileKey: jest.fn()
+          }
         }
       ]
     }).compile();
@@ -77,14 +88,18 @@ export class TestServiceUtil{
     })
 
     const andWhere = jest.fn();
+    const andWhereMultipleColumns = jest.fn();
     const getMany = ()=> Promise.resolve(mockEntities)as any
     const leftJoinAndSelect = jest.fn(()=> ({ getMany }));
-
+    const loadRelationIdAndMap = jest.fn(()=> ({ getMany }));
     jest.spyOn(repository, "find").mockImplementation(() => Promise.resolve(mockEntities));
+    jest.spyOn(repository, "findOne").mockImplementation(() => Promise.resolve( testType === "update" ? mockEntities?.at(0) : null));
     jest.spyOn(repository, "createQueryBuilder").mockImplementation(() => ({ 
       andWhere, 
+      andWhereMultipleColumns,
+      loadRelationIdAndMap,
       getMany, 
-      leftJoinAndSelect
+      leftJoinAndSelect,
       } as any))
 
     // For test purpouses create and save methods just return the object received.
@@ -97,7 +112,7 @@ export class TestServiceUtil{
     const softDeleteMock = jest.spyOn(repository, "softDelete").mockImplementation(()=> Promise.resolve(TEST_DEFAULT_HARD_DELETE_ONE_RESPONSE));
     const deleteMock = jest.spyOn(repository, "delete").mockImplementation(()=> Promise.resolve(TEST_DEFAULT_DELETE_ONE_RESPONSE));
 
-    return { serviceInstance, repository, andWhere, softDeleteMock, deleteMock}
+    return { serviceInstance, repository, andWhere, andWhereMultipleColumns, softDeleteMock, deleteMock}
   };
 
 

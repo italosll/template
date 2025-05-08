@@ -13,5 +13,5 @@ export const getQuerys =(entity:Partial<UserContract & AuditContract>):GetQueryC
     where:`id LIKE :id`,
     parameters:{ id: `%${entity?.id}%`},
   },
-  ...getAuditQuerys(entity)
+  ...getAuditQuerys()
 })

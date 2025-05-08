@@ -30,9 +30,10 @@ export class DialogOpenerUtil{
        }]);
     }
 
-    public async openUpdateDialog():Promise<boolean>{
+    public async openUpdateDialog(id:number):Promise<boolean>{
         return this._openDialog([{
             key: 'editar',
+            value: { id }
         }]);
     }
 

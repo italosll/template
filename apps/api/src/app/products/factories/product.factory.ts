@@ -1,43 +1,70 @@
-import { ProductContract } from "@interfaces/product.contract";
 import { CreateProductDTO } from "../dto/create-product.dto";
-import { FullProductDTO } from "../dto/full-product.dto";
+import { ResponseProductDTO } from "../dto/response-product.dto";
 import { UpdateProductDTO } from "../dto/update-product.dto";
 import { AuditContract } from "../../common/contracts/audit.contract";
-import { ProductWithCategoriesDTO } from "../dto/product-with-categories.dto";
-import { bindAuditProperties } from "../utils/bind-audit-properties.util";
+import { FactoryContract } from "../../common/contracts/factory.contract";
 
-export class ProductFactory implements ProductContract, AuditContract{
-  public id: number;
-  public name: string;
-  public code: string;
-  public description: string;
-  public image: {
-    name: string;
-    url: string;
-  };
+import { plainToInstance } from 'class-transformer';
 
-  public createdAt: Date;
-  public updatedAt: Date;
-  public deletedAt: Date;
-  public recoveredAt: Date;
-  public categoryIds: number[];
+export class ProductFactory implements FactoryContract<
+  CreateProductDTO,
+  UpdateProductDTO,
+  ResponseProductDTO
+>{
 
-  constructor(product?: Partial<ProductContract & AuditContract>) {
-    this.id = product?.id ?? 1;
-    this.name = product?.name ?? "Default Product Name";
-    this.code = product?.code ?? "PRD123";
-    this.description = product?.description ?? "Default product description";
-    this.image = product?.image ?? { name: "default-image.jpg", url: "https://example.com/default-image.jpg" };
-    // this.categoryIds = [1,2,3]
-    bindAuditProperties(this, product);
+  private _fakeData:Partial<CreateProductDTO | UpdateProductDTO | ResponseProductDTO> ={
+    id: 1,
+    code : "X1223G",
+    description : "Descrição",
+    image : {
+      name: "motor_3243423.png",
+      url: "www.url.com.br"
+    },
+    name: "nome",
+    amount: 10,
+    cost : 10,
+    sellingPrice : 15,
+    maxDiscountPercentage: 10,
+    categoryIds:[1,2,3,4],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: new Date(),
+    recoveredAt: new Date()
   }
 
+  public create (
+    params?:Partial<CreateProductDTO & AuditContract>,
+    setFakeData = false
+  ) {
+   return plainToInstance(
+    CreateProductDTO,
+     setFakeData 
+     ? {...this._fakeData, ...params} 
+     : params
+    );
+  }
 
-  createData = (params?) => new CreateProductDTO({...this, ...params});
+  public update (
+    params?:Partial<UpdateProductDTO & AuditContract>,
+    setFakeData = false
+  ) {
+    return plainToInstance(
+      UpdateProductDTO,
+       setFakeData 
+       ? {...this._fakeData, ...params} 
+       : params
+      );
+  }
 
-  fullDataWithRelations = (params?) => new ProductWithCategoriesDTO({...this, ...params});
-
-  updateData = (params?) => new UpdateProductDTO({...this, ...params});
-
-  fullData = (params?) => new FullProductDTO({...this, params});
+  public response  (
+    params?:Partial<ResponseProductDTO & AuditContract>,
+    setFakeData = false
+  ) {
+    return plainToInstance(
+      ResponseProductDTO,
+       setFakeData 
+       ? {...this._fakeData, ...params} 
+       : params
+       );
+  }
 }

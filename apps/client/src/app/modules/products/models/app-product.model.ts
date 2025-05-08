@@ -1,6 +1,8 @@
+import { Validators } from "@angular/forms";
 import { FormularyUtils } from "@client/common/components/app-formulary/formulary.util";
 import { SchemeContract } from "@client/common/components/app-formulary/scheme.contract";
 import { ProductContract } from "@interfaces/product.contract";
+import { min } from "rxjs";
 
 export class ProductModel{
     public readonly schemes: SchemeContract<ProductContract> =
@@ -10,19 +12,8 @@ export class ProductModel{
             name: "email",
             inputs: [
                 {
-                    type: "text",
-                    name: "code",
-                    label: "codigo",
-                    validators: [],
-                    width: 3
-                    
-                },
-                {
-                    type: "text",
-                    name: "description",
-                    label: "descricao",
-                    validators: [],
-                    width: 3
+                    type: "id",
+                    name: "id",
                 },
                 {
                     type: "image",
@@ -33,9 +24,23 @@ export class ProductModel{
                 },
                 {
                     type: "text",
+                    name: "code",
+                    label: "codigo",
+                    validators: [Validators.required],
+                    width: 3
+                },
+                {
+                    type: "text",
+                    name: "description",
+                    label: "descricao",
+                    validators: [],
+                    width: 3
+                },
+                {
+                    type: "text",
                     name: "name",
                     label: "nome",
-                    validators: [],
+                    validators: [Validators.required],
                     width: 3
                 }
             ]

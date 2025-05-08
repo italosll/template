@@ -1,20 +1,24 @@
 import { ProductsController } from './products.controller';
-import { TestControllerUtil } from '../common/utils/test-controller.util';
 import { ProductsService } from './products.service';
 import { ProductFactory } from './factories/product.factory';
+import { TestControllerUtil } from '../common/utils/test-controller.util';
+import { CreateProductDTO } from './dto/create-product.dto';
+import { UpdateProductDTO } from './dto/update-product.dto';
+import { ResponseProductDTO } from './dto/response-product.dto';
 
 
 describe("categories.controller", ()=>{
 
-  const setup = () => {
-    const service = new ProductsService(null,null);
-    TestControllerUtil.setSpies(service)
-    const controller = new ProductsController(service);
+  const testControllerUtil = new TestControllerUtil<CreateProductDTO, UpdateProductDTO, ResponseProductDTO>();
 
+  const setup = () => {
+    const service = new ProductsService(null,null,null);
+    testControllerUtil.setSpies(service)
+    const controller = new ProductsController(service);
     return {controller, service};
   }
 
-  const methods = TestControllerUtil.getControllerMethods(new ProductFactory())
+  const methods = testControllerUtil.getControllerMethods(new ProductFactory())
 
 
   it.each(methods)("Should call service.$methodName with parameter: $parameter", async ({
@@ -22,9 +26,7 @@ describe("categories.controller", ()=>{
     methodName,
   })=>{
     const { controller, service } = setup();
-
     await controller[methodName](parameter);
-
     expect(service[methodName]).toHaveBeenCalledWith(parameter);
   })
 
@@ -34,9 +36,7 @@ describe("categories.controller", ()=>{
     expectedResponse
   })=>{
     const { controller } = setup();
-
     const response = await controller[methodName](parameter);
-
     expect(response).toStrictEqual(expectedResponse);
   });
 

@@ -1,22 +1,41 @@
 import { ProductContract } from "@interfaces/product.contract";
+import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateProductDTO implements Omit<ProductContract, "id">{
-
+  @IsNotEmpty()
+  @IsString()
   public name: string;
+
+  @IsNotEmpty()
+  @IsString()
   public code: string;
+
+  @IsNotEmpty()
+  @IsString()
   public description: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  public amount:number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  public cost:number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  public sellingPrice:number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  public maxDiscountPercentage:number;
+
   public image:{
-    name:string;
-    url:string;
+    base64file?:string|null;
+    name?:string;
+    url?:string;
   };
 
+  @IsArray()
   public categoryIds: number[];
-
-  constructor (createProductDTO:CreateProductDTO ){
-     this.name = createProductDTO.name;
-     this.code = createProductDTO.code;
-     this.description = createProductDTO.description;
-     this.image = createProductDTO.image;
-     this.categoryIds = createProductDTO.categoryIds;
-  }
 }

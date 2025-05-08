@@ -40,6 +40,6 @@ export class CrudTemplateComponent{
   //   }
   // ]  
   constructor(){
-      this._http.get().subscribe((r)=>this.items.set(r));
+      this._http.findAll().subscribe((r)=>this.items.set(r));
   }
 }

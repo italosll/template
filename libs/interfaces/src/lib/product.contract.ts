@@ -3,8 +3,14 @@ export interface ProductContract{
   name:string;
   code:string;
   description:string;
+  amount:number;
+  cost:number;
+  sellingPrice:number;
+  maxDiscountPercentage:number;
+  categoryIds?:number[];
   image:{
-    name:string;
-    url:string;
+    base64File?:string;
+    name?:string;
+    url?:string;
   }
 }

@@ -17,5 +17,5 @@ export const getQuerys =(entity:Partial<CategoryContract & AuditContract>):GetQu
     where:`code LIKE :code`,
     parameters:{ code: `%${entity?.code}%`},
   },
-  ...getAuditQuerys(entity)
+  ...getAuditQuerys()
 })

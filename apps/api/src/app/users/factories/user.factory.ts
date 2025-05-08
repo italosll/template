@@ -6,7 +6,9 @@ import { FullUserDTO } from "../dto/full-user.dto";
 import { bindAuditProperties } from "../../products/utils/bind-audit-properties.util";
 import { FactoryContract } from "../../common/contracts/factory.contract";
 
-export class UserFactory implements UserContract, AuditContract, FactoryContract{
+export class UserFactory implements UserContract, AuditContract
+// FactoryContract
+{
   public id: number;
   public email: string;
   public filterableEmail: string;

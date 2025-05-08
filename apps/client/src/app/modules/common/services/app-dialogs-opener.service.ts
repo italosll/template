@@ -1,6 +1,6 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, Injector, ViewContainerRef } from "@angular/core";
 import { DialogsToken } from "../providers/provide-dialogs.provider";
-import { MatDialog } from "@angular/material/dialog";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Injectable()
@@ -9,6 +9,11 @@ export class DialogsOpenerService {
     private readonly _activatedRoute = inject(ActivatedRoute);
     private readonly _matDialog = inject(MatDialog);
     private readonly _router = inject(Router)
+    private readonly _injector = inject(Injector);
+
+    private readonly _matDialogConfig: MatDialogConfig = {
+        injector: this._injector,
+    };
     constructor(){
         this._activatedRoute.queryParams.subscribe((params)=>{
 
@@ -23,7 +28,7 @@ export class DialogsOpenerService {
                         queryParams[k] = null;
                     });
 
-                    this._matDialog.open(dialog.component).afterClosed().subscribe(()=>{ 
+                    this._matDialog.open(dialog.component, this._matDialogConfig).afterClosed().subscribe(()=>{ 
                         this._router.navigate([],{
                             relativeTo: this._activatedRoute,
                             queryParamsHandling: 'merge',

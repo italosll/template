@@ -33,11 +33,15 @@ import { MatButtonModule } from "@angular/material/button";
             :host{
                 display:block;
                 padding:0.5rem
+            }
 
-        }
-        a{
+            .mat-mdc-unelevated-button{
+            }
+            
+            a{
+                border-radius:10px !important;
                 display:flex;
-                justify-content: flex-start;                
+                justify-content: flex-start;  
             }
         
         `
@@ -45,7 +49,10 @@ import { MatButtonModule } from "@angular/material/button";
     template:`
             @for(navigationItem of navigationItems(); track navigationItem.path ){
                 <a
-                    [style]="{color: navigationItem.active ? 'var(--primary-color)' : 'black'}"
+                    [style]="{
+                        color: navigationItem.active ? 'var(--primary-color)' : 'black',
+                        background: navigationItem.active ? 'var(--primary-color-light)' : 'white',
+                    }"
                     mat-flat-button 
                     [routerLink]="navigationItem.path"
                     routerLinkActive="active"

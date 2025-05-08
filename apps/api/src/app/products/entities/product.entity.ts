@@ -6,7 +6,7 @@ import { Category } from "../../categories/entities/category.entity";
 
 
 @Entity()
-export class Product extends Audit implements ProductContract {
+export class Product extends Audit implements Omit<ProductContract, "image"> {
 
   @PrimaryGeneratedColumn()
   id:number;
@@ -36,10 +36,6 @@ export class Product extends Audit implements ProductContract {
   @Column({default:0})
   maxDiscountPercentage:number
 
-  @Column({ type: 'simple-json', nullable:true})
-  image:{
-    name:string;
-    url:string;
-  }
-
+  @Column()
+  s3FileKey:string;
 }

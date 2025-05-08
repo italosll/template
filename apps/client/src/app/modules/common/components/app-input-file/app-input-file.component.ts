@@ -122,12 +122,6 @@ export class InputImageComponent extends BaseInputDirective<InputFileForm> imple
     private _elementRef: ElementRef<HTMLElement> = inject(ElementRef);
     stateChanges = new Subject<void>();
 
-    // protected form = this._formBuilder.group({
-    //     base64file: [null as unknown as string],
-    //     url: [this.urlTest as unknown as string],
-    //     name: [null as unknown as string],
-    // });
-
 
     private _placeholder = '';
   

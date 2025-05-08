@@ -15,5 +15,5 @@ export interface CustomRibbonItemContract extends RibbonItemContract{
 export interface RibbonCategoryContract{
     title: string;
     icon: string;
-    items: RibbonItemContract []
+    items: (RibbonItemContract |CustomRibbonItemContract) []
 }

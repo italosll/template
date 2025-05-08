@@ -8,12 +8,15 @@ import { CreateProductDTO } from "./dto/create-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";
 import { HardDeleteDefaultResponseDTO } from "../common/dto/hard-delete-default-response.dto";
 import { ProductContract } from "@interfaces/product.contract";
-import { Product } from "./entities/product.entity";
+import { ResponseProductDTO } from "./dto/response-product.dto";
 
 @Controller("products")
 export class ProductsController{
 
-  constructor(@Inject(ProductsService) private _productsService: ProductsService){}
+  constructor(
+    @Inject(ProductsService) private _productsService: ProductsService,
+  
+  ){}
 
   @Post()
   async create(@Body(new ValidationPipe({ transform: true })) createProductDTO: CreateProductDTO): Promise<CreateDefaultResponseDTO>{
@@ -21,7 +24,7 @@ export class ProductsController{
   }
 
   @Get()
-  async findAll(@Query() query: ProductContract & AuditContract): Promise<Product[]>{
+  async findAll(@Query() query: ProductContract & AuditContract): Promise<ResponseProductDTO[]>{
     return this._productsService.findAll(query);
   }
 

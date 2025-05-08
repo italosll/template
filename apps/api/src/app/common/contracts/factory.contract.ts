@@ -1,9 +1,7 @@
-export type FactoryContract = {
- fullData: (params?: object) => object
- createData: (params?: object) => object
- updateData: (params?: object) => object
-}
+import { AuditContract } from "./audit.contract"
 
-export interface FactoryWithRelationsContract extends FactoryContract{
-    fullDataWithRelations: (params?: object) => object
+export type FactoryContract<CreateDTO, UpdateDTO, ResponseDTO> = {
+ create: (params:Partial<CreateDTO & AuditContract>, setFakeData?:boolean) => CreateDTO;
+ update: (params:Partial<UpdateDTO & AuditContract>, setFakeData?:boolean) => UpdateDTO;
+ response:  (params:Partial<ResponseDTO & AuditContract>, setFakeData?:boolean) => ResponseDTO;
 }

@@ -10,6 +10,7 @@ import { IamModule } from './iam/iam.module';
 import databaseConfig from './core/config/database.config';
 import { DatabaseConfigContract } from './core/contracts/database.config.contract';
 import { CategoriesModule } from './categories/categories.module';
+import s3FilesConfig from './common/config/s3-files.config';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { CategoriesModule } from './categories/categories.module';
     ConfigModule.forRoot({
       isGlobal: true,
       load:[
-        databaseConfig
+        databaseConfig,
+        s3FilesConfig
       ]
     }),
     TypeOrmModule.forRootAsync({

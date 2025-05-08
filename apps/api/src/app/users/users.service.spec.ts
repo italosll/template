@@ -1,10 +1,10 @@
 import { TestServiceUtil } from '../common/utils/test-service.util';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
-import { UserContract } from '@template/interfaces';
 import { UserFactory } from './factories/user.factory';
 import { getQuerys } from './utils/get-query.util';
 import { In } from 'typeorm';
+import { UserContract } from '@interfaces/user.contract';
 
 const { fullData } = new UserFactory()
  

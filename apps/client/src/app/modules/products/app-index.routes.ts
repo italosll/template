@@ -36,9 +36,9 @@ export function getProductsRoutes(){
 
     const client={
         products:{
-            title: "Produtos",
-            path:"produtos",
-            icon:"local_mall"
+            title: "Estoque",
+            path:"estoque",
+            icon:"inventory"
         }
     }
 
@@ -92,7 +92,7 @@ export function getProductsRoutes(){
                 ]),
                 provideDialogs([
                     {
-                        keys:["cadastrar","atualizar"],
+                        keys:["cadastrar","editar"],
                         component: DialogProductComponent
                     }
                 ])

@@ -22,6 +22,7 @@ $my-m3-theme: mat.m2-define-light-theme((
 
 :root {
   --primary-color: #{mat.m2-get-color-from-palette($my-primary)};
+  --primary-color-light: #{mat.m2-get-color-from-palette($my-primary, 50)};
   --accent-color: #{mat.m2-get-color-from-palette($my-accent)};
   --warn-color: #{mat.m2-get-color-from-palette($my-warn)};
 }

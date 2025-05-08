@@ -1,5 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject } from "@angular/core";
+import { objectToQueryParams } from "../utils/app-object-to-query-params";
+import { map, Observable } from "rxjs";
 
  
 export class BaseHttpService <T>{
@@ -7,14 +9,33 @@ export class BaseHttpService <T>{
 
     constructor(public _url:string){}
 
-public get = () => this.httpClient.get<T[]>(this._url,{
-    responseType: 'json',
-    withCredentials: true
-});
+    public findAll = (filters?:{[key:string]:unknown}) => {
+        
+        let fullUrl = this._url;
 
-    public post = (body:T) => this.httpClient.post<T>(this._url, body);
+        if(filters){
+            fullUrl += objectToQueryParams(filters);
+        }
+        
+        return this.httpClient.get<T[]>(fullUrl,{
+            responseType: 'json',
+            withCredentials: true
+        });
+    }
+    
+    public findById = (id:number|string):Observable<T | undefined> => {
+        
+        const  fullUrl = `${this._url}?id=${id}`;
+ 
+        return this.httpClient.get<T[]>(fullUrl,{
+            responseType: 'json',
+            withCredentials: true
+        })?.pipe(map((data) => data?.at(0) ));
+    }
 
-    public put = (body:T) => this.httpClient.put<T>(this._url, body);
+    public create = (body:T) => this.httpClient.post<T>(this._url, body);
+
+    public update = (body:T) => this.httpClient.put<T>(this._url, body);
 
     public delete = () => this.httpClient.delete<T>(this._url);    
 }

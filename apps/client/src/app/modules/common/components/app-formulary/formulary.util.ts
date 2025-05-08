@@ -18,7 +18,7 @@ export class FormularyUtils {
             //     return;
             // }
 
-            formRecord.addControl( input.name, new FormControl(input.initialValue, input.validators, input.asyncValidators));
+            formRecord.addControl( input.name, new FormControl(input.initialValue, input?.validators, input.asyncValidators));
        
        
         });

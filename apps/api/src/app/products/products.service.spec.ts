@@ -1,19 +1,20 @@
+import { TestCrudTypesEnum } from './../common/enums/test-crud-types.enum';
 import { CategoryFactory } from './../categories/factories/category.factory';
 import { ProductsService } from './products.service';
 import { ProductFactory } from './factories/product.factory';
-import { TestServiceUtil } from '../common/utils/test-service.util';
 import { Product } from './entities/product.entity';
-import { ProductContract } from '@template/interfaces';
-import { getQuerys } from './utils/get-query.util';
+import { getQueriesParameters } from './utils/get-queries-parameters.util';
 import { In } from 'typeorm';
 import { Category } from '../categories/entities/category.entity';
+import { TestServiceUtil } from '../common/utils/test-service.util';
 
-const {createData, updateData,fullData, fullDataWithRelations } = new ProductFactory()
+const productFactory = new ProductFactory();
+
 const {updateData: updateCategory } = new CategoryFactory()
 
-const product1 = () => fullData({id:1});
-const product2 = () => fullData({id:2});
-const product3 = () => fullData({id:3});
+const product1 = () => productFactory.response({id:1}, true);
+const product2 = () => productFactory.response({id:2}, true);
+const product3 = () => productFactory.response({id:3}, true);
 
 
 export const mockProducts= () => [
@@ -22,57 +23,41 @@ export const mockProducts= () => [
   product3()
 ];
 
-describe("products.service",()=>{
- 
-  const validFilters = { ...fullDataWithRelations()}
-  delete validFilters.image;
-  delete validFilters.description;
-  delete validFilters.categories;
-  delete validFilters.categoryIds; // until find product by categories is enabled
- 
-  const validQuerys = TestServiceUtil.getQuerysByObject<ProductContract>(validFilters);
+const queriesParameters = getQueriesParameters();
 
-  const setup = (categories=[]) => TestServiceUtil.setup<ProductsService>(
+
+describe("products.service",()=>{
+
+  const setup = (categories=[], testType?:TestCrudTypesEnum) => 
+    TestServiceUtil.setup<ProductsService>(
     ProductsService, 
     mockProducts(),
     {
-      
         main:Product,
         extraEntities:[
           {
             entity:Category,
             spies:[
               {
-                repositoryMethod:"find" as never,
+                repositoryMethod:"findBy" as never,
                 implementation: ()=> categories as never
               }
             ]
           }
         ]
-    }
+    },
+    testType
   );
 
-  it.each(validQuerys)("Should filter by key: $key with value: $value", async ({key,value})=>{
-    const { serviceInstance, andWhere} = await  setup()
+  it.each(getQueriesParameters())("Should filter by key: $key with value: $value", async ({
+  like
+  })=>{
+    const { serviceInstance, andWhereMultipleColumns} = await  setup()
 
-    await serviceInstance.findAll({[key]: value} as any as Product);
+    const query = {[like]: product1()[like]}
+    await serviceInstance.findAll(query);
 
-    const querys = getQuerys(validFilters);
- 
-    expect(andWhere).toHaveBeenCalledWith(querys[key].where, querys[key].parameters);
-  })
-
-
-  const invalidQuerys = TestServiceUtil.getQuerysByObject<ProductContract>({
-    image: {name:"", url:"url" },
-  });
-
-  it.each(invalidQuerys)("Shouldn't filter by key: $key with value: $value", async ({key,value})=>{
-    const { serviceInstance, andWhere} = await setup()
-
-    await serviceInstance.findAll({[key]: value} as any as Product);
-
-    expect(andWhere).not.toHaveBeenCalled();
+    expect(andWhereMultipleColumns).toHaveBeenCalledWith(query, queriesParameters);
   })
 
 
@@ -80,17 +65,23 @@ describe("products.service",()=>{
     {
       serviceMethodName:"create",
       repositoryMethodName:"save",
-      serviceParameter: createData({id:1}),
-      repositoryParameter: createData({id:1})
+      serviceParameter: productFactory.create({categoryIds: [1,2]},true),
+      repositoryParameter: {
+        ...productFactory.create({categoryIds: [1,2]},true),
+        id:1,
+        categories: [updateCategory({id:1}), updateCategory({id:2})]
+      }
+      
     },
     {
       serviceMethodName:"update",
       repositoryMethodName:"save",
-      serviceParameter: updateData({id:1, categoryIds: [1,2]}),
+      serviceParameter: productFactory.update( { id:1,  categoryIds: [1,2] },
+      true
+    ),
       repositoryParameter: {
-        ...updateData(),
+        ...productFactory.update(null,true),
         id:1,
-        categoryIds: [1,2], 
         categories: [updateCategory({id:1}), updateCategory({id:2})]
       }
     },
@@ -108,7 +99,7 @@ describe("products.service",()=>{
       repositoryParameter: {id: In([1])}
     }
 
-  ]
+  ] as const
 
   it.each(methods)("$serviceMethodName Should have called repository.$repositoryMethodName with correct $repositoryParameter", async ({
     repositoryMethodName,
@@ -117,16 +108,15 @@ describe("products.service",()=>{
     repositoryParameter
   })=>{
 
- 
     const categories =serviceParameter?.["categoryIds"]?.map(
       (id)=> new CategoryFactory().updateData({id})
     );
-
-    const { serviceInstance, repository} = await setup(categories)
-
-    await serviceInstance[serviceMethodName](serviceParameter);
  
-    expect(repository[repositoryMethodName]).toHaveBeenCalledWith({...repositoryParameter});
+    const { serviceInstance, repository} = await setup(categories, serviceMethodName as TestCrudTypesEnum)
+
+    await serviceInstance[serviceMethodName](serviceParameter as any);
+ 
+    expect(repository[repositoryMethodName]).toHaveBeenCalledWith({...repositoryParameter });
   });
 
 })
