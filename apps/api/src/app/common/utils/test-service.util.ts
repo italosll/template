@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from "../../users/users.service";
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 import { Repository } from 'typeorm';
@@ -8,24 +7,14 @@ import { QueryParameterContract } from '../contracts/query-parameters.contract';
 import { EncryptionService } from '../encryption/encryption.service';
 import { HashingService } from '../../iam/hashing/hashing.service';
 import { S3FilesService } from '../files/s3-files.service';
-import { TestCrudTypesEnum } from '../enums/test-crud-types.enum';
 const TEST_DEFAULT_HARD_DELETE_ONE_RESPONSE = { raw: {}, affected: 1 , generatedMaps:[]};
 const TEST_DEFAULT_DELETE_ONE_RESPONSE = { raw: {}, affected: 1 };
 
-const TEST_DEFAULT_CREATED_ID = 1;
-
-interface ExtraEntity{
-  entity:EntityClassOrSchema,
-  spies?: {
-    repositoryMethod:never,
-    implementation:(...args: never) => never
-  }[]
-}
-
+ 
 
 interface Entities{
   main: EntityClassOrSchema,
-  extraEntities?:ExtraEntity[]
+  extraEntities?:EntityClassOrSchema[]
 }
 
 export class TestServiceUtil{
@@ -34,11 +23,10 @@ export class TestServiceUtil{
     serviceClass:Type<any>, 
     mockEntities:any[], 
     entities:Entities,
-    testType?:TestCrudTypesEnum
   ){
    
    
-    const repositories = entities?.extraEntities?.map(({entity})=>({
+    const repositories = [entities.main, ...entities?.extraEntities ?? []]?.map((entity)=>({
       provide: getRepositoryToken(entity),
       useClass: Repository
     })) ?? []
@@ -47,10 +35,6 @@ export class TestServiceUtil{
       providers:[
         serviceClass,
         ...repositories,
-        {
-          provide: getRepositoryToken(entities.main),
-          useClass: Repository
-        },
         {
           provide: EncryptionService,
           useValue: {
@@ -79,13 +63,7 @@ export class TestServiceUtil{
     const serviceInstance  = module.get<ServiceType>(serviceClass );
     const repository = module.get<Repository<any>>(getRepositoryToken(entities.main));
 
-    const extraRepositories = entities?.extraEntities?.map(({entity, spies})=> [module.get<Repository<any>>(getRepositoryToken(entity)), spies] as const);
-
-    extraRepositories?.forEach(([repo,spies])=>{
-      spies?.forEach((spy)=>{
-        jest?.spyOn(repo, spy.repositoryMethod as never).mockImplementation(spy.implementation);
-      })
-    })
+ 
 
     const andWhere = jest.fn();
     const andWhereMultipleColumns = jest.fn();
@@ -93,7 +71,6 @@ export class TestServiceUtil{
     const leftJoinAndSelect = jest.fn(()=> ({ getMany }));
     const loadRelationIdAndMap = jest.fn(()=> ({ getMany }));
     jest.spyOn(repository, "find").mockImplementation(() => Promise.resolve(mockEntities));
-    jest.spyOn(repository, "findOne").mockImplementation(() => Promise.resolve( testType === "update" ? mockEntities?.at(0) : null));
     jest.spyOn(repository, "createQueryBuilder").mockImplementation(() => ({ 
       andWhere, 
       andWhereMultipleColumns,
@@ -102,7 +79,6 @@ export class TestServiceUtil{
       leftJoinAndSelect,
       } as any))
 
-    // For test purpouses create and save methods just return the object received.
     jest.spyOn(repository, "create").mockImplementation((createUser) => (createUser));
     jest.spyOn(repository, "save").mockImplementation((user)=> Promise.resolve(user));
 
@@ -112,7 +88,7 @@ export class TestServiceUtil{
     const softDeleteMock = jest.spyOn(repository, "softDelete").mockImplementation(()=> Promise.resolve(TEST_DEFAULT_HARD_DELETE_ONE_RESPONSE));
     const deleteMock = jest.spyOn(repository, "delete").mockImplementation(()=> Promise.resolve(TEST_DEFAULT_DELETE_ONE_RESPONSE));
 
-    return { serviceInstance, repository, andWhere, andWhereMultipleColumns, softDeleteMock, deleteMock}
+    return { module, serviceInstance, repository, andWhere, andWhereMultipleColumns, softDeleteMock, deleteMock}
   };
 
 

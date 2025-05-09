@@ -1,12 +1,12 @@
-import { TestCrudTypesEnum } from './../common/enums/test-crud-types.enum';
 import { CategoryFactory } from './../categories/factories/category.factory';
 import { ProductsService } from './products.service';
 import { ProductFactory } from './factories/product.factory';
 import { Product } from './entities/product.entity';
 import { getQueriesParameters } from './utils/get-queries-parameters.util';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Category } from '../categories/entities/category.entity';
 import { TestServiceUtil } from '../common/utils/test-service.util';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 const productFactory = new ProductFactory();
 
@@ -28,25 +28,14 @@ const queriesParameters = getQueriesParameters();
 
 describe("products.service",()=>{
 
-  const setup = (categories=[], testType?:TestCrudTypesEnum) => 
+  const setup = () => 
     TestServiceUtil.setup<ProductsService>(
     ProductsService, 
     mockProducts(),
     {
         main:Product,
-        extraEntities:[
-          {
-            entity:Category,
-            spies:[
-              {
-                repositoryMethod:"findBy" as never,
-                implementation: ()=> categories as never
-              }
-            ]
-          }
-        ]
+        extraEntities:[Category]
     },
-    testType
   );
 
   it.each(getQueriesParameters())("Should filter by key: $key with value: $value", async ({
@@ -108,11 +97,14 @@ describe("products.service",()=>{
     repositoryParameter
   })=>{
 
-    const categories =serviceParameter?.["categoryIds"]?.map(
+    const categories = serviceParameter?.["categoryIds"]?.map(
       (id)=> new CategoryFactory().updateData({id})
     );
- 
-    const { serviceInstance, repository} = await setup(categories, serviceMethodName as TestCrudTypesEnum)
+    
+    const { serviceInstance, repository, module} = await setup()
+    repository.findOne = jest.fn(() => Promise.resolve(serviceMethodName === "create" ? null : product1()));
+    const categoryRepository =  module.get<Repository<Category>>(getRepositoryToken(Category));
+    categoryRepository.findBy = jest.fn(() => Promise.resolve(categories as Category[]));
 
     await serviceInstance[serviceMethodName](serviceParameter as any);
  

@@ -50,23 +50,17 @@ export class ProductsService implements EntityService<ResponseProductDTO, Create
           image: this._filesService.getFileInfoByS3FileKey(product.s3FileKey, product.name)
         })
     );
-    
     return productsWithFiles;
   }
 
   async create(createProduct:CreateProductDTO): Promise<CreateDefaultResponseDTO>{
     const registeredProduct = await this._findOneProduct("code", createProduct.code);
-    console.log("registeredProduct");
-
-    console.log(registeredProduct);
+    
     if(registeredProduct) throw new HttpException(HTTP_ERROR_MESSAGES.alreadyExists(), HttpStatus.CONFLICT);
     const categories = await this._categoryRepository.findBy({ id: In(createProduct.categoryIds)});
-
   	const entity = this._productRepository.create(createProduct);
     entity.categories = categories;
     entity.s3FileKey = await this._filesService.upload(["products"],createProduct?.image?.base64file, registeredProduct?.s3FileKey);
-
-
     const created = await this._productRepository.save(entity);
     const response = { id: created.id };
     return response;
