@@ -1,3 +1,4 @@
+import { ImageContract } from "@interfaces/image.contract";
 import { ProductContract } from "@interfaces/product.contract";
 import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
@@ -30,11 +31,7 @@ export class CreateProductDTO implements Omit<ProductContract, "id">{
   @IsNumber()
   public maxDiscountPercentage:number;
 
-  public image:{
-    base64file?:string|null;
-    name?:string;
-    url?:string;
-  };
+  public image:ImageContract;
 
   @IsArray()
   public categoryIds: number[];

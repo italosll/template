@@ -1,6 +1,7 @@
 import { CategoryContract } from '@interfaces/category.contract';
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Audit } from '../../common/utils/audit.util';
+import { Tenant } from '../../iam/entities/tenant.entity';
 
 @Entity()
 export class Category extends Audit implements CategoryContract{
@@ -12,5 +13,8 @@ export class Category extends Audit implements CategoryContract{
 
   @Column({unique:true})
   code: string;
+
+  @ManyToOne(() => Tenant, (tenant) => tenant.id)
+  tenantId: number;
 
 }

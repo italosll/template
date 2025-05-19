@@ -1,6 +1,6 @@
 import { CategoryContract } from "@interfaces/category.contract";
 import { GetQueryContract } from "../../common/contracts/get-query.contract";
-import { getAuditQuerys } from "../../common/utils/get-query.util";
+import { getAuditQuerys } from "../../common/utils/get-audit-query.util";
 import { AuditContract } from "../../common/contracts/audit.contract";
 import { Category } from "../entities/category.entity";
 

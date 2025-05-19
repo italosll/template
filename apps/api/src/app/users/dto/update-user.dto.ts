@@ -5,9 +5,5 @@ export class UpdateUserDTO implements Partial<UserContract>{
   email?:string;
   password?:string;
 
-  constructor(updateUserDTO:UpdateUserDTO){
-    this.id = updateUserDTO.id;
-    this.email = updateUserDTO.email;
-    this.password = updateUserDTO.password;
-  }
+ 
 }

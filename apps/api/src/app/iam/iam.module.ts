@@ -15,11 +15,14 @@ import { APP_GUARD } from "@nestjs/core";
 import { AccesTokenGuard } from "./guards/access-token.guard";
 import { AuthenticationGuard } from "./guards/authentication.guard";
 import { RefreshTokensMiddleware } from "./middlewares/refresh-tokens.middleware";
+import { Tenant } from "./entities/tenant.entity";
 
 @Module({
-  imports:[TypeOrmModule.forFeature([User]),
-  JwtModule.registerAsync(jwtConfig.asProvider()),
-  ConfigModule.forFeature(jwtConfig)
+  imports:
+  [
+    TypeOrmModule.forFeature([User, Tenant]),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+    ConfigModule.forFeature(jwtConfig)
   ],
   providers:[
     { provide: HashingService, useClass: BcryptService},

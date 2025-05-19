@@ -1,13 +1,13 @@
 import { ProductContract } from '@interfaces/product.contract';
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Audit } from "../../common/utils/audit.util";
 import { Category } from "../../categories/entities/category.entity";
+import { Tenant } from '../../iam/entities/tenant.entity';
 
 
 
 @Entity()
 export class Product extends Audit implements Omit<ProductContract, "image"> {
-
   @PrimaryGeneratedColumn()
   id:number;
 
@@ -38,4 +38,7 @@ export class Product extends Audit implements Omit<ProductContract, "image"> {
 
   @Column()
   s3FileKey:string;
+
+  @ManyToOne(() => Tenant, (tenant) => tenant.id)
+  tenantId: number;
 }

@@ -1,5 +1,6 @@
 import { ProductContract } from "@interfaces/product.contract"
 import { AuditContract } from "../../common/contracts/audit.contract";
+import { ImageContract } from "@interfaces/image.contract";
 
 export class ResponseProductDTO implements ProductContract, AuditContract{
   public id: number
@@ -11,11 +12,7 @@ export class ResponseProductDTO implements ProductContract, AuditContract{
   public sellingPrice: number
   public maxDiscountPercentage: number
   
-  public image: {
-    name?: string;
-    url?: string;
-    base64file?: string;
-  }
+  public image: ImageContract;
 
   public categoryIds:number[]
 

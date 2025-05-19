@@ -1,7 +1,8 @@
-import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {UserContract} from "@interfaces/user.contract"
 import { Audit } from "../../common/utils/audit.util";
 import { EncryptionService } from "../../common/encryption/encryption.service";
+import { Tenant } from "../../iam/entities/tenant.entity";
 
 
 @Entity()
@@ -17,6 +18,9 @@ export class User extends Audit implements UserContract{
 
   @Column({ select: false })
   password:string;
+
+  @ManyToOne(() => Tenant, (tenant) => tenant.id)
+  tenantId: number;
 
   public static encrypt(userData: Partial<UserContract>, encryptionService:EncryptionService): User{
     const user = new User();

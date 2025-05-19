@@ -1,4 +1,4 @@
-import { AuditContract } from "../../common/contracts/audit.contract";
+import { AuditContract } from "../contracts/audit.contract";
 
 export function bindAuditProperties(instance:object & AuditContract, values:Partial<object & AuditContract> ){
     instance.createdAt = values?.createdAt;

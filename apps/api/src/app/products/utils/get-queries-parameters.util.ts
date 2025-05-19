@@ -1,4 +1,4 @@
-import { getAuditQuerys } from "../../common/utils/get-query.util";
+import { getAuditQuerys } from "../../common/utils/get-audit-query.util";
 import { Product } from "../entities/product.entity";
 import { ColumnQueryParameters } from "../../common/utils/crud-helper.util";
 

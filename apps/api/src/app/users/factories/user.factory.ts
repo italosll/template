@@ -3,7 +3,7 @@ import { AuditContract } from "../../common/contracts/audit.contract";
 import { CreateUserDTO } from "../dto/create-user.dto";
 import { UpdateUserDTO } from "../dto/update-user.dto";
 import { FullUserDTO } from "../dto/full-user.dto";
-import { bindAuditProperties } from "../../products/utils/bind-audit-properties.util";
+import { bindAuditProperties } from "../../common/utils/bind-audit-properties.util";
 import { FactoryContract } from "../../common/contracts/factory.contract";
 
 export class UserFactory implements UserContract, AuditContract
@@ -27,10 +27,10 @@ export class UserFactory implements UserContract, AuditContract
 
   }
 
-  createData = (params?) =>  new CreateUserDTO({...this, ...params});
+  createData = (params?) =>  new CreateUserDTO();
 
-  updateData = (params?) =>  new UpdateUserDTO({...this, ...params});
+  updateData = (params?) =>  new UpdateUserDTO();
 
-  fullData = (params?) => new FullUserDTO({...this, ...params});
+  fullData = (params?) => new FullUserDTO();
 }
 

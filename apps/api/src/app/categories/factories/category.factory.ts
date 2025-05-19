@@ -5,7 +5,7 @@ import { CreateCategoryDTO } from "../dto/create-category.dto";
 import { UpdateCategoryDTO } from "../dto/update-category.dto";
 import { FullCategoryDTO } from "../dto/full-category.dto";
 import { FactoryContract } from "../../common/contracts/factory.contract";
-import { bindAuditProperties } from "../../products/utils/bind-audit-properties.util";
+import { bindAuditProperties } from "../../common/utils/bind-audit-properties.util";
 
 export class CategoryFactory implements 
 // FactoryContract,

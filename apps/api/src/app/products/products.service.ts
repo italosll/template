@@ -60,7 +60,7 @@ export class ProductsService implements EntityService<ResponseProductDTO, Create
     const categories = await this._categoryRepository.findBy({ id: In(createProduct.categoryIds)});
   	const entity = this._productRepository.create(createProduct);
     entity.categories = categories;
-    entity.s3FileKey = await this._filesService.upload(["products"],createProduct?.image?.base64file, registeredProduct?.s3FileKey);
+    entity.s3FileKey = await this._filesService.upload(["products"],createProduct?.image?.base64File, registeredProduct?.s3FileKey);
     const created = await this._productRepository.save(entity);
     const response = { id: created.id };
     return response;
@@ -74,7 +74,7 @@ export class ProductsService implements EntityService<ResponseProductDTO, Create
     const categories = await this._categoryRepository.findBy({ id: In(entity.categoryIds)});
     this._productRepository.merge(registeredProduct, entity);
     registeredProduct.categories = categories;    
-    registeredProduct.s3FileKey = await this._filesService.upload(["products"],entity?.image?.base64file, registeredProduct?.s3FileKey);
+    registeredProduct.s3FileKey = await this._filesService.upload(["products"],entity?.image?.base64File, registeredProduct?.s3FileKey);
     
     await this._productRepository.save( registeredProduct );
     const response = { id: registeredProduct.id };

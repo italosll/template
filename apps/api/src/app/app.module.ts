@@ -11,11 +11,13 @@ import databaseConfig from './core/config/database.config';
 import { DatabaseConfigContract } from './core/contracts/database.config.contract';
 import { CategoriesModule } from './categories/categories.module';
 import s3FilesConfig from './common/config/s3-files.config';
+import { CompanyModule } from './company/companies.module';
 
 @Module({
   imports: [
     UsersModule,
     ProductsModule,
+    CompanyModule,
     CategoriesModule,
     IamModule,
     ConfigModule.forRoot({

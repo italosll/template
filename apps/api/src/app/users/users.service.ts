@@ -7,12 +7,12 @@ import { CreateUserDTO } from "./dto/create-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
 import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
-import { getQuerys } from "./utils/get-query.util";
 import { AuditContract } from "../common/contracts/audit.contract";
 import { UserContract } from "@interfaces/user.contract";
 import { EncryptionService } from "../common/encryption/encryption.service";
 import { HashingService } from "../iam/hashing/hashing.service";
 import { EntityService } from "../common/services/entity.service";
+import { getQuerys } from "./utils/get-query.util";
 
 @Injectable()
 export class UsersService implements EntityService<User, CreateUserDTO, UpdateUserDTO>{
@@ -23,7 +23,7 @@ export class UsersService implements EntityService<User, CreateUserDTO, UpdateUs
     private _encryptionService: EncryptionService
   ){}
 
-  async findAll(user?:UserContract & AuditContract): Promise<User[]>{
+  async findAll(user?:Partial<UserContract & AuditContract>): Promise<User[]>{
     const querys = getQuerys(user);
     const queryBuilder = this._userRepository.createQueryBuilder();
 

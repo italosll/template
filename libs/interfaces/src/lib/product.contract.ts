@@ -1,3 +1,5 @@
+import { ImageContract } from "./image.contract";
+
 export interface ProductContract{
   id:number;
   name:string;
@@ -8,9 +10,5 @@ export interface ProductContract{
   sellingPrice:number;
   maxDiscountPercentage:number;
   categoryIds?:number[];
-  image:{
-    base64File?:string;
-    name?:string;
-    url?:string;
-  }
+  image: ImageContract;
 }
