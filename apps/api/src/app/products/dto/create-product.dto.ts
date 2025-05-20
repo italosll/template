@@ -1,8 +1,14 @@
-import { ImageContract } from "@interfaces/image.contract";
+import { FileContract } from "@interfaces/file.contract";
 import { ProductContract } from "@interfaces/product.contract";
-import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
 
-export class CreateProductDTO implements Omit<ProductContract, "id">{
+export class CreateProductDTO implements Omit<ProductContract, "id"> {
   @IsNotEmpty()
   @IsString()
   public name: string;
@@ -11,28 +17,30 @@ export class CreateProductDTO implements Omit<ProductContract, "id">{
   @IsString()
   public code: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsOptional()
   public description: string;
 
-  @IsNotEmpty()
   @IsNumber()
-  public amount:number;
+  @IsOptional()
+  public amount?: number;
 
-  @IsNotEmpty()
   @IsNumber()
-  public cost:number;
+  @IsOptional()
+  public cost?: number;
 
-  @IsNotEmpty()
   @IsNumber()
-  public sellingPrice:number;
+  @IsOptional()
+  public sellingPrice?: number;
 
-  @IsNotEmpty()
   @IsNumber()
-  public maxDiscountPercentage:number;
+  @IsOptional()
+  public maxDiscountPercentage?: number;
 
-  public image:ImageContract;
+  @IsOptional()
+  public image: FileContract;
 
   @IsArray()
-  public categoryIds: number[];
+  @IsOptional()
+  public categoryIds?: number[];
 }

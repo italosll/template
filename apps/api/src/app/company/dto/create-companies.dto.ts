@@ -1,13 +1,16 @@
-import { ImageContract } from '@interfaces/image.contract';
-import { CompanyContract } from '@interfaces/company.contract';
+import { CompanyContract } from "@interfaces/company.contract";
+import { FileContract } from "@interfaces/file.contract";
 import { IsNotEmpty, IsString, Length } from "class-validator";
+import { TenantDTO } from "../../common/dto/tenant.dto";
 
-export class CreateCompanyDTO implements Omit<CompanyContract, "id">{
-  
+export class CreateCompanyDTO
+  extends TenantDTO
+  implements Omit<CompanyContract, "id">
+{
   @IsNotEmpty()
   @IsString()
-  @Length(14,14)
-  public cnpj : string;
+  @Length(14, 14)
+  public cnpj: string;
 
   @IsNotEmpty()
   @IsString()
@@ -17,5 +20,5 @@ export class CreateCompanyDTO implements Omit<CompanyContract, "id">{
   @IsString()
   public companyName: string;
 
-  public image:ImageContract;
+  public image: FileContract;
 }

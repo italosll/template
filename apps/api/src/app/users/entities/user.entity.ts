@@ -1,8 +1,8 @@
 import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {UserContract} from "@interfaces/user.contract"
-import { Audit } from "../../common/utils/audit.util";
 import { EncryptionService } from "../../common/encryption/encryption.service";
 import { Tenant } from "../../iam/entities/tenant.entity";
+import { Audit } from "../../common/utils/audit.util";
 
 
 @Entity()

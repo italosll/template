@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Audit } from "../../common/utils/audit.util";
 import { CompanyContract } from '@interfaces/company.contract';
 import { Tenant } from "../../iam/entities/tenant.entity";
+import { Audit } from "../../common/utils/audit.util";
 
 
 

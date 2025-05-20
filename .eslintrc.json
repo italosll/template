@@ -25,7 +25,11 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nx/typescript"],
-      "rules": {}
+      "rules": {
+        "block-spacing": ["error", "always"],
+        "no-console": "warn",
+        "no-alert": "warn"
+      }
     },
     {
       "files": ["*.js", "*.jsx"],
