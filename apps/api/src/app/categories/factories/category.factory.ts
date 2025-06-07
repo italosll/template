@@ -1,36 +1,49 @@
-import { CategoryContract } from "@interfaces/category.contract";
- 
+import { plainToInstance } from "class-transformer";
 import { AuditContract } from "../../common/contracts/audit.contract";
 import { CreateCategoryDTO } from "../dto/create-category.dto";
-import { UpdateCategoryDTO } from "../dto/update-category.dto";
 import { FullCategoryDTO } from "../dto/full-category.dto";
-import { FactoryContract } from "../../common/contracts/factory.contract";
-import { bindAuditProperties } from "../../common/utils/bind-audit-properties.util";
+import { UpdateCategoryDTO } from "../dto/update-category.dto";
 
-export class CategoryFactory implements 
-// FactoryContract,
- CategoryContract, AuditContract{
-  public id: number;
-  public name: string;
-  public code: string;
- 
-  public createdAt: Date;
-  public updatedAt: Date;
-  public deletedAt: Date;
-  public recoveredAt: Date;
- 
+export class CategoryFactory {
+  private _fakeData: Partial<
+    CreateCategoryDTO | UpdateCategoryDTO | FullCategoryDTO
+  > = {
+    id: 1,
+    name: "Default Category Name",
+    code: "C123",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: new Date(),
+    recoveredAt: new Date(),
+  };
 
-  constructor(category?: Partial<CategoryContract & AuditContract>) {
-    this.id = category?.id ?? 1;
-    this.name = category?.name ?? "Default Category Name";
-    this.code = category?.code ?? "C123";
-    bindAuditProperties(this, category);
+  public create(
+    params?: Partial<CreateCategoryDTO & AuditContract>,
+    setFakeData = false
+  ) {
+    return plainToInstance(
+      CreateCategoryDTO,
+      setFakeData ? { ...this._fakeData, ...params } : params
+    );
   }
 
+  public update(
+    params?: Partial<UpdateCategoryDTO & AuditContract>,
+    setFakeData = false
+  ) {
+    return plainToInstance(
+      UpdateCategoryDTO,
+      setFakeData ? { ...this._fakeData, ...params } : params
+    );
+  }
 
-  createData = (params?) => new CreateCategoryDTO({...this, ...params});
-
-  updateData = (params?) => new UpdateCategoryDTO({...this, ...params});
-
-  fullData = (params?) => new FullCategoryDTO({...this, ...params});
+  public response(
+    params?: Partial<FullCategoryDTO & AuditContract>,
+    setFakeData = false
+  ) {
+    return plainToInstance(
+      FullCategoryDTO,
+      setFakeData ? { ...this._fakeData, ...params } : params
+    );
+  }
 }

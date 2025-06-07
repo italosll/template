@@ -1,116 +1,119 @@
-import { CategoryFactory } from './../categories/factories/category.factory';
-import { ProductsService } from './products.service';
-import { ProductFactory } from './factories/product.factory';
-import { Product } from './entities/product.entity';
-import { getQueriesParameters } from './utils/get-queries-parameters.util';
-import { In, Repository } from 'typeorm';
-import { Category } from '../categories/entities/category.entity';
-import { TestServiceUtil } from '../common/utils/test-service.util';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { Category } from "@api/categories/entities/category.entity";
+import { S3FilesService } from "@api/common/files/s3-files.service";
+import { createMockQueryBuilder } from "@api/common/utils/mock-repositository";
+import { ProductContract } from "@interfaces/product.contract";
+import { Test } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { mock } from "jest-mock-extended";
+import { Repository } from "typeorm";
+import { Product } from "./entities/product.entity";
+import { ProductFactory } from "./factories/product.factory";
+import { ProductsService } from "./products.service";
 
-const productFactory = new ProductFactory();
-
-const {updateData: updateCategory } = new CategoryFactory()
-
-const product1 = () => productFactory.response({id:1}, true);
-const product2 = () => productFactory.response({id:2}, true);
-const product3 = () => productFactory.response({id:3}, true);
-
-
-export const mockProducts= () => [
-  product1(),
-  product2(),
-  product3()
-];
-
-const queriesParameters = getQueriesParameters();
-
-
-describe("products.service",()=>{
-
-  const setup = () => 
-    TestServiceUtil.setup<ProductsService>(
-    ProductsService, 
-    mockProducts(),
+describe("products.service", () => {
+  const product = new ProductFactory().update(null, true);
+  const products: Partial<Product>[] = [
     {
-        main:Product,
-        extraEntities:[Category]
-    },
-  );
-
-  it.each(getQueriesParameters())("Should filter by key: $key with value: $value", async ({
-  like
-  })=>{
-    const { serviceInstance, andWhereMultipleColumns} = await  setup()
-
-    const query = {[like]: product1()[like]}
-    await serviceInstance.findAll(query);
-
-    expect(andWhereMultipleColumns).toHaveBeenCalledWith(query, queriesParameters);
-  })
-
-
-  const methods = [
-    {
-      serviceMethodName:"create",
-      repositoryMethodName:"save",
-      serviceParameter: productFactory.create({categoryIds: [1,2]},true),
-      repositoryParameter: {
-        ...productFactory.create({categoryIds: [1,2]},true),
-        id:1,
-        categories: [updateCategory({id:1}), updateCategory({id:2})]
-      }
-      
+      id: 1,
+      name: "Test Product",
+      s3FileKey: "test-product-key",
     },
     {
-      serviceMethodName:"update",
-      repositoryMethodName:"save",
-      serviceParameter: productFactory.update( { id:1,  categoryIds: [1,2] },
-      true
-    ),
-      repositoryParameter: {
-        ...productFactory.update(null,true),
-        id:1,
-        categories: [updateCategory({id:1}), updateCategory({id:2})]
-      }
+      id: 2,
+      name: "Another Product",
+      s3FileKey: "another-product-key",
     },
-    {
-      serviceMethodName:"delete",
-      repositoryMethodName:"softDelete",
-      serviceParameter: [1],
-      repositoryParameter: {id: In([1])}
+  ];
 
-    },
-    {
-      serviceMethodName:"hardDelete",
-      repositoryMethodName:"delete",
-      serviceParameter: [1],
-      repositoryParameter: {id: In([1])}
-    }
+  const image = {
+    url: "https://example.com/image.jpg",
+    name: "Test Product",
+  };
 
-  ] as const
+  const productsWithFiles = products.map((product) => ({
+    ...product,
+    image: image,
+  }));
 
-  it.each(methods)("$serviceMethodName Should have called repository.$repositoryMethodName with correct $repositoryParameter", async ({
-    repositoryMethodName,
-    serviceMethodName,
-    serviceParameter,
-    repositoryParameter
-  })=>{
+  const setup = async (findOneProduct?: ProductContract | null) => {
+    const productRepository = mock<Repository<Product>>();
 
-    const categories = serviceParameter?.["categoryIds"]?.map(
-      (id)=> new CategoryFactory().updateData({id})
-    );
-    
-    const { serviceInstance, repository, module} = await setup()
-    repository.findOne = jest.fn(() => Promise.resolve(serviceMethodName === "create" ? null : product1()));
-    const categoryRepository =  module.get<Repository<Category>>(getRepositoryToken(Category));
-    categoryRepository.findBy = jest.fn(() => Promise.resolve(categories as Category[]));
+    const queryBuilder = createMockQueryBuilder<Product>();
+    queryBuilder.getMany.mockResolvedValue(products as any);
 
-    await serviceInstance[serviceMethodName](serviceParameter as any);
- 
-    expect(repository[repositoryMethodName]).toHaveBeenCalledWith({...repositoryParameter });
+    productRepository.createQueryBuilder.mockReturnValue(queryBuilder);
+    productRepository.create.mockReturnValue({ ...product } as any);
+
+    productRepository.findOne = jest
+      .fn()
+      .mockResolvedValue(findOneProduct) as any;
+
+    productRepository.find = jest
+      .fn()
+      .mockResolvedValue([findOneProduct]) as any;
+
+    productRepository.save.mockResolvedValue(product as any);
+
+    const module = await Test.createTestingModule({
+      providers: [
+        ProductsService,
+        {
+          provide: getRepositoryToken(Product),
+          useValue: productRepository,
+        },
+        {
+          provide: getRepositoryToken(Category),
+          useValue: mock<Repository<Category>>(),
+        },
+        {
+          provide: S3FilesService,
+          useValue: mock<S3FilesService>(),
+        },
+      ],
+    }).compile();
+
+    const filesService = module.get<S3FilesService>(S3FilesService);
+    filesService.getFileInfoByS3FileKey = jest.fn().mockReturnValue(image);
+    const service = module.get<ProductsService>(ProductsService);
+
+    return {
+      productRepository,
+      filesService,
+      service,
+    };
+  };
+
+  it("should filter", async () => {
+    const { service } = await setup();
+
+    const response = await service.findAll();
+
+    expect(response).toStrictEqual(productsWithFiles);
   });
 
-})
+  it("should create", async () => {
+    const product = new ProductFactory().create(null, true);
+    const { service } = await setup();
 
+    const response = await service.create(product);
 
+    expect(response).toStrictEqual({ id: 1 });
+  });
+
+  it("should update", async () => {
+    const product = new ProductFactory().update(null, true);
+    const { service } = await setup(product as any);
+
+    const response = await service.update(product);
+
+    expect(response).toStrictEqual({ id: 1 });
+  });
+
+  it("should delete", async () => {
+    const { service } = await setup(product);
+
+    const response = await service.delete([1]);
+
+    expect(response).toStrictEqual({ ids: [1] });
+  });
+});

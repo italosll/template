@@ -1,43 +1,65 @@
-import { ProductsController } from './products.controller';
-import { ProductsService } from './products.service';
-import { ProductFactory } from './factories/product.factory';
-import { TestControllerUtil } from '../common/utils/test-controller.util';
-import { CreateProductDTO } from './dto/create-product.dto';
-import { UpdateProductDTO } from './dto/update-product.dto';
-import { ResponseProductDTO } from './dto/response-product.dto';
+import { Test } from "@nestjs/testing";
+import { mock } from "jest-mock-extended";
+import { ProductFactory } from "./factories/product.factory";
+import { ProductsController } from "./products.controller";
+import { ProductsService } from "./products.service";
 
+describe("products.controller", () => {
+  const setup = async () => {
+    const productsService = mock<ProductsService>();
+    const module = await Test.createTestingModule({
+      controllers: [ProductsController],
+      providers: [
+        {
+          provide: ProductsService,
+          useValue: productsService,
+        },
+      ],
+    }).compile();
 
-describe("categories.controller", ()=>{
+    return {
+      controller: module.get<ProductsController>(ProductsController),
+      service: module.get<ProductsService>(ProductsService),
+    };
+  };
+  it("should filter", async () => {
+    const { controller, service } = await setup();
 
-  const testControllerUtil = new TestControllerUtil<CreateProductDTO, UpdateProductDTO, ResponseProductDTO>();
+    const filtros = {
+      id: 1,
+      name: "Test Product",
+    };
 
-  const setup = () => {
-    const service = new ProductsService(null,null,null);
-    testControllerUtil.setSpies(service)
-    const controller = new ProductsController(service);
-    return {controller, service};
-  }
+    await controller.findAll(filtros);
 
-  const methods = testControllerUtil.getControllerMethods(new ProductFactory())
-
-
-  it.each(methods)("Should call service.$methodName with parameter: $parameter", async ({
-    parameter,
-    methodName,
-  })=>{
-    const { controller, service } = setup();
-    await controller[methodName](parameter);
-    expect(service[methodName]).toHaveBeenCalledWith(parameter);
-  })
-
-  it.each(methods)("Should service.$methodName respond with $expectedResponse", async ({
-    parameter,
-    methodName,
-    expectedResponse
-  })=>{
-    const { controller } = setup();
-    const response = await controller[methodName](parameter);
-    expect(response).toStrictEqual(expectedResponse);
+    expect(service.findAll).toHaveBeenCalledWith(filtros);
   });
 
-})
+  it("should create", async () => {
+    const { controller, service } = await setup();
+
+    const product = new ProductFactory().create();
+
+    await controller.create(product);
+
+    expect(service.create).toHaveBeenCalledWith(product);
+  });
+
+  it("should update", async () => {
+    const { controller, service } = await setup();
+
+    const product = new ProductFactory().update();
+
+    await controller.update(product);
+
+    expect(service.update).toHaveBeenCalledWith(product);
+  });
+
+  it("should delete", async () => {
+    const { controller, service } = await setup();
+
+    await controller.delete([1]);
+
+    expect(service.delete).toHaveBeenCalledWith([1]);
+  });
+});

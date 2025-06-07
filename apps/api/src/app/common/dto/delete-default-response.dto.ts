@@ -1,3 +1,3 @@
-export class DeleteDefaultResponseDTO{
-  ids:number[];
+export class DeleteDefaultResponseDTO {
+  ids!: number[];
 }

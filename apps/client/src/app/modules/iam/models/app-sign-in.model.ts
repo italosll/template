@@ -1,34 +1,28 @@
-import { FormularyUtils } from "@client/common/components/app-formulary/formulary.util";
-import { SchemeContract } from "@client/common/components/app-formulary/scheme.contract";
+import { FormModel } from "@client/common/model/app-form.model";
 import { SignInContract } from "@interfaces/sign-in.contract";
 
-export class SignInModel{
-
-
-    public readonly schemes: SchemeContract<SignInContract> =
-    [
-        {
-            type: "default",
+export class SignInModel extends FormModel<SignInContract> {
+  constructor() {
+    super([
+      {
+        type: "default",
+        inputs: [
+          {
+            type: "text",
             name: "email",
-            inputs: [
-                {
-                    type: "text",
-                    name: "email",
-                    label: "email",
-                    validators: [],
-                    width: 12
-                    
-                },
-                {
-                    type: "text",
-                    name: "password",
-                    label: "password",
-                    validators: [],
-                    width: 12
-                }
-            ]
-        }
-    ];
-    
-    public readonly form = new FormularyUtils().create(this.schemes);
+            label: "email",
+            validators: [],
+            width: 12,
+          },
+          {
+            type: "text",
+            name: "password",
+            label: "password",
+            validators: [],
+            width: 12,
+          },
+        ],
+      },
+    ]);
+  }
 }

@@ -6,17 +6,17 @@ import { generateUniqueId } from "../utils/generate-unique-ids.util";
 
 @Injectable()
 export class S3FilesCloudflareR2Service {
-  private _s3Config: S3FilesConfigContract;
+  private _s3Config: S3FilesConfigContract | null | undefined;
   private _s3Client: S3Client;
 
   constructor(@Inject() private readonly _configService: ConfigService) {
     this._s3Config = this._configService.get<S3FilesConfigContract>("s3-files");
     this._s3Client = new S3Client({
-      region: this._s3Config.s3Region,
-      endpoint: this._s3Config.s3Endpoint,
+      region: this._s3Config?.s3Region,
+      endpoint: this._s3Config?.s3Endpoint,
       credentials: {
-        accessKeyId: this._s3Config.s3AccessKeyId,
-        secretAccessKey: this._s3Config.s3SecretAccessKey,
+        accessKeyId: this._s3Config?.s3AccessKeyId ?? "",
+        secretAccessKey: this._s3Config?.s3SecretAccessKey ?? "",
       },
     });
   }
@@ -45,7 +45,7 @@ export class S3FilesCloudflareR2Service {
       this._decodeBase64StringToBuffer(fileBase64);
 
     const command = new PutObjectCommand({
-      Bucket: this._s3Config.s3Bucket,
+      Bucket: this._s3Config?.s3Bucket,
       Key: key ?? this.generateKey(path, contentType),
       Body: content,
       ContentType: contentType,
@@ -55,7 +55,7 @@ export class S3FilesCloudflareR2Service {
   }
 
   public getUrlByKey(key: string) {
-    const url = `${this._s3Config.s3PublicBucketEndpoint}/${key}`;
+    const url = `${this._s3Config?.s3PublicBucketEndpoint}/${key}`;
     return url;
   }
 

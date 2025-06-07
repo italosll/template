@@ -1,24 +1,23 @@
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { UserContract } from '@interfaces/user.contract';
-import { ActiveUserContract } from '@interfaces/active-user.contract';
+import { ActiveUserContract } from "@interfaces/active-user.contract";
+import { UserContract } from "@interfaces/user.contract";
+import { RefreshTokenDto } from "./dto/refresh-token.dto";
 
-import { SignUpDTO } from './dto/sign-up.dto';
+import { CookieToken } from "@interfaces/cookie-tokens.contract";
+import { ConflictException, UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../../users/entities/user.entity";
 import { Repository } from "typeorm";
+import { EncryptionService } from "../../common/encryption/encryption.service";
+import { MYSQL_VIOLATION_ERROR_CODES } from "../../common/utils/mysql-violation-error-codes";
+import { User } from "../../users/entities/user.entity";
+import { JwtConfigContract } from "../contracts/jwt.config.contract";
 import { HashingService } from "../hashing/hashing.service";
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
-import { SignInDTO } from './dto/sign-in.dto';
-import { EncryptionService } from '../../common/encryption/encryption.service';
-import { MYSQL_VIOLATION_ERROR_CODES } from '../../common/utils/mysql-violation-error-codes';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { JwtConfigContract } from '../contracts/jwt.config.contract';
-import { CookieToken } from '@interfaces/cookie-tokens.contract';
+import { SignInDTO } from "./dto/sign-in.dto";
+import { SignUpDTO } from "./dto/sign-up.dto";
 
-export class AuthenticationService{
-
-  private _jwtConfig : JwtConfigContract;
+export class AuthenticationService {
+  private _jwtConfig: JwtConfigContract;
 
   constructor(
     @InjectRepository(User) private readonly _usersRepository: Repository<User>,
@@ -26,35 +25,46 @@ export class AuthenticationService{
     private readonly _encryptionService: EncryptionService,
     private readonly _jwtService: JwtService,
     private readonly _configService: ConfigService
-  ){
-    this._jwtConfig = this._configService.get<JwtConfigContract>("jwt");
+  ) {
+    const jwtConfig = this._configService.get<JwtConfigContract>("jwt");
+    if (!jwtConfig) {
+      throw new Error("JWT config not found");
+    }
+    this._jwtConfig = jwtConfig;
   }
 
-  async signUp( signUpDTO:SignUpDTO){
-
-    try{
+  async signUp(signUpDTO: SignUpDTO) {
+    try {
       const user = new User();
       user.email = signUpDTO.email;
       user.password = await this._hashingService.generate(signUpDTO.password);
       await this._usersRepository.save(user);
-    }catch(err){
+    } catch (err) {
       const mysqlUniqueValidationErrorCode = MYSQL_VIOLATION_ERROR_CODES.unique;
 
-      if(err.code === mysqlUniqueValidationErrorCode){
+      if (
+        (err as Error & { code: number })?.code ===
+        mysqlUniqueValidationErrorCode
+      ) {
         throw new ConflictException();
       }
       throw err;
     }
   }
 
-  async signIn(signInDTO:SignInDTO){
-    const encryptedUsers = await this._usersRepository.find({select:["email", "password"]});
-    const decryptedUsers = User.decrypt(encryptedUsers, this._encryptionService);
+  async signIn(signInDTO: SignInDTO) {
+    const encryptedUsers = await this._usersRepository.find({
+      select: ["email", "password"],
+    });
+    const decryptedUsers = User.decrypt(
+      encryptedUsers,
+      this._encryptionService
+    );
 
-    const user = decryptedUsers?.find(({email})=> email === signInDTO.email);
+    const user = decryptedUsers?.find(({ email }) => email === signInDTO.email);
 
-    if(!user){
-      throw new UnauthorizedException('User does not exists');
+    if (!user) {
+      throw new UnauthorizedException("User does not exists");
     }
 
     const isEqual = await this._hashingService.isMatch(
@@ -62,36 +72,34 @@ export class AuthenticationService{
       user.password
     );
 
-    if(!isEqual){
-      throw new UnauthorizedException('Password does not match');
+    if (!isEqual) {
+      throw new UnauthorizedException("Password does not match");
     }
 
-    return this._generateTokens(user)
-
+    return this._generateTokens(user);
   }
 
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
-  try{
-    const { sub } = await this._jwtService.verifyAsync<
-    Pick<ActiveUserContract, 'sub'>>( refreshTokenDto.refreshToken,{
-      secret: this._jwtConfig.secret,
-      audience: this._jwtConfig.audience,
-      issuer: this._jwtConfig.issuer
-    })
+    try {
+      const { sub } = await this._jwtService.verifyAsync<
+        Pick<ActiveUserContract, "sub">
+      >(refreshTokenDto.refreshToken, {
+        secret: this._jwtConfig.secret,
+        audience: this._jwtConfig.audience,
+        issuer: this._jwtConfig.issuer,
+      });
 
-    const user = await this._usersRepository.findOneByOrFail({
-        id: sub
-      })
+      const user = await this._usersRepository.findOneByOrFail({
+        id: sub,
+      });
 
-      return this._generateTokens(user)
-
-    }catch(err){
+      return this._generateTokens(user);
+    } catch (err) {
       throw new UnauthorizedException();
     }
   }
 
-  private async signToken<T>(userId:number, expiresIn: number, payload?:T) {
-
+  private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
     return await this._jwtService.signAsync(
       {
         sub: userId,
@@ -106,11 +114,11 @@ export class AuthenticationService{
     );
   }
 
-  private async _generateTokens(user: UserContract){
+  private async _generateTokens(user: UserContract) {
     const accessTokenPromise = this.signToken<Partial<ActiveUserContract>>(
       user.id,
-    this._jwtConfig.accessTokenTtl,
-    {email: user.email}
+      this._jwtConfig.accessTokenTtl,
+      { email: user.email }
     );
 
     const refreshTokenPromise = this.signToken<Partial<ActiveUserContract>>(
@@ -118,21 +126,24 @@ export class AuthenticationService{
       this._jwtConfig.refreshTokenTtl
     );
 
-    const [accessToken, refreshToken] = await Promise.all([accessTokenPromise, refreshTokenPromise]);
+    const [accessToken, refreshToken] = await Promise.all([
+      accessTokenPromise,
+      refreshTokenPromise,
+    ]);
 
-    const accessTokenExpInMilliseconds = this._jwtService.decode<ActiveUserContract>(accessToken)?.exp * 1000;
-    const refreshTokenExpInMilliseconds = this._jwtService.decode<ActiveUserContract>(refreshToken)?.exp * 1000;
+    const accessTokenExpInMilliseconds =
+      this._jwtService.decode<ActiveUserContract>(accessToken)?.exp * 1000;
+    const refreshTokenExpInMilliseconds =
+      this._jwtService.decode<ActiveUserContract>(refreshToken)?.exp * 1000;
 
     const accessTokenExpDate = new Date(accessTokenExpInMilliseconds);
     const refreshTokenExpDate = new Date(refreshTokenExpInMilliseconds);
 
     return {
-      [CookieToken.AccessToken]:accessToken,
-      [CookieToken.RefreshToken]:refreshToken,
+      [CookieToken.AccessToken]: accessToken,
+      [CookieToken.RefreshToken]: refreshToken,
       refreshTokenExpDate,
-      accessTokenExpDate
-    }
+      accessTokenExpDate,
+    };
   }
-
-
 }

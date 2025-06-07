@@ -11,15 +11,15 @@ import {
 export class CreateProductDTO implements Omit<ProductContract, "id"> {
   @IsNotEmpty()
   @IsString()
-  public name: string;
+  public name!: string;
 
   @IsNotEmpty()
   @IsString()
-  public code: string;
+  public code?: string;
 
   @IsString()
   @IsOptional()
-  public description: string;
+  public description?: string;
 
   @IsNumber()
   @IsOptional()
@@ -38,7 +38,7 @@ export class CreateProductDTO implements Omit<ProductContract, "id"> {
   public maxDiscountPercentage?: number;
 
   @IsOptional()
-  public image: FileContract;
+  public image?: FileContract;
 
   @IsArray()
   @IsOptional()

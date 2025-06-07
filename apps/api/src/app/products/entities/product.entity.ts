@@ -15,17 +15,17 @@ import { Tenant } from "../../iam/entities/tenant.entity";
 export class Product extends Audit implements Omit<ProductContract, "image"> {
   categoryIds?: number[];
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ unique: true })
-  code: string;
+  code!: string;
 
   @ManyToMany(() => Category, { nullable: false })
   @JoinTable()
-  categories: Category[];
+  categories!: Category[];
 
   @Column({ nullable: true })
   description?: string;
@@ -37,14 +37,14 @@ export class Product extends Audit implements Omit<ProductContract, "image"> {
   cost?: number;
 
   @Column({ nullable: true })
-  sellingPrice: number;
+  sellingPrice!: number;
 
   @Column({ default: 0 })
-  maxDiscountPercentage: number;
+  maxDiscountPercentage!: number;
 
   @Column({ nullable: true })
   s3FileKey?: string;
 
   @ManyToOne(() => Tenant, (tenant) => tenant.id)
-  tenantId: number;
+  tenantId!: number;
 }

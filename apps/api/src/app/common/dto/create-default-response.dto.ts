@@ -1,3 +1,3 @@
-export class CreateDefaultResponseDTO{
-  id:number;
+export class CreateDefaultResponseDTO {
+  id!: number;
 }

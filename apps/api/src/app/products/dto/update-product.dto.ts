@@ -1,9 +1,12 @@
-import { IsNotEmpty, IsNumber} from "class-validator";
 import { ProductContract } from "@interfaces/product.contract";
+import { IsNotEmpty, IsNumber } from "class-validator";
 import { CreateProductDTO } from "./create-product.dto";
 
-export class UpdateProductDTO extends CreateProductDTO implements ProductContract{
+export class UpdateProductDTO
+  extends CreateProductDTO
+  implements ProductContract
+{
   @IsNotEmpty()
   @IsNumber()
-  public id: number;
+  public id!: number;
 }

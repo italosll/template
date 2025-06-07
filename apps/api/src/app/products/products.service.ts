@@ -27,7 +27,10 @@ export class ProductsService
     @Inject(S3FilesService) private _filesService: S3FilesService
   ) {}
 
-  private _findOneProduct(key: string, value: unknown): Promise<Product> {
+  private _findOneProduct(
+    key: string,
+    value: unknown
+  ): Promise<Product | null> {
     return this._productRepository.findOne({
       where: { [key]: value },
       relations: ["categories"],
@@ -41,7 +44,7 @@ export class ProductsService
     const queriesParameters: ColumnQueryParameters<Product>[] =
       getQueriesParameters();
 
-    queryBuilder.andWhereMultipleColumns(product, queriesParameters);
+    queryBuilder.andWhereMultipleColumns(product ?? {}, queriesParameters);
 
     const products = await queryBuilder
       .loadRelationIdAndMap("product.categoryIds", "product.categories")
@@ -50,7 +53,7 @@ export class ProductsService
     const productsWithFiles = products.map((product) => ({
       ...new ProductFactory().response(product),
       image: this._filesService.getFileInfoByS3FileKey(
-        product.s3FileKey,
+        product?.s3FileKey,
         product.name
       ),
     }));
@@ -65,11 +68,13 @@ export class ProductsService
       createProduct.code
     );
 
-    if (registeredProduct)
+    if (registeredProduct) {
       throw new HttpException(
         HTTP_ERROR_MESSAGES.alreadyExists(),
         HttpStatus.CONFLICT
       );
+    }
+
     const categories = await this._categoryRepository.findBy({
       id: In(createProduct?.categoryIds ?? []),
     });
@@ -78,8 +83,7 @@ export class ProductsService
     entity.categories = categories;
     entity.s3FileKey = await this._filesService.upload(
       ["products"],
-      createProduct?.image?.base64File,
-      registeredProduct?.s3FileKey
+      createProduct?.image?.base64File
     );
     const created = await this._productRepository.save(entity);
     const response = { id: created.id };
@@ -87,7 +91,7 @@ export class ProductsService
   }
 
   async update(entity?: UpdateProductDTO): Promise<UpdateDefaultResponseDTO> {
-    const registeredProduct = await this._findOneProduct("id", entity.id);
+    const registeredProduct = await this._findOneProduct("id", entity?.id);
 
     if (!registeredProduct)
       throw new HttpException(
@@ -96,9 +100,9 @@ export class ProductsService
       );
 
     const categories = await this._categoryRepository.findBy({
-      id: In(entity.categoryIds ?? []),
+      id: In(entity?.categoryIds ?? []),
     });
-    this._productRepository.merge(registeredProduct, entity);
+    this._productRepository.merge(registeredProduct, entity ?? {});
     registeredProduct.categories = categories;
 
     const resposta = await this._filesService.upload(

@@ -10,13 +10,14 @@ import { EntityService } from "../common/services/entity.service";
 import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
 import { HashingService } from "../iam/hashing/hashing.service";
 import { CreateUserDTO } from "./dto/create-user.dto";
+import { responseUserDTO } from "./dto/response-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
-import { getQuerys } from "./utils/get-query.util";
+import { UserFactory } from "./factories/user.factory";
 
 @Injectable()
 export class UsersService
-  implements EntityService<User, CreateUserDTO, UpdateUserDTO>
+  implements EntityService<responseUserDTO, CreateUserDTO, UpdateUserDTO>
 {
   constructor(
     @InjectRepository(User) private _userRepository: Repository<User>,
@@ -24,37 +25,10 @@ export class UsersService
     private _encryptionService: EncryptionService
   ) {}
 
-  async findAll(user?: Partial<UserContract & AuditContract>): Promise<User[]> {
-    const querys = getQuerys(user);
+  async findAll(
+    user?: Partial<UserContract & AuditContract>
+  ): Promise<responseUserDTO[]> {
     const queryBuilder = this._userRepository.createQueryBuilder();
-
-    if (user?.filterableEmail)
-      queryBuilder.andWhere(
-        querys.filterableEmail.where,
-        querys.filterableEmail.parameters
-      );
-    if (user?.id) queryBuilder.andWhere(querys.id.where, querys.id.parameters);
-
-    if (user?.createdAt)
-      queryBuilder.andWhere(
-        querys.createdAt.where,
-        querys.createdAt.parameters
-      );
-    if (user?.updatedAt)
-      queryBuilder.andWhere(
-        querys.updatedAt.where,
-        querys.updatedAt.parameters
-      );
-    if (user?.deletedAt)
-      queryBuilder.andWhere(
-        querys.deletedAt.where,
-        querys.deletedAt.parameters
-      );
-    if (user?.recoveredAt)
-      queryBuilder.andWhere(
-        querys.recoveredAt.where,
-        querys.recoveredAt.parameters
-      );
 
     const encryptedUsers = await queryBuilder.getMany();
     const decryptedUsers = User.decrypt(
@@ -62,7 +36,9 @@ export class UsersService
       this._encryptionService
     );
 
-    return decryptedUsers;
+    const userFactory = new UserFactory();
+    const users = decryptedUsers.map((du) => userFactory.response(du));
+    return users;
   }
 
   async create(createEntity: CreateUserDTO): Promise<CreateDefaultResponseDTO> {
@@ -116,7 +92,7 @@ export class UsersService
     );
 
     let registeredUser = decryptedUsers?.find(
-      ({ id }) => id === updateEntity.id
+      ({ id }) => id === updateEntity?.id
     );
 
     if (!registeredUser)
@@ -125,7 +101,7 @@ export class UsersService
         HttpStatus.NOT_FOUND
       );
 
-    if (updateEntity.password) {
+    if (updateEntity?.password) {
       updateEntity.password = await this._hasingService.generate(
         updateEntity.password
       );
@@ -133,7 +109,10 @@ export class UsersService
 
     registeredUser = User.encrypt(registeredUser, this._encryptionService);
 
-    const merged = this._userRepository.merge(registeredUser, updateEntity);
+    const merged = this._userRepository.merge(
+      registeredUser,
+      updateEntity ?? {}
+    );
 
     await this._userRepository.save(merged);
     const response = { id: registeredUser.id };

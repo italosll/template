@@ -7,6 +7,8 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "strict": true,
+    "resolveJsonModule": true,
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
@@ -22,6 +24,16 @@
       "@client/start/*": ["apps/client/src/app/modules/start/*"],
 
       "@client/theme": ["apps/client/src/theme.scss"],
+
+      "@api/common/*": ["apps/api/src/app/common/*"],
+      "@api/categories/*": ["apps/api/src/app/categories/*"],
+      "@api/company/*": ["apps/api/src/app/company/*"],
+      "@api/core/*": ["apps/api/src/app/core/*"],
+      "@api/iam/*": ["apps/api/src/app/iam/*"],
+      "@api/person/*": ["apps/api/src/app/person/*"],
+      "@api/products/*": ["apps/api/src/app/products/*"],
+      "@api/users/*": ["apps/api/src/app/users/*"],
+
       "@interfaces/*": ["libs/interfaces/src/lib/*"]
     }
   },

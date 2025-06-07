@@ -1,15 +1,19 @@
-import { TenantContract } from '@interfaces/tenant.contract';
-import {  Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Company } from '../../company/entities/companies.entity';
-import { Audit } from '../../common/utils/audit.util';
+import { TenantContract } from "@interfaces/tenant.contract";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Audit } from "../../common/utils/audit.util";
 
 @Entity()
-export class Tenant extends Audit implements Omit<TenantContract,"companyId"> {
+export class Tenant
+  extends Audit
+  implements Omit<TenantContract, "companyId" | "image">
+{
   @PrimaryGeneratedColumn()
-  id:number;
+  id!: number;
 
-  @OneToOne(()=> Company)
-  @JoinColumn()
-  company?:Company;
-  
+  // @OneToOne(() => Company, (company) => company.id)
+  // @JoinColumn()
+  companyId?: number;
+
+  @Column({ nullable: true })
+  s3FileKey?: string;
 }

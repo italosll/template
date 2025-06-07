@@ -4,11 +4,15 @@ import { TenantDTO } from "../../common/dto/tenant.dto";
 
 export class CreateUserDTO
   extends TenantDTO
-  implements Omit<UserContract, "id" | "filterableEmail">
+  implements
+    Omit<UserContract, "id" | "filterableEmail" | "filterablePhoneNumber">
 {
   @IsString()
-  public email: string;
+  public phoneNumber?: string;
 
   @IsString()
-  public password: string;
+  public email?: string;
+
+  @IsString()
+  public password!: string;
 }

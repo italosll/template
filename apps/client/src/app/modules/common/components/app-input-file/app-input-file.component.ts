@@ -54,7 +54,7 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
       img {
         width: 100%;
         height: 200px;
-        border-radius: 5px;
+        // border-radius: 5px;
         opacity: 0.95;
         object-fit: cover;
       }
@@ -67,7 +67,7 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
         display: flex;
         justify-content: space-between;
         background: rgba(0, 0, 0, 1);
-        border-radius: 5px;
+        // border-radius: 5px;
       }
       button {
         color: white;

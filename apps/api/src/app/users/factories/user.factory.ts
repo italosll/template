@@ -1,36 +1,39 @@
-import { UserContract } from "@interfaces/user.contract";
-import { AuditContract } from "../../common/contracts/audit.contract";
+import { plainToInstance } from "class-transformer";
 import { CreateUserDTO } from "../dto/create-user.dto";
+import { responseUserDTO } from "../dto/response-user.dto";
 import { UpdateUserDTO } from "../dto/update-user.dto";
-import { FullUserDTO } from "../dto/full-user.dto";
-import { bindAuditProperties } from "../../common/utils/bind-audit-properties.util";
-import { FactoryContract } from "../../common/contracts/factory.contract";
 
-export class UserFactory implements UserContract, AuditContract
-// FactoryContract
-{
-  public id: number;
-  public email: string;
-  public filterableEmail: string;
-  public password: string;
-  public createdAt: Date;
-  public updatedAt: Date;
-  public deletedAt: Date;
-  public recoveredAt: Date;
+export class UserFactory {
+  private _fakeData: Partial<CreateUserDTO | UpdateUserDTO | responseUserDTO> =
+    {
+      id: 1,
+      email: "email@email.com",
+      filterableEmail: "emai",
+      password: "password",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: new Date(),
+      recoveredAt: new Date(),
+    };
 
-  constructor(user?: Partial<UserContract & AuditContract>){
-    this.id = user?.id ?? 1;
-    this.email = user?.email ?? "email@email.com";
-    this.filterableEmail = user?.filterableEmail ?? "emai";
-    this.password = user?.password ?? "password";
-    bindAuditProperties(this, user);
-
+  public create(params?: Partial<CreateUserDTO>, setFakeData = false) {
+    return plainToInstance(
+      CreateUserDTO,
+      setFakeData ? { ...this._fakeData, ...params } : params
+    );
   }
 
-  createData = (params?) =>  new CreateUserDTO();
+  public update(params?: Partial<UpdateUserDTO>, setFakeData = false) {
+    return plainToInstance(
+      UpdateUserDTO,
+      setFakeData ? { ...this._fakeData, ...params } : params
+    );
+  }
 
-  updateData = (params?) =>  new UpdateUserDTO();
-
-  fullData = (params?) => new FullUserDTO();
+  public response(params?: Partial<responseUserDTO>, setFakeData = false) {
+    return plainToInstance(
+      responseUserDTO,
+      setFakeData ? { ...this._fakeData, ...params } : params
+    );
+  }
 }
-

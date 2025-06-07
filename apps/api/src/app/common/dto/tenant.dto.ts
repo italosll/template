@@ -1,6 +1,6 @@
 import { IsNumber } from "class-validator";
 
-export class TenantDTO{
+export class TenantDTO {
   @IsNumber()
-  tenantId:number;
+  tenantId!: number;
 }
