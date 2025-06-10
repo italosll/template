@@ -90,13 +90,8 @@ export class SidenavComponent {
 
   protected signOut = () => {
     this._accessService.signOut().subscribe({
-      next: (resp) => {
-        console.log("Usuário deslogado com sucesso");
-        console.log(resp);
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error("Erro ao deslogar:", error);
-      },
+      next: (resp) => {},
+      error: (error: HttpErrorResponse) => {},
     });
   };
 }

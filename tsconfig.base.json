@@ -17,23 +17,20 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@client/common/*": ["apps/client/src/app/modules/common/*"],
-      "@client/iam/*": ["apps/client/src/app/modules/iam/*"],
-      "@client/products/*": ["apps/client/src/app/modules/products/*"],
-      "@client/users/*": ["apps/client/src/app/modules/users/*"],
-      "@client/start/*": ["apps/client/src/app/modules/start/*"],
-
-      "@client/theme": ["apps/client/src/theme.scss"],
-
-      "@api/common/*": ["apps/api/src/app/common/*"],
       "@api/categories/*": ["apps/api/src/app/categories/*"],
+      "@api/common/*": ["apps/api/src/app/common/*"],
       "@api/company/*": ["apps/api/src/app/company/*"],
       "@api/core/*": ["apps/api/src/app/core/*"],
       "@api/iam/*": ["apps/api/src/app/iam/*"],
       "@api/person/*": ["apps/api/src/app/person/*"],
       "@api/products/*": ["apps/api/src/app/products/*"],
       "@api/users/*": ["apps/api/src/app/users/*"],
-
+      "@client/common/*": ["apps/client/src/app/modules/common/*"],
+      "@client/iam/*": ["apps/client/src/app/modules/iam/*"],
+      "@client/products/*": ["apps/client/src/app/modules/products/*"],
+      "@client/start/*": ["apps/client/src/app/modules/start/*"],
+      "@client/theme": ["apps/client/src/theme.scss"],
+      "@client/users/*": ["apps/client/src/app/modules/users/*"],
       "@interfaces/*": ["libs/interfaces/src/lib/*"]
     }
   },

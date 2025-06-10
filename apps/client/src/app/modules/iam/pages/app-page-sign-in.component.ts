@@ -94,7 +94,5 @@ export class PageSignInComponent {
       .subscribe();
   }
 
-  constructor() {
-    console.log("--------");
-  }
+  constructor() {}
 }

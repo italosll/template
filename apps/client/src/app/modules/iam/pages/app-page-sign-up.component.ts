@@ -90,18 +90,24 @@ import { AccessService } from "../services/app-access.service";
         </mat-card-content>
         <mat-card-actions align="end">
           <button
+            id="sign-up-form-button-previous"
+            mat-button
             class="actionButton"
-            mat-flat-button
             (click)="stepper.previous()"
           >
+            <mat-icon>north</mat-icon>
+
             Anterior
           </button>
           <button
+            id="sign-up-form-button-next"
             class="actionButton"
-            mat-flat-button
+            mat-fab
+            extended
             color="primary"
             (click)="stepper.next()"
           >
+            <mat-icon>south</mat-icon>
             Próximo
           </button>
         </mat-card-actions>

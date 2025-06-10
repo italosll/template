@@ -48,13 +48,25 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
         background: white;
         padding: 0 5px;
       }
+
+      .container {
+        // background: red;
+        height: 200px;
+      }
+
       .mat-mdc-text-field-wrapper {
         padding: 0;
       }
-      img {
+      .cover {
         width: 100%;
+        min-width: 100px;
         height: 200px;
+        min-height: 200px;
+        background-size: cover !important;
+        background-position: center !important;
         // border-radius: 5px;
+        //background: green;
+
         opacity: 0.95;
         object-fit: cover;
       }
@@ -75,52 +87,63 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
     `,
   ],
   template: `
-    <input
-      type="file"
-      style="display:none"
-      #inputImage
-      (change)="changeInputFile($event)"
-    />
-    <img [src]="value?.url ?? value?.base64File" />
-    <li>
-      <button
-        type="button"
-        mat-icon-button
-        aria-label="Edit"
-        matTooltip="Trocar foto"
-        (click)="inputImage.click()"
-      >
-        <mat-icon>edit</mat-icon>
-      </button>
+    <div class="container">
+      <input
+        type="file"
+        style="display:none"
+        #inputImage
+        (change)="changeInputFile($event)"
+      />
 
-      @if(value?.name){
+      <div
+        class="cover"
+        [style.background]="
+          value?.url
+            ? 'url(' + value?.url + ')'
+            : 'url(' + value?.base64File + ')'
+        "
+      ></div>
+      <li>
+        <button
+          type="button"
+          mat-icon-button
+          aria-label="Edit"
+          matTooltip="Trocar foto"
+          (click)="inputImage.click()"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
 
-      <button
-        mat-icon-button
-        aria-label="Download"
-        matTooltip="Baixar"
-        type="button"
-        (click)="downloadFile()"
-      >
-        <mat-icon>download</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        aria-label="Delete"
-        matTooltip="Deletar"
-        type="button"
-        (click)="deleteFile()"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
-      }
-    </li>
+        @if(value?.name){
+
+        <button
+          mat-icon-button
+          aria-label="Download"
+          matTooltip="Baixar"
+          type="button"
+          (click)="downloadFile()"
+        >
+          <mat-icon>download</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          aria-label="Delete"
+          matTooltip="Deletar"
+          type="button"
+          (click)="deleteFile()"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+        }
+      </li>
+    </div>
   `,
 })
 export class InputImageComponent
   extends BaseInputDirective<FileContract>
   implements MatFormFieldControl<FileContract>, ControlValueAccessor, OnDestroy
 {
+  disableAutomaticLabeling?: boolean | undefined;
   private _changeDetectorRef = inject(ChangeDetectorRef);
 
   private _inputImage = viewChild<ElementRef<HTMLInputElement>>("inputImage");
@@ -185,7 +208,6 @@ export class InputImageComponent
 
   protected async changeInputFile(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
-    console.log(file);
     if (!file) return;
 
     const base64 = await FileUtil.fileToBase64(file);
@@ -197,6 +219,11 @@ export class InputImageComponent
     };
 
     if (this.onChange) this.onChange(this.value);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  public override writeValue(obj: object): void {
+    this.value = obj;
     this._changeDetectorRef.markForCheck();
   }
 
@@ -214,7 +241,6 @@ export class InputImageComponent
   }
 
   protected deleteFile() {
-    console.log("999999999999");
     this.value = {
       base64File: null,
       url: null,

@@ -81,10 +81,4 @@ export class FormularyInputsGroupComponent {
     optional: true,
   });
   protected form = this._formGroupDirective?.form;
-
-  constructor() {
-    console.log("this.form");
-
-    console.log(this.form);
-  }
 }
