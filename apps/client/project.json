@@ -13,7 +13,6 @@
         "outputPath": "dist/apps/client",
         "index": "apps/client/src/index.html",
         "browser": "apps/client/src/main.ts",
-        "polyfills": ["zone.js"],
         "tsConfig": "apps/client/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -24,12 +23,7 @@
           "apps/client/src/assets"
         ],
         "styles": ["apps/client/src/styles.scss"],
-        "scripts": [],
-        "server": "apps/client/src/main.server.ts",
-        "prerender": true,
-        "ssr": {
-          "entry": "apps/client/server.ts"
-        }
+        "scripts": []
       },
       "configurations": {
         "production": {
@@ -81,10 +75,12 @@
       "executor": "@nx/eslint:lint"
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+    "executor": "@nx/vite:test",
       "options": {
-        "jestConfig": "apps/client/jest.config.ts"
+        "tsConfig": "apps/client/tsconfig.spec.json",
+        "config": "apps/client/vite.config.mts",
+        "runner": "vitest",
+        "buildTarget": "client:build:development"
       }
     },
     "serve-static": {

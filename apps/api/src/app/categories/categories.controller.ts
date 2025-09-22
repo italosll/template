@@ -13,9 +13,8 @@ import {
 import { AuditContract } from "../common/contracts/audit.contract";
 import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
 import { DeleteDefaultResponseDTO } from "../common/dto/delete-default-response.dto";
-import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
-
 import { HardDeleteDefaultResponseDTO } from "../common/dto/hard-delete-default-response.dto";
+import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
 import { CategoriesService } from "./categories.service";
 import { CreateCategoryDTO } from "./dto/create-category.dto";
 import { UpdateCategoryDTO } from "./dto/update-category.dto";
@@ -36,7 +35,7 @@ export class CategoriesController {
 
   @Get()
   async findAll(
-    @Query() query: ProductContract & AuditContract
+    @Query() query: Partial<ProductContract & AuditContract>
   ): Promise<UpdateCategoryDTO[]> {
     return this._categoriesService.findAll(query);
   }

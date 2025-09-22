@@ -4,26 +4,190 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   margin: 0;
   height: 100%;
-
-  @include mat.theme(
-    (
-      color: (
-        theme-type: light,
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
 }
 
 html {
   height: 100%;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+
+  .theme-color-azure {
+    @include mat.theme(
+      (
+        color: mat.$azure-palette,
+      )
+    );
+  }
+
+  .theme-color-rose {
+    @include mat.theme(
+      (
+        color: mat.$rose-palette,
+      )
+    );
+  }
+
+  .theme-radius-0 {
+    @include mat.fab-overrides(
+      (
+        container-shape: 0px,
+        extended-container-shape: 0px,
+        small-container-shape: 0px,
+      )
+    );
+
+    @include mat.icon-button-overrides(
+      (
+        container-shape: 0px,
+      )
+    );
+
+    @include mat.button-overrides(
+      (
+        filled-container-shape: 0px,
+        outlined-container-shape: 0px,
+        protected-container-shape: 0px,
+        text-container-shape: 0px,
+        tonal-container-shape: 0px,
+      )
+    );
+
+    @include mat.form-field-overrides(
+      (
+        filled-container-shape: 0px,
+        outlined-container-shape: 0px,
+      )
+    );
+
+    @include mat.dialog-overrides(
+      (
+        container-shape: 0px,
+      )
+    );
+  }
+
+  .theme-radius-1 {
+    @include mat.fab-overrides(
+      (
+        container-shape: 8px,
+        extended-container-shape: 8px,
+        small-container-shape: 8px,
+      )
+    );
+
+    @include mat.icon-button-overrides(
+      (
+        container-shape: 8px,
+      )
+    );
+
+    @include mat.button-overrides(
+      (
+        filled-container-shape: 8px,
+        outlined-container-shape: 8px,
+        protected-container-shape: 8px,
+        text-container-shape: 8px,
+        tonal-container-shape: 8px,
+      )
+    );
+
+    @include mat.form-field-overrides(
+      (
+        filled-container-shape: 8px,
+        outlined-container-shape: 8px,
+      )
+    );
+
+    @include mat.dialog-overrides(
+      (
+        container-shape: 8px,
+      )
+    );
+  }
+
+  .theme-radius-2 {
+    @include mat.fab-overrides(
+      (
+        container-shape: 16px,
+        extended-container-shape: 16px,
+        small-container-shape: 16px,
+      )
+    );
+
+    @include mat.icon-button-overrides(
+      (
+        container-shape: 16px,
+      )
+    );
+
+    @include mat.button-overrides(
+      (
+        filled-container-shape: 16px,
+        outlined-container-shape: 16px,
+        protected-container-shape: 16px,
+        text-container-shape: 16px,
+        tonal-container-shape: 16px,
+      )
+    );
+
+    @include mat.form-field-overrides(
+      (
+        filled-container-shape: 16px,
+        outlined-container-shape: 16px,
+      )
+    );
+
+    @include mat.dialog-overrides(
+      (
+        container-shape: 16px,
+      )
+    );
+  }
+
+  .theme-radius-3 {
+    @include mat.fab-overrides(
+      (
+        container-shape: 24px,
+        extended-container-shape: 24px,
+        small-container-shape: 24px,
+      )
+    );
+
+    @include mat.icon-button-overrides(
+      (
+        container-shape: 24px,
+      )
+    );
+
+    @include mat.button-overrides(
+      (
+        filled-container-shape: 24px,
+        outlined-container-shape: 24px,
+        protected-container-shape: 24px,
+        text-container-shape: 24px,
+        tonal-container-shape: 24px,
+      )
+    );
+
+    @include mat.form-field-overrides(
+      (
+        filled-container-shape: 24px,
+        outlined-container-shape: 24px,
+      )
+    );
+
+    @include mat.dialog-overrides(
+      (
+        container-shape: 24px,
+      )
+    );
+  }
 }
 
 :root {
-  // --primary-color: #{mat.m2-get-color-from-palette($my-primary)};
+  // @include mat.all-theme-variables()
+
+  // --primary-color: #{mat.get-color-from-palette(mat.$azure-palette, 500)};
   // --primary-color-light: #{mat.m2-get-color-from-palette($my-primary, 50)};
   // --accent-color: #{mat.m2-get-color-from-palette($my-accent)};
   // --warn-color: #{mat.m2-get-color-from-palette($my-warn)};

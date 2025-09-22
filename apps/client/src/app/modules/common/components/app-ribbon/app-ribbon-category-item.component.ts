@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,17 +19,14 @@ import { RibbonItemDataToken } from "./app-ribbon-category-item.provider";
   standalone: true,
   selector: "app-ribbon-category-item",
   providers: [],
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatButtonModule,
-  ],
+  imports: [FormsModule, MatIconModule, MatSidenavModule, MatButtonModule],
   styles: [``],
   template: `
     @if (item) {
-    <button mat-flat-button (click)="runFunctionInInjectionContext(item.click)">
+    <button
+      matButton="filled"
+      (click)="runFunctionInInjectionContext(item.click)"
+    >
       <mat-icon>{{ item.icon }}</mat-icon>
       <span>
         {{ item.title }}

@@ -1,5 +1,5 @@
 import { BooleanInput, coerceBooleanProperty } from "@angular/cdk/coercion";
-import { CommonModule } from "@angular/common";
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -29,13 +29,12 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
   selector: "app-input-file",
   encapsulation: ViewEncapsulation.Emulated,
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatInputModule,
-  ],
+    MatInputModule
+],
   providers: [
     {
       provide: MatFormFieldControl,
@@ -50,7 +49,6 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
       }
 
       .container {
-        // background: red;
         height: 200px;
       }
 
@@ -64,9 +62,6 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
         min-height: 200px;
         background-size: cover !important;
         background-position: center !important;
-        // border-radius: 5px;
-        //background: green;
-
         opacity: 0.95;
         object-fit: cover;
       }
@@ -79,7 +74,6 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
         display: flex;
         justify-content: space-between;
         background: rgba(0, 0, 0, 1);
-        // border-radius: 5px;
       }
       button {
         color: white;

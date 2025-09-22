@@ -1,7 +1,6 @@
 import { Category } from "@api/categories/entities/category.entity";
 import { S3FilesService } from "@api/common/files/s3-files.service";
 import { createMockQueryBuilder } from "@api/common/utils/mock-repositository";
-import { ProductContract } from "@interfaces/product.contract";
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { mock } from "jest-mock-extended";
@@ -35,31 +34,27 @@ describe("products.service", () => {
     image: image,
   }));
 
-  const setup = async (findOneProduct?: ProductContract | null) => {
-    const productRepository = mock<Repository<Product>>();
-
+  const setup = async (product: Partial<Product>, modoCadastrar = false) => {
+    const repository = mock<Repository<Product>>();
     const queryBuilder = createMockQueryBuilder<Product>();
+
     queryBuilder.getMany.mockResolvedValue(products as any);
 
-    productRepository.createQueryBuilder.mockReturnValue(queryBuilder);
-    productRepository.create.mockReturnValue({ ...product } as any);
+    repository.createQueryBuilder.mockReturnValue(queryBuilder);
+    repository.create.mockReturnValue({ ...product } as any);
 
-    productRepository.findOne = jest
+    repository.findOne = jest
       .fn()
-      .mockResolvedValue(findOneProduct) as any;
-
-    productRepository.find = jest
-      .fn()
-      .mockResolvedValue([findOneProduct]) as any;
-
-    productRepository.save.mockResolvedValue(product as any);
+      .mockResolvedValue(modoCadastrar ? null : product) as any;
+    repository.find = jest.fn().mockResolvedValue([product]) as any;
+    repository.save.mockResolvedValue(product as any);
 
     const module = await Test.createTestingModule({
       providers: [
         ProductsService,
         {
           provide: getRepositoryToken(Product),
-          useValue: productRepository,
+          useValue: repository,
         },
         {
           provide: getRepositoryToken(Category),
@@ -77,43 +72,37 @@ describe("products.service", () => {
     const service = module.get<ProductsService>(ProductsService);
 
     return {
-      productRepository,
+      repository,
       filesService,
       service,
     };
   };
 
   it("should filter", async () => {
-    const { service } = await setup();
-
+    const product = new ProductFactory().create(null, true);
+    const { service } = await setup(product);
     const response = await service.findAll();
-
     expect(response).toStrictEqual(productsWithFiles);
   });
 
   it("should create", async () => {
-    const product = new ProductFactory().create(null, true);
-    const { service } = await setup();
-
+    const product = new ProductFactory().create({ code: "new_code" }, true);
+    const { service } = await setup(product, true);
     const response = await service.create(product);
-
     expect(response).toStrictEqual({ id: 1 });
   });
 
   it("should update", async () => {
     const product = new ProductFactory().update(null, true);
-    const { service } = await setup(product as any);
-
+    const { service } = await setup(product);
     const response = await service.update(product);
-
     expect(response).toStrictEqual({ id: 1 });
   });
 
   it("should delete", async () => {
+    const product = new ProductFactory().update(null, true);
     const { service } = await setup(product);
-
     const response = await service.delete([1]);
-
     expect(response).toStrictEqual({ ids: [1] });
   });
 });

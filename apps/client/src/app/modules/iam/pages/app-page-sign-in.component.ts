@@ -10,10 +10,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { RouterLink } from "@angular/router";
 import { FormularyComponent } from "@client/common/components/app-formulary/app-formulary.component";
-import { SignInModel } from "@client/iam/models/app-sign-in.model";
 import { SignInContract } from "@interfaces/sign-in.contract";
 import { getIamRoutes } from "../app-index.routes";
 import { TemplatePageSignComponent } from "../components/app-template-page-sign.component";
+import { SignInModel } from "../models/app-sign-in.model";
 import { AccessService } from "../services/app-access.service";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,25 +28,7 @@ import { AccessService } from "../services/app-access.service";
     TemplatePageSignComponent,
     RouterLink,
   ],
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-
-      mat-card {
-        position: absolute !important;
-        inset: 0;
-        margin: auto;
-        max-width: fit-content;
-        max-height: fit-content;
-      }
-      mat-card-header {
-        width: 400px;
-        padding-bottom: 1rem !important;
-      }
-    `,
-  ],
+  styles: [],
   template: `
     <app-template-page-sign>
       <mat-card>

@@ -8,7 +8,7 @@ const deletedResponse = { ids: [1] };
 const findAllResponse: any = [];
 
 export class TestControllerUtil<CreateDTO, UpdateDTO, GetDTO> {
-  public setSpies(service: any) {
+  public setSpies(service: any = {}) {
     jest
       .spyOn(service, "findAll")
       .mockImplementation(() => Promise.resolve(findAllResponse as any));
@@ -24,6 +24,8 @@ export class TestControllerUtil<CreateDTO, UpdateDTO, GetDTO> {
     jest
       .spyOn(service, "hardDelete")
       .mockImplementation(() => Promise.resolve(deletedResponse));
+
+    return service;
   }
 
   public getControllerMethods(

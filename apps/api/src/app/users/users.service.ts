@@ -63,8 +63,13 @@ export class UsersService
     createEntity.password = hashedPassword;
 
     const entity = User.encrypt(createEntity, this._encryptionService);
-
     const created = await this._userRepository.save(entity);
+
+    console.log("------");
+    console.log(encryptedUsers);
+    console.log(decryptedUsers);
+    console.log(created);
+    console.log(entity);
 
     const response = { id: created.id };
     return response;

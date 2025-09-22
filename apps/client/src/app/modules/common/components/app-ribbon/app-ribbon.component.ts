@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -26,12 +26,11 @@ import { provideRibbonItem } from "./app-ribbon-category-item.provider";
   selector: "app-ribbon",
   providers: [],
   imports: [
-    CommonModule,
     FormsModule,
     MatIconModule,
     MatSidenavModule,
-    MatButtonModule,
-  ],
+    MatButtonModule
+],
   styles: [
     `
       //     :host{

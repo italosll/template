@@ -1,11 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
+import { MatDialog } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { RouterModule } from "@angular/router";
+import { SettingsDialogComponent } from "../app-settings-dialog/app-settings-dialog.component";
 import { SidenavComponent } from "../app-sidenav/app-sidenav.component";
 import { TemplateService } from "./app.template.service";
 @Component({
@@ -31,8 +33,16 @@ import { TemplateService } from "./app.template.service";
         align-items: center;
       }
 
+      mat-drawer {
+        width: 250px;
+      }
+
       mat-drawer-container {
         height: calc(100% - 64px);
+      }
+
+      mat-drawer-content {
+        padding: 20px;
       }
 
       #logo {
@@ -55,7 +65,12 @@ import { TemplateService } from "./app.template.service";
       />
       <span> My Company</span>
 
-      <button id="settings" mat-icon-button aria-label="Settings">
+      <button
+        id="settings"
+        mat-icon-button
+        aria-label="Settings"
+        (click)="openSettingsDialog()"
+      >
         <mat-icon>settings</mat-icon>
       </button>
     </nav>
@@ -70,4 +85,10 @@ import { TemplateService } from "./app.template.service";
     </mat-drawer-container>
   `,
 })
-export class TemplateComponent {}
+export class TemplateComponent {
+  private _matDialog = inject(MatDialog);
+
+  protected openSettingsDialog() {
+    this._matDialog.open(SettingsDialogComponent);
+  }
+}

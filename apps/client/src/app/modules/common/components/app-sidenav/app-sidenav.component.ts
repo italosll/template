@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
 import {
   ChangeDetectionStrategy,
@@ -21,7 +20,6 @@ import { TemplateService } from "../templates/app.template.service";
   selector: "app-sidenav",
   providers: [TemplateService, AccessService],
   imports: [
-    CommonModule,
     FormsModule,
     RouterLink,
     RouterLinkActive,
@@ -36,6 +34,7 @@ import { TemplateService } from "../templates/app.template.service";
         flex-direction: column;
         padding: 0.5rem;
         height: 100%;
+        border-right: 1px solid lightgray;
       }
 
       a {
@@ -53,11 +52,8 @@ import { TemplateService } from "../templates/app.template.service";
   template: `
     @for(navigationItem of navigationItems(); track navigationItem.path ){
     <a
-      [style]="{
-        color: navigationItem.active ? 'var(--primary-color)' : 'black',
-         background: navigationItem.active ? 'var(--primary-color-light)' : 'white',
-    }"
-      mat-flat-button
+      mat-button
+      color="primary"
       [routerLink]="navigationItem.path"
       routerLinkActive="active"
     >

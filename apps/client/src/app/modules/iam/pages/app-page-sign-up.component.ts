@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,6 +17,7 @@ import { SignUpStepImageModel } from "../models/app-sign-up-step-image.model";
 import { SignUpStepPersonLegalModel } from "../models/app-sign-up-step-person-legal.model";
 import { SignUpStepUserModel } from "../models/app-sign-up-step-user.model";
 import { AccessService } from "../services/app-access.service";
+import { CommonModule } from "@angular/common";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
@@ -33,18 +33,7 @@ import { AccessService } from "../services/app-access.service";
     MatStepperModule,
     MatIconModule,
   ],
-  styles: [
-    `
-      // mat-card {
-      //   max-width: fit-content;
-      //   max-height: fit-content;
-      // }
-      // mat-card-header {
-      //   width: 400px;
-      //   padding-bottom: 1rem !important;
-      // }
-    `,
-  ],
+  styles: [],
   template: `
     <app-template-page-sign>
       <mat-card>

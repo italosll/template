@@ -1,13 +1,20 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
+import {
+  CipherCCMTypes,
+  CipherKey,
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+} from "crypto";
 import { EncryptionService } from "./encryption.service";
 
 @Injectable()
 export class CryptoService implements EncryptionService {
   constructor(private _configService: ConfigService) {}
 
-  private _algorithm = this._configService.get<string>("ENCRYPTION_ALGORITHM");
+  private _algorithm: CipherCCMTypes | undefined =
+    this._configService.get<CipherCCMTypes>("ENCRYPTION_ALGORITHM");
   private _keyHex = this._configService.get<string>("ENCRYPTION_KEYHEX");
 
   public encrypt(text: string) {
@@ -16,9 +23,11 @@ export class CryptoService implements EncryptionService {
     }
     const initializationVector = randomBytes(16);
 
+    const cipherKey: CipherKey = Buffer.from(this._keyHex, "hex");
+
     const cipher = createCipheriv(
       this._algorithm,
-      Buffer.from(this._keyHex, "hex"),
+      cipherKey,
       initializationVector
     );
 

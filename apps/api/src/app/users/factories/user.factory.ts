@@ -16,21 +16,24 @@ export class UserFactory {
       recoveredAt: new Date(),
     };
 
-  public create(params?: Partial<CreateUserDTO>, setFakeData = false) {
+  public create(params?: Partial<CreateUserDTO> | null, setFakeData = false) {
     return plainToInstance(
       CreateUserDTO,
       setFakeData ? { ...this._fakeData, ...params } : params
     );
   }
 
-  public update(params?: Partial<UpdateUserDTO>, setFakeData = false) {
+  public update(params?: Partial<UpdateUserDTO> | null, setFakeData = false) {
     return plainToInstance(
       UpdateUserDTO,
       setFakeData ? { ...this._fakeData, ...params } : params
     );
   }
 
-  public response(params?: Partial<responseUserDTO>, setFakeData = false) {
+  public response(
+    params?: Partial<responseUserDTO> | null,
+    setFakeData = false
+  ) {
     return plainToInstance(
       responseUserDTO,
       setFakeData ? { ...this._fakeData, ...params } : params

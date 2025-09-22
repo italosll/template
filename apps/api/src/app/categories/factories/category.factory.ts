@@ -18,7 +18,7 @@ export class CategoryFactory {
   };
 
   public create(
-    params?: Partial<CreateCategoryDTO & AuditContract>,
+    params?: Partial<CreateCategoryDTO & AuditContract> | null,
     setFakeData = false
   ) {
     return plainToInstance(
@@ -28,7 +28,7 @@ export class CategoryFactory {
   }
 
   public update(
-    params?: Partial<UpdateCategoryDTO & AuditContract>,
+    params?: Partial<UpdateCategoryDTO & AuditContract> | null,
     setFakeData = false
   ) {
     return plainToInstance(
@@ -38,7 +38,7 @@ export class CategoryFactory {
   }
 
   public response(
-    params?: Partial<FullCategoryDTO & AuditContract>,
+    params?: Partial<FullCategoryDTO & AuditContract> | null,
     setFakeData = false
   ) {
     return plainToInstance(

@@ -8,6 +8,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   imports: [CommonModule],
+
   selector: "app-template-page-sign",
   standalone: true,
   styles: [

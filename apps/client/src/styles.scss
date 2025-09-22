@@ -1,6 +1,8 @@
 @use "@angular/material" as mat;
 @use "./styles/theme.scss";
+@use "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+
 * {
   padding: 0;
   margin: 0;
@@ -15,7 +17,7 @@ span {
 }
 
 :root {
-  --mdc-outlined-card-container-shape: 12px;
+  --mat-card-outlined-container-shape: 12px;
 }
 
 html,
@@ -42,5 +44,14 @@ mat-dialog-actions {
 }
 
 .mdc-button {
-  --mdc-filled-button-container-height: 42px;
+  --mat-button-filled-container-height: 42px;
+}
+
+// Taiwindcss - Angular material fixes
+.mdc-notched-outline__notch {
+  border-style: none;
+}
+
+.mat-mdc-icon-button {
+  line-height: normal;
 }

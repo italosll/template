@@ -15,13 +15,7 @@ import { DialogsOpenerService } from "@client/common/services/app-dialogs-opener
 import { DialogOpenerUtil } from "@client/common/utils/app-dialog-opener.util";
 import { ProductsHttpService } from "./http/app-products.http.service";
 import { DialogProductComponent } from "./pages/app-page-products-dialog-product.component";
-
-function provideBaseHttpService(service: typeof BaseHttpService<any>) {
-  return {
-    provide: BaseHttpService,
-    useClass: service,
-  };
-}
+import { provideBaseHttpService } from "@client/common/providers/app-provide-base-http-service.provider";
 
 // export const DisplayedColumnsToken = new InjectionToken<TableColumnModel[]>('DisplayedColumnsToken');
 // function provideDisplayedColumns(displayedColumns:TableColumnModel[], displayAuditColumns = true){

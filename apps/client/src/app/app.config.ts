@@ -1,17 +1,23 @@
 import { provideHttpClient, withFetch } from "@angular/common/http";
-import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";
+import {
+  ApplicationConfig,
+  inject,
+  provideAppInitializer,
+  provideZonelessChangeDetection,
+} from "@angular/core";
 import { MAT_CARD_CONFIG } from "@angular/material/card";
 import { MAT_ICON_DEFAULT_OPTIONS } from "@angular/material/icon";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { provideRouter } from "@angular/router";
 import { CookieService } from "@client/common/services/app-cookie.service";
+import { ThemeService } from "@client/common/services/app-theme.service";
 import { appRoutes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideClientHydration(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     provideRouter(appRoutes),
     provideHttpClient(withFetch()),
 
@@ -25,5 +31,8 @@ export const appConfig: ApplicationConfig = {
         fontSet: "material-icons-round",
       },
     },
+    provideAppInitializer(() => {
+      inject(ThemeService);
+    }),
   ],
 };

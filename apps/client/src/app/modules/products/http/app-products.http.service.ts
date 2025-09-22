@@ -1,13 +1,11 @@
-import { ProductContract} from '@interfaces/product.contract';
+import { ProductContract } from "@interfaces/product.contract";
 import { Injectable } from "@angular/core";
 import { BaseHttpService } from "@client/common/http/app-base.http.service";
-import { getProductsRoutes } from '../app-index.routes';
+import { getProductsRoutes } from "../app-index.routes";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class ProductsHttpService extends BaseHttpService<ProductContract> {
-    constructor(){
-        super(getProductsRoutes().api.products)
-    }
+  constructor() {
+    super(getProductsRoutes().api.products);
+  }
 }
