@@ -17,7 +17,7 @@ export class PersonService {
       this.personRepository.createQueryBuilder("personLegal");
     const queriesParameters = getQueriesParameters();
 
-    queryBuilder.andWhereMultipleColumns(personLegal ?? {}, queriesParameters);
+    // queryBuilder.andWhereMultipleColumns(personLegal ?? {}, queriesParameters);
 
     const persons = await queryBuilder
       .loadRelationIdAndMap("personLegal.personId", "personLegal.personId")

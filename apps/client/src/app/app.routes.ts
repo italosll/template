@@ -4,7 +4,7 @@ import { getIamRoutes } from '@client/iam/app-index.routes';
 import { getProductsRoutes } from '@client/products/app-index.routes';
 import { getStartRoutes } from '@client/start/app-index.routes';
 import { getUsersRoutes } from '@client/users/app-index.routes';
- 
+
 
 export const appRoutes: Route[] = [
     ...getIamRoutes().angular,
@@ -17,4 +17,4 @@ export const appRoutes: Route[] = [
             ...getUsersRoutes().angular,
         ]
     }
-];
+    ];

@@ -86,6 +86,7 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
         type="file"
         style="display:none"
         #inputImage
+        data-testid="file-input"
         (change)="changeInputFile($event)"
       />
 

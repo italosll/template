@@ -34,28 +34,25 @@ import { TemplateService } from "../templates/app.template.service";
         flex-direction: column;
         padding: 0.5rem;
         height: 100%;
-        border-right: 1px solid lightgray;
       }
 
-      a {
-        // border-radius: 10px !important;
-        display: flex;
-        justify-content: flex-start;
+      a{
+        justify-content: left;
         margin-top: 2px;
       }
 
-      #logout {
-        margin-top: auto;
+      .active{
+        background: var(--mat-sys-primary-container) !important;
       }
     `,
   ],
   template: `
     @for(navigationItem of navigationItems(); track navigationItem.path ){
+
     <a
       mat-button
-      color="primary"
-      [routerLink]="navigationItem.path"
       routerLinkActive="active"
+      [routerLink]="navigationItem.path"
     >
       <mat-icon>{{ navigationItem.icon }}</mat-icon>
       <span>
@@ -66,9 +63,9 @@ import { TemplateService } from "../templates/app.template.service";
 
     <button
       type="button"
-      mat-flat-button
+      mat-button
       aria-label="Sair"
-      id="logout"
+      style="margin-top: auto"
       (click)="signOut()"
     >
       Sair

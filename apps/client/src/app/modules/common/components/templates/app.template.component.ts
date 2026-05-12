@@ -27,7 +27,7 @@ import { TemplateService } from "./app.template.service";
     `
       nav {
         height: 64px;
-        background-color: white;
+        background-color: var(--mat-sys-primary-container);
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -59,11 +59,12 @@ import { TemplateService } from "./app.template.service";
   template: `
     <nav>
       <img
+        class="rounded"
         id="logo"
         src="https://img.freepik.com/vetores-premium/um-logotipo-para-a-empresa-empresa-sobre-um-fundo-branco_1072857-23733.jpg?semt=ais_hybrid&w=740"
         alt="Logo"
       />
-      <span> My Company</span>
+      <span style="margin-left: 8px"> My Company</span>
 
       <button
         id="settings"
@@ -74,9 +75,8 @@ import { TemplateService } from "./app.template.service";
         <mat-icon>settings</mat-icon>
       </button>
     </nav>
-    <mat-divider></mat-divider>
     <mat-drawer-container>
-      <mat-drawer mode="side" opened="true">
+      <mat-drawer [style.width.px]="180" mode="side" opened="true">
         <app-sidenav />
       </mat-drawer>
       <mat-drawer-content>

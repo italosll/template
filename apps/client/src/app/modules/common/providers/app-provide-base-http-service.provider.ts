@@ -6,3 +6,4 @@ export function provideBaseHttpService(service: typeof BaseHttpService<any>) {
     useClass: service,
   };
 }
+

@@ -13,6 +13,9 @@ import { provideRouter } from "@angular/router";
 import { CookieService } from "@client/common/services/app-cookie.service";
 import { ThemeService } from "@client/common/services/app-theme.service";
 import { appRoutes } from "./app.routes";
+import { DialogsOpenerService } from "@client/common/services/app-dialogs-opener.service";
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,9 +23,8 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(appRoutes),
     provideHttpClient(withFetch()),
-
-    provideAnimations(),
     CookieService,
+
 
     { provide: MAT_CARD_CONFIG, useValue: { appearance: "outlined" } },
     {
@@ -30,6 +32,10 @@ export const appConfig: ApplicationConfig = {
       useValue: {
         fontSet: "material-icons-round",
       },
+    },
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: { appearance: 'outline' }
     },
     provideAppInitializer(() => {
       inject(ThemeService);

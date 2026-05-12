@@ -33,27 +33,14 @@ import { provideRibbonItem } from "./app-ribbon-category-item.provider";
 ],
   styles: [
     `
-      //     :host{
-      //         display:block;
-      //         padding:0.5rem
-
-      // }
+        :host{
+          display: flex;
+          gap: 16px;
+        }
     `,
   ],
   template: `
-    <div #categoryTarget></div>
-    <!-- @for(category of categories(); track category.title ){
-            @for(item of category.items; track item.title){
-                
-                <button mat-flat-button (click)=" 
-                runFunctionInInjectionContext(item?.click)">
-                    <mat-icon>{{item.icon}}</mat-icon>    
-                    <span>
-                        {{item.title}}
-                    </span>
-                </button>
-            }
-        } -->
+    <div style="display:none" #categoryTarget></div>
   `,
 })
 export class RibbonComponent implements AfterViewInit, OnDestroy {
@@ -68,20 +55,10 @@ export class RibbonComponent implements AfterViewInit, OnDestroy {
   private _changeDetectorRef = inject(ChangeDetectorRef);
 
   public ngAfterViewInit() {
-    // const teste = this._categoryTargetRef()?.createComponent(RibbonCategoryItemComponent,
-    //     {
-    //         injector: Injector.create({
-    //             parent: this._injector,
-    //             providers: [
-    //                ...provideRibbonItem(new RibbonItemModel("Teste",""))
-    //             ]
-    //         }),
-    //     }
-    // )
 
-    // this._changeDetectorRef.detectChanges();
 
     this.categories().forEach((category) => {
+
       category.items.forEach((item) => {
         const component =
           item instanceof CustomRibbonItemModel ? item.component : null;
@@ -95,16 +72,6 @@ export class RibbonComponent implements AfterViewInit, OnDestroy {
       });
     });
   }
-
-  // protected emitClickItem(categoryTitle:RibbonCategoryContract["title"] , itemTitle: RibbonCategoryContract["items"][0]["title"]){
-  //     this.clickItem.emit(`${categoryTitle}-${itemTitle}`);
-  // }
-
-  // protected runFunctionInInjectionContext(functionClick:RibbonItemContract["click"]){
-  //     runInInjectionContext(this._injector,(async () => {
-  //         if(functionClick) await functionClick();
-  //     }))
-  // }
 
   ngOnDestroy() {
     console.log("destroy ribbon");

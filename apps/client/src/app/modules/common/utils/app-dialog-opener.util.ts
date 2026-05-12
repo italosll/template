@@ -37,4 +37,13 @@ export class DialogOpenerUtil{
         }]);
     }
 
+
+  public async openDeleteDialog():Promise<boolean>{
+    return this._openDialog([{
+      key: 'deletar',
+    }]);
+  }
+
+
+
 }

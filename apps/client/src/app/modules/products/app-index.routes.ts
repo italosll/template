@@ -16,6 +16,15 @@ import { DialogOpenerUtil } from "@client/common/utils/app-dialog-opener.util";
 import { ProductsHttpService } from "./http/app-products.http.service";
 import { DialogProductComponent } from "./pages/app-page-products-dialog-product.component";
 import { provideBaseHttpService } from "@client/common/providers/app-provide-base-http-service.provider";
+import { inject, provideEnvironmentInitializer } from "@angular/core";
+import {
+  RibbonCategoryItemDeleteComponent
+} from "@client/common/components/app-ribbon/app-ribbon-category-item-delete.component";
+import { DialogConfirmDeleteComponent } from "@client/common/components/app-dialog/app-dialog-confirm-delete.component";
+import { provideSelectionService } from "@client/common/providers/app-provide-selection-service.provider";
+import { SelectionService } from "@client/common/services/app-selection.service";
+import { provideDataSourceService } from "@client/common/providers/app-provide-data-source-service.provider";
+import { DataSourceService } from "@client/common/services/app-data-source.service";
 
 // export const DisplayedColumnsToken = new InjectionToken<TableColumnModel[]>('DisplayedColumnsToken');
 // function provideDisplayedColumns(displayedColumns:TableColumnModel[], displayAuditColumns = true){
@@ -46,8 +55,9 @@ export function getProductsRoutes() {
       title: client.products.title,
       path: client.products.path,
       providers: [
-        DialogsOpenerService,
         provideBaseHttpService(ProductsHttpService),
+        provideDataSourceService(DataSourceService),
+        provideSelectionService(SelectionService),
         provideDisplayedColumns([
           new TableColumnModel("ID", "id", "id"),
           new TableColumnModel("Código", "code", "string"),
@@ -60,20 +70,6 @@ export function getProductsRoutes() {
             title: "Cadastro",
             icon: "add",
             items: [
-              new RibbonItemModel(
-                "Novo",
-                "add",
-                "products_create",
-                async () => await new DialogOpenerUtil().openCreateDialog(),
-                true
-              ),
-              new RibbonItemModel(
-                "Excluir",
-                "delete",
-                "products_delete",
-                async () => console.log("Excluir"),
-                true
-              ),
               new CustomRibbonItemModel(
                 RibbonCategoryItemComponent,
                 "Novo",
@@ -82,6 +78,7 @@ export function getProductsRoutes() {
                 async () => await new DialogOpenerUtil().openCreateDialog(),
                 true
               ),
+              new CustomRibbonItemModel(RibbonCategoryItemDeleteComponent),
             ],
           },
         ]),
@@ -90,6 +87,10 @@ export function getProductsRoutes() {
             keys: ["cadastrar", "editar"],
             component: DialogProductComponent,
           },
+          {
+            keys:["deletar"],
+            component: DialogConfirmDeleteComponent,
+          }
         ]),
       ],
       loadComponent: () =>

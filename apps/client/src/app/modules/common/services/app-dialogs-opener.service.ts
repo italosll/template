@@ -1,10 +1,16 @@
-import { inject, Injectable, Injector, ViewContainerRef } from "@angular/core";
+import {
+  inject,
+  Injectable,
+  Injector,
+  OnDestroy,
+  ViewContainerRef,
+} from "@angular/core";
 import { DialogsToken } from "../providers/provide-dialogs.provider";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Injectable()
-export class DialogsOpenerService {
+export class DialogsOpenerService implements  OnDestroy{
     private readonly _dialogs = inject(DialogsToken);
     private readonly _activatedRoute = inject(ActivatedRoute);
     private readonly _matDialog = inject(MatDialog);
@@ -13,8 +19,12 @@ export class DialogsOpenerService {
 
     private readonly _matDialogConfig: MatDialogConfig = {
         injector: this._injector,
+      
     };
     constructor(){
+
+      console.log("constructor1---");
+      console.log(this._dialogs)
         this._activatedRoute.queryParams.subscribe((params)=>{
 
             this._dialogs.forEach((dialog)=>{
@@ -28,7 +38,7 @@ export class DialogsOpenerService {
                         queryParams[k] = null;
                     });
 
-                    this._matDialog.open(dialog.component, this._matDialogConfig).afterClosed().subscribe(()=>{ 
+                    this._matDialog.open(dialog.component, this._matDialogConfig).afterClosed().subscribe(()=>{
                         this._router.navigate([],{
                             relativeTo: this._activatedRoute,
                             queryParamsHandling: 'merge',
@@ -38,5 +48,10 @@ export class DialogsOpenerService {
                 }
             });
         });
+    }
+
+    public ngOnDestroy(){
+      console.log("ngOnDestroy---");
+      console.log(this._dialogs)
     }
 }

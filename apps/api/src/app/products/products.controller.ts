@@ -37,9 +37,12 @@ export class ProductsController {
 
   @Get()
   async findAll(
-    @Query() query: Partial<ProductContract & AuditContract>
+    @Query() query:{pesquisar?:string, id:number}
   ): Promise<ResponseProductDTO[]> {
-    return this._productsService.findAll(query);
+    return this._productsService.findAll({
+      textToSearch:query.pesquisar,
+      id:query.id,
+    });
   }
 
   @Put()

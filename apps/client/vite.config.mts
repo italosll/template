@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
       // inspectBrk: true,
       // fileParallelism: false,
       // testTimeout:0,
-      
+
       browser: {
         enabled: true,
         name: 'chromium',

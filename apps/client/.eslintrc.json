@@ -1,5 +1,5 @@
 {
-  "extends": ["../../.eslintrc.json"],
+  "extends": ["plugin:playwright/recommended", "../../.eslintrc.json"],
   "ignorePatterns": [
     "!**/*",
     "**/vite.config.*.timestamp*",
@@ -34,6 +34,10 @@
     {
       "files": ["*.html"],
       "extends": ["plugin:@nx/angular-template"],
+      "rules": {}
+    },
+    {
+      "files": ["e2e/**/*.{ts,js,tsx,jsx}"],
       "rules": {}
     }
   ]

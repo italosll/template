@@ -1,8 +1,8 @@
 import { Type } from "@angular/core";
 
 export interface RibbonItemContract{
-    title: string;
-    icon: string;
+    title?: string;
+    icon?: string;
     permissionName?: string;
     enabled: boolean;
     click?: () => (unknown | Promise<unknown>);

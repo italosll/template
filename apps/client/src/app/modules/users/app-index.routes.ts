@@ -1,17 +1,20 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { Route } from "@angular/router";
-import { RoutesContract } from "@client/common/contracts/routes.contract";
-import { DialogsOpenerService } from "@client/common/services/app-dialogs-opener.service";
-import { UsersHttpService } from "./http/app-users.http.service";
-import { provideBaseHttpService } from "@client/common/providers/app-provide-base-http-service.provider";
-import { provideDisplayedColumns } from "@client/common/providers/provide-displayed-columns.provider";
 import { TableColumnModel } from "@client/common/components/app-table/app-table-column.model";
-import { provideRibbon } from "@client/common/providers/app-provide-ribbon.provider";
+import { RoutesContract } from "@client/common/contracts/routes.contract";
 import { RibbonItemModel } from "@client/common/model/app-ribbon-item.model";
-import { DialogOpenerUtil } from "@client/common/utils/app-dialog-opener.util";
+import { provideBaseHttpService } from "@client/common/providers/app-provide-base-http-service.provider";
+import { provideDataSourceService } from "@client/common/providers/app-provide-data-source-service.provider";
+import { provideRibbon } from "@client/common/providers/app-provide-ribbon.provider";
+import { provideSelectionService } from "@client/common/providers/app-provide-selection-service.provider";
 import { provideDialogs } from "@client/common/providers/provide-dialogs.provider";
-import { DialogProductComponent } from "@client/products/pages/app-page-products-dialog-product.component";
+import { provideDisplayedColumns } from "@client/common/providers/provide-displayed-columns.provider";
+import { DataSourceService } from "@client/common/services/app-data-source.service";
+import { DialogsOpenerService } from "@client/common/services/app-dialogs-opener.service";
+import { SelectionService } from "@client/common/services/app-selection.service";
+import { DialogOpenerUtil } from "@client/common/utils/app-dialog-opener.util";
 import { DialogUsersComponent } from "@client/users/pages/app-page-users-dialog.component";
+import { UsersHttpService } from "./http/app-users.http.service";
 
 export function getUsersRoutes() {
   const client = {
@@ -32,6 +35,10 @@ export function getUsersRoutes() {
       path: client.users.path,
       providers: [
         DialogsOpenerService,
+        // provideEnvironmentInitializer(()=> inject(DialogsOpenerService)),
+        provideDataSourceService(DataSourceService),
+        provideSelectionService(SelectionService),
+        
         provideBaseHttpService(UsersHttpService),
         provideDisplayedColumns([
           new TableColumnModel("ID", "id", "id"),

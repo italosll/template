@@ -9,15 +9,15 @@
   box-sizing: border-box;
   font-family: Quicksand, "Helvetica Neue", sans-serif;
 }
-
-html,
-th,
-span {
-  font-size: 110% !important;
-}
-
 :root {
   --mat-card-outlined-container-shape: 12px;
+  @include mat.table-overrides((
+    row-item-outline-color: #e5e5e5,
+  ));
+
+  @include mat.dialog-overrides((
+    actions-padding: 16px
+  ))
 }
 
 html,
@@ -55,3 +55,5 @@ mat-dialog-actions {
 .mat-mdc-icon-button {
   line-height: normal;
 }
+
+

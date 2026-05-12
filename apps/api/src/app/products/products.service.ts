@@ -37,18 +37,19 @@ export class ProductsService
     });
   }
 
-  async findAll(
-    product?: Partial<ResponseProductDTO>
-  ): Promise<ResponseProductDTO[]> {
+  async findAll(  params:{textToSearch?:string, id?:number} ): Promise<ResponseProductDTO[]> {
     const queryBuilder = this._productRepository.createQueryBuilder("product");
     const queriesParameters: ColumnQueryParameters<Product>[] =
       getQueriesParameters();
 
-    queryBuilder.andWhereMultipleColumns(product ?? {}, queriesParameters);
+    queryBuilder.andWhereMultipleColumns( params, queriesParameters);
 
     const products = await queryBuilder
       .loadRelationIdAndMap("product.categoryIds", "product.categories")
       .getMany();
+    console.log("products----------")
+
+    console.log(products)
 
     const productsWithFiles = products.map((product) => ({
       ...new ProductFactory().response(product),
