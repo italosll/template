@@ -3,6 +3,6 @@ export interface UserContract {
   email?: string;
   filterableEmail?: string;
   password: string;
-  phoneNumber?: string;
+  phoneNumber?: string | null;
   filterablePhoneNumber?: string;
 }

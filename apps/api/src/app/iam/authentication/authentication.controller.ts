@@ -19,10 +19,10 @@ import { AuthType } from "./enums/auth-type.enum";
 export class AuthenticationController {
   constructor(private readonly _authenticationService: AuthenticationService) {}
 
-  @Post("sign-up")
-  signUp(@Body() SignUpDTO: SignUpDTO) {
-    return this._authenticationService.signUp(SignUpDTO);
-  }
+  // @Post("sign-up")
+  // signUp(@Body() SignUpDTO: SignUpDTO) {
+  //   return this._authenticationService.signUp(SignUpDTO);
+  // }
 
   @HttpCode(HttpStatus.OK)
   @Post("sign-in")

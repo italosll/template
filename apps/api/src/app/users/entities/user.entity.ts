@@ -1,13 +1,14 @@
 import { UserContract } from "@interfaces/user.contract";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { EncryptionService } from "../../common/encryption/encryption.service";
 import { Audit } from "../../common/utils/audit.util";
-import { Tenant } from "../../iam/entities/tenant.entity";
 import { CreateUserDTO } from "../dto/create-user.dto";
 import { UpdateUserDTO } from "../dto/update-user.dto";
+import { Tenant } from "@api/iam/entities/tenant.entity";
+import { CreateTenantContract } from "@interfaces/tenant.contract";
 
 @Entity()
-export class User extends Audit implements UserContract {
+export class User extends Audit implements UserContract, CreateTenantContract {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -17,26 +18,32 @@ export class User extends Audit implements UserContract {
   @Column({ select: false })
   filterableEmail?: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   phoneNumber?: string;
 
-  @Column({ select: false })
+  @Column({ select: false ,nullable: true})
   filterablePhoneNumber?: string;
 
   @Column({ select: false })
   password!: string;
 
   @ManyToOne(() => Tenant, (tenant) => tenant.id)
-  tenantId!: number;
+  tenant!: Tenant;
+
+  @Column({ nullable: true })
+  tenantId!: number
 
   public static encrypt(
     userData: CreateUserDTO | UpdateUserDTO,
-    encryptionService: EncryptionService
+    encryptionService: EncryptionService,
+    tenant:Tenant
   ): User {
     const user = new User();
+    
     user.filterableEmail = userData?.email?.slice(0, 4);
     user.filterablePhoneNumber = userData?.phoneNumber?.slice(0, 4);
     user.password = userData.password;
+    user.tenant = tenant;
 
     if (userData?.email) {
       user.email = encryptionService?.encrypt(userData?.email);
@@ -50,9 +57,9 @@ export class User extends Audit implements UserContract {
   }
 
   public static decrypt(
-    usersData: (UserContract & Audit)[],
+    usersData: (UserContract & Audit & {tenantId: number})[],
     encryptionService: EncryptionService
-  ): User[] {
+  ): User   [] {
     const users: User[] = [];
 
     usersData?.forEach((u) => {
@@ -64,6 +71,7 @@ export class User extends Audit implements UserContract {
       user.deletedAt = u.deletedAt;
       user.updatedAt = u.updatedAt;
       user.recoveredAt = u.recoveredAt;
+      user.tenantId = u.tenantId;
 
       if (u.email) {
         (user.email = encryptionService.decrypt(u.email)),

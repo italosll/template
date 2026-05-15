@@ -46,5 +46,8 @@ export class Product extends Audit implements Omit<ProductContract, "image"> {
   s3FileKey?: string;
 
   @ManyToOne(() => Tenant, (tenant) => tenant.id)
+  tenant!: Tenant;
+
+  @Column({ nullable: true })
   tenantId!: number;
 }

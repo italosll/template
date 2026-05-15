@@ -14,6 +14,7 @@ import { responseUserDTO } from "./dto/response-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 import { UserFactory } from "./factories/user.factory";
+import { Tenant } from "@api/iam/entities/tenant.entity";
 
 @Injectable()
 export class UsersService
@@ -21,6 +22,8 @@ export class UsersService
 {
   constructor(
     @InjectRepository(User) private _userRepository: Repository<User>,
+    @InjectRepository(Tenant) private _tenantRepository: Repository<Tenant>,
+
     private _hasingService: HashingService,
     private _encryptionService: EncryptionService
   ) {}
@@ -38,6 +41,9 @@ export class UsersService
 
     const userFactory = new UserFactory();
     const users = decryptedUsers.map((du) => userFactory.response(du));
+
+    console.log("-------")
+    console.log(decryptedUsers);
     return users;
   }
 
@@ -51,6 +57,7 @@ export class UsersService
     const registeredUser = decryptedUsers?.find(
       ({ email }) => email === createEntity.email
     );
+
     if (registeredUser)
       throw new HttpException(
         HTTP_ERROR_MESSAGES.alreadyExists(),
@@ -62,14 +69,9 @@ export class UsersService
     );
     createEntity.password = hashedPassword;
 
-    const entity = User.encrypt(createEntity, this._encryptionService);
+    const tenant = await this._tenantRepository.findOneBy({ id: createEntity.tenantId });
+    const entity = User.encrypt(createEntity, this._encryptionService, tenant!);
     const created = await this._userRepository.save(entity);
-
-    console.log("------");
-    console.log(encryptedUsers);
-    console.log(decryptedUsers);
-    console.log(created);
-    console.log(entity);
 
     const response = { id: created.id };
     return response;
@@ -112,7 +114,7 @@ export class UsersService
       );
     }
 
-    registeredUser = User.encrypt(registeredUser, this._encryptionService);
+    registeredUser = User.encrypt(registeredUser, this._encryptionService, registeredUser.tenant);
 
     const merged = this._userRepository.merge(
       registeredUser,

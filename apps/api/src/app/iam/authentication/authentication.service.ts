@@ -1,20 +1,19 @@
 import { ActiveUserContract } from "@interfaces/active-user.contract";
 import { UserContract } from "@interfaces/user.contract";
 import { RefreshTokenDto } from "./dto/refresh-token.dto";
-
 import { CookieToken } from "@interfaces/cookie-tokens.contract";
-import { ConflictException, UnauthorizedException } from "@nestjs/common";
+import { UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { EncryptionService } from "../../common/encryption/encryption.service";
-import { MYSQL_VIOLATION_ERROR_CODES } from "../../common/utils/mysql-violation-error-codes";
-import { User } from "../../users/entities/user.entity";
 import { JwtConfigContract } from "../contracts/jwt.config.contract";
 import { HashingService } from "../hashing/hashing.service";
 import { SignInDTO } from "./dto/sign-in.dto";
-import { SignUpDTO } from "./dto/sign-up.dto";
+import { User } from "@api/users/entities/user.entity";
+import { CreateTenantContract } from "@interfaces/tenant.contract";
+ 
 
 export class AuthenticationService {
   private _jwtConfig: JwtConfigContract;
@@ -33,28 +32,28 @@ export class AuthenticationService {
     this._jwtConfig = jwtConfig;
   }
 
-  async signUp(signUpDTO: SignUpDTO) {
-    try {
-      const user = new User();
-      user.email = signUpDTO.email;
-      user.password = await this._hashingService.generate(signUpDTO.password);
-      await this._usersRepository.save(user);
-    } catch (err) {
-      const mysqlUniqueValidationErrorCode = MYSQL_VIOLATION_ERROR_CODES.unique;
+  // async signUp(signUpDTO: SignUpDTO) {
+  //   try {
+  //     const user = new User();
+  //     user.email = signUpDTO.email;
+  //     user.password = await this._hashingService.generate(signUpDTO.password);
+  //     await this._usersRepository.save(user);
+  //   } catch (err) {
+  //     const mysqlUniqueValidationErrorCode = MYSQL_VIOLATION_ERROR_CODES.unique;
 
-      if (
-        (err as Error & { code: number })?.code ===
-        mysqlUniqueValidationErrorCode
-      ) {
-        throw new ConflictException();
-      }
-      throw err;
-    }
-  }
+  //     if (
+  //       (err as Error & { code: number })?.code ===
+  //       mysqlUniqueValidationErrorCode
+  //     ) {
+  //       throw new ConflictException();
+  //     }
+  //     throw err;
+  //   }
+  // }
 
   async signIn(signInDTO: SignInDTO) {
     const encryptedUsers = await this._usersRepository.find({
-      select: ["email", "password"],
+      select: ["email", "password", "id", "tenantId"],
     });
     const decryptedUsers = User.decrypt(
       encryptedUsers,
@@ -76,6 +75,10 @@ export class AuthenticationService {
       throw new UnauthorizedException("Password does not match");
     }
 
+          console.log("----")
+      console.log({ user })
+
+
     return this._generateTokens(user);
   }
 
@@ -93,6 +96,7 @@ export class AuthenticationService {
         id: sub,
       });
 
+
       return this._generateTokens(user);
     } catch (err) {
       throw new UnauthorizedException();
@@ -100,6 +104,8 @@ export class AuthenticationService {
   }
 
   private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
+    // console.log("----------")
+    // console.log({userId, expiresIn, payload})
     return await this._jwtService.signAsync(
       {
         sub: userId,
@@ -114,11 +120,14 @@ export class AuthenticationService {
     );
   }
 
-  private async _generateTokens(user: UserContract) {
+  private async _generateTokens(user: UserContract & CreateTenantContract) {
     const accessTokenPromise = this.signToken<Partial<ActiveUserContract>>(
       user.id,
       this._jwtConfig.accessTokenTtl,
-      { email: user.email }
+      { 
+        email: user.email,
+        tenantId: user.tenantId 
+       }
     );
 
     const refreshTokenPromise = this.signToken<Partial<ActiveUserContract>>(

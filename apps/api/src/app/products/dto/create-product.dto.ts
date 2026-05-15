@@ -1,5 +1,6 @@
 import { FileContract } from "@interfaces/file.contract";
 import { ProductContract } from "@interfaces/product.contract";
+import { CreateTenantContract } from "@interfaces/tenant.contract";
 import {
   IsArray,
   IsNotEmpty,
@@ -8,7 +9,7 @@ import {
   IsString,
 } from "class-validator";
 
-export class CreateProductDTO implements Omit<ProductContract, "id"> {
+export class CreateProductDTO  implements Omit<ProductContract, "id">, CreateTenantContract  {
   @IsNotEmpty()
   @IsString()
   public name!: string;
@@ -43,4 +44,7 @@ export class CreateProductDTO implements Omit<ProductContract, "id"> {
   @IsArray()
   @IsOptional()
   public categoryIds?: number[];
+
+  @IsNumber()
+  public tenantId!: number;
 }

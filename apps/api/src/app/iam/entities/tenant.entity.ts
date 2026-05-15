@@ -1,6 +1,9 @@
 import { TenantContract } from "@interfaces/tenant.contract";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Audit } from "../../common/utils/audit.util";
+import { PersonLegal } from "@api/person/entities/person-legal.entity";
+import { User } from "@api/users/entities/user.entity";
+
 
 @Entity()
 export class Tenant
@@ -10,10 +13,13 @@ export class Tenant
   @PrimaryGeneratedColumn()
   id!: number;
 
-  // @OneToOne(() => Company, (company) => company.id)
-  // @JoinColumn()
-  companyId?: number;
+  @OneToOne(() => PersonLegal, (personLegal) => personLegal.id)
+  @JoinColumn()
+  personLegalId?: number;
 
   @Column({ nullable: true })
   s3FileKey?: string;
+
+  @OneToMany(() => User, (user) => user.id)
+  user!: User[]
 }

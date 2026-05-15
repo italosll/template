@@ -9,6 +9,7 @@ import { CreateCategoryDTO } from "./dto/create-category.dto";
 import { FullCategoryDTO } from "./dto/full-category.dto";
 import { UpdateCategoryDTO } from "./dto/update-category.dto";
 import { Category } from "./entities/category.entity";
+import { Tenant } from "@api/iam/entities/tenant.entity";
 
 @Injectable()
 export class CategoriesService
@@ -16,7 +17,10 @@ export class CategoriesService
 {
   constructor(
     @InjectRepository(Category)
-    private _categoryRepository: Repository<Category>
+    private readonly _categoryRepository: Repository<Category>,
+    @InjectRepository(Tenant)
+    private readonly _tenantRepository: Repository<Tenant>,
+
   ) {}
 
   async findAll(category?: Partial<FullCategoryDTO>): Promise<Category[]> {
@@ -64,7 +68,15 @@ export class CategoriesService
         HttpStatus.CONFLICT
       );
 
+    const tenant = await this._tenantRepository.findOneBy({ id: createEntity.tenantId });
+    if (!tenant)
+      throw new HttpException(
+        HTTP_ERROR_MESSAGES.tenantNotFound(),
+        HttpStatus.NOT_FOUND
+      );
+
     const entity = this._categoryRepository.create(createEntity);
+    entity.tenant = tenant;
     const created = await this._categoryRepository.save(entity);
     const response = { id: created.id };
     return response;

@@ -7,10 +7,11 @@ import { Category } from "../categories/entities/category.entity";
 import { CommonModule } from "../common/common.module";
 import { S3FilesService } from "../common/files/s3-files.service";
 import { S3FilesCloudflareR2Service } from "../common/files/s3-files-cloudflare-r2.service";
+import { Tenant } from "@api/iam/entities/tenant.entity";
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([Product, Category]),
+    TypeOrmModule.forFeature([Product, Category, Tenant]),
     CommonModule
   ],
   providers:[

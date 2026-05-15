@@ -1,18 +1,22 @@
+import { TenantDTO } from "@api/common/dto/tenant.dto";
+import { CreateTenantContract } from "@interfaces/tenant.contract";
 import { UserContract } from "@interfaces/user.contract";
-import { IsString } from "class-validator";
-import { TenantDTO } from "../../common/dto/tenant.dto";
+import { IsNumber, isNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateUserDTO
-  extends TenantDTO
   implements
-    Omit<UserContract, "id" | "filterableEmail" | "filterablePhoneNumber">
+    Omit<UserContract, "id" | "filterableEmail" | "filterablePhoneNumber">, CreateTenantContract 
 {
+  @IsOptional()
   @IsString()
-  public phoneNumber?: string;
+  public phoneNumber?: string | null = null;
 
   @IsString()
-  public email?: string;
+  public email!: string;
 
   @IsString()
   public password!: string;
+
+  @IsNumber()
+  public tenantId!: number;
 }

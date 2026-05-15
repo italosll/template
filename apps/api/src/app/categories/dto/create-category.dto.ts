@@ -1,7 +1,8 @@
 import { CategoryContract } from "@interfaces/category.contract";
-import { IsNotEmpty, IsString } from "class-validator";
+import { CreateTenantContract } from "@interfaces/tenant.contract";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-export class CreateCategoryDTO implements Omit<CategoryContract, "id"> {
+export class CreateCategoryDTO implements Omit<CategoryContract, "id">, CreateTenantContract {
   @IsNotEmpty()
   @IsString()
   public name!: string;
@@ -9,6 +10,9 @@ export class CreateCategoryDTO implements Omit<CategoryContract, "id"> {
   @IsNotEmpty()
   @IsString()
   public code!: string;
+
+  @IsNumber()
+  public tenantId!: number;
 
   // constructor (createCategoryDTO:CreateCategoryDTO ){
   //   this.name = createCategoryDTO.name;

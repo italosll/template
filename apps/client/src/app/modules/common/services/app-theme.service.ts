@@ -3,7 +3,7 @@ import { COLOR_DETAILS } from "../components/app-settings-dialog/app-color-detai
 import { ColorPalettesEnum } from "../enums/color-palettes.enum";
 
 export const DEFAULT_THEME_COLOR = ColorPalettesEnum.azure;
-export const DEFAULT_THEME_BORDER_RADIUS_INTENSITY = 1;
+export const DEFAULT_THEME_BORDER_RADIUS_INTENSITY = 2;
 
 @Injectable({
   providedIn: "root",

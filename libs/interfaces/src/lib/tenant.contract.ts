@@ -5,3 +5,7 @@ export interface TenantContract {
   companyId: number;
   image: FileContract;
 }
+
+export interface CreateTenantContract{
+  tenantId:number;
+}

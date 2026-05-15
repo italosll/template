@@ -14,6 +14,7 @@ import { UpdateProductDTO } from "./dto/update-product.dto";
 import { Product } from "./entities/product.entity";
 import { ProductFactory } from "./factories/product.factory";
 import { getQueriesParameters } from "./utils/get-queries-parameters.util";
+import { Tenant } from "@api/iam/entities/tenant.entity";
 
 @Injectable()
 export class ProductsService
@@ -22,6 +23,7 @@ export class ProductsService
 {
   constructor(
     @InjectRepository(Product) private _productRepository: Repository<Product>,
+    @InjectRepository(Tenant) private _tenantRepository: Repository<Tenant>,
     @InjectRepository(Category)
     private _categoryRepository: Repository<Category>,
     @Inject(S3FilesService) private _filesService: S3FilesService
@@ -79,6 +81,14 @@ export class ProductsService
     const categories = await this._categoryRepository.findBy({
       id: In(createProduct?.categoryIds ?? []),
     });
+ 
+
+    const tenant = await this._tenantRepository.findOneBy({ id: createProduct.tenantId });
+    if (!tenant)
+      throw new HttpException(
+        HTTP_ERROR_MESSAGES.tenantNotFound(),
+        HttpStatus.NOT_FOUND
+      );
 
     const entity = this._productRepository.create(createProduct);
     entity.categories = categories;
@@ -86,6 +96,8 @@ export class ProductsService
       ["products"],
       createProduct?.image?.base64File
     );
+
+    entity.tenant = tenant!;
     const created = await this._productRepository.save(entity);
     const response = { id: created.id };
     return response;
