@@ -1,7 +1,7 @@
 import { TenantDTO } from "@api/common/dto/tenant.dto";
 import { CreateTenantContract } from "@interfaces/tenant.contract";
 import { UserContract } from "@interfaces/user.contract";
-import { IsNumber, isNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateUserDTO
   implements
@@ -19,4 +19,9 @@ export class CreateUserDTO
 
   @IsNumber()
   public tenantId!: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  public roleIds?: number[];
 }

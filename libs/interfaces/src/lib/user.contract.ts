@@ -5,4 +5,5 @@ export interface UserContract {
   password: string;
   phoneNumber?: string | null;
   filterablePhoneNumber?: string;
+  roleIds?: number[];
 }

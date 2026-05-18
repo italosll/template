@@ -10,6 +10,7 @@ export class UserFactory {
       email: "email@email.com",
       filterableEmail: "emai",
       password: "password",
+      roleIds: [1, 2],
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: new Date(),

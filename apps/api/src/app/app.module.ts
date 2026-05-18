@@ -9,6 +9,7 @@ import s3FilesConfig from "./common/config/s3-files.config";
 import databaseConfig from "./core/config/database.config";
 import { DatabaseConfigContract } from "./core/contracts/database.config.contract";
 import { IamModule } from "./iam/iam.module";
+import { RolesModule } from "./iam/roles/roles.module";
 import { PersonModule } from "./person/person.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
@@ -19,6 +20,7 @@ import { UsersModule } from "./users/users.module";
     ProductsModule,
     CategoriesModule,
     IamModule,
+    RolesModule,
     PersonModule,
     ConfigModule.forRoot({
       isGlobal: true,

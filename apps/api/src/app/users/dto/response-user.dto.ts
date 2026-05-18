@@ -9,6 +9,7 @@ export class responseUserDTO implements UserContract, AuditContract {
   public email!: string;
   public password!: string;
   public filterableEmail!: string;
+  public roleIds?: number[];
   public createdAt!: Date;
   public updatedAt!: Date;
   public deletedAt!: Date;

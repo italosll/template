@@ -49,9 +49,6 @@ export class ProductsService
     const products = await queryBuilder
       .loadRelationIdAndMap("product.categoryIds", "product.categories")
       .getMany();
-    console.log("products----------")
-
-    console.log(products)
 
     const productsWithFiles = products.map((product) => ({
       ...new ProductFactory().response(product),

@@ -2,7 +2,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
 import { SignUpDTO } from "../dto/sign-up.dto";
-import { HashingService } from "../hashing/hashing.service";
 import { MYSQL_VIOLATION_ERROR_CODES } from "@api/common/utils/mysql-violation-error-codes";
 import { ConflictException } from "@nestjs/common";
 import { PersonLegal } from "@api/person/entities/person-legal.entity";
@@ -38,7 +37,7 @@ export class TenantService {
       const user = await this._usersService.create({
         email: signUpDTO.email,
         password: signUpDTO.password,
-        
+        tenantId: tenant.id,
       })
 
       return { id: user.id };

@@ -27,6 +27,9 @@ export class User extends Audit implements UserContract, CreateTenantContract {
   @Column({ select: false })
   password!: string;
 
+  @Column({ type: "json", nullable: true })
+  roleIds?: number[];
+
   @ManyToOne(() => Tenant, (tenant) => tenant.id)
   tenant!: Tenant;
 
@@ -44,6 +47,7 @@ export class User extends Audit implements UserContract, CreateTenantContract {
     user.filterablePhoneNumber = userData?.phoneNumber?.slice(0, 4);
     user.password = userData.password;
     user.tenant = tenant;
+    user.roleIds = userData.roleIds;
 
     if (userData?.email) {
       user.email = encryptionService?.encrypt(userData?.email);
@@ -72,6 +76,7 @@ export class User extends Audit implements UserContract, CreateTenantContract {
       user.updatedAt = u.updatedAt;
       user.recoveredAt = u.recoveredAt;
       user.tenantId = u.tenantId;
+      user.roleIds = u.roleIds;
 
       if (u.email) {
         (user.email = encryptionService.decrypt(u.email)),

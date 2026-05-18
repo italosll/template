@@ -1,6 +1,6 @@
 import { TenantDTO } from "@api/common/dto/tenant.dto";
 import { UserContract } from "@interfaces/user.contract";
-import { IsString } from "class-validator";
+import { IsArray, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class UpdateUserDTO
   extends TenantDTO
@@ -17,4 +17,9 @@ export class UpdateUserDTO
 
   @IsString()
   public password!: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  public roleIds?: number[];
 }
