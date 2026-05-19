@@ -38,10 +38,9 @@ export class PersonService {
     personLegal: PersonLegalContract
   ): Promise<CreateDefaultResponseDTO> {
     return this.datasource.transaction(async (manager) => {
-      const personRepository = manager.getRepository(Person);
       const personLegalRepository = manager.getRepository(PersonLegal);
 
-      const existingPerson = await personRepository.findOne({
+      const existingPerson = await personLegalRepository.findOne({
         where: { document: personLegal.document },
       });
 
@@ -49,7 +48,7 @@ export class PersonService {
         throw new HttpException(ALREADY_EXISTS, HttpStatus.CONFLICT);
       }
 
-      const newPerson = await personRepository.save(personLegal);
+      const newPerson = await personLegalRepository.save(personLegal);
       await personLegalRepository.save({
         ...personLegal,
         personId: newPerson.id,

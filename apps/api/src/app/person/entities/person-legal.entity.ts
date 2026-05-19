@@ -22,6 +22,9 @@ export class PersonLegal
   @Column()
   companyRealName!: string;
 
+  @Column({ type: "varchar", length: 14 })
+  document!: string;
+
   @OneToOne(() => Person, (person) => person.id)
   @JoinColumn()
   personId!: number;

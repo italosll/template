@@ -22,6 +22,9 @@ export class PersonNatural
   @Column({ unique: true })
   birthDate!: Date;
 
+  @Column({ unique: true,  type: "varchar", length: 14 })
+  document!: string;
+
   @OneToOne(() => Person, (person) => person.id)
   @JoinColumn()
   personId!: number;

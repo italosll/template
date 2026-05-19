@@ -3,13 +3,15 @@ export interface PersonContract {
   name: string;
   email: string;
   phoneNumber: string;
-  document: string;
 }
 
 export interface PersonLegalContract extends PersonContract {
   companyRealName: string;
+  document: string;
+
 }
 
 export interface PersonNaturalContract extends PersonContract {
   birthDate: Date;
+  document: string;
 }

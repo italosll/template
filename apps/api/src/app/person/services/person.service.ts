@@ -12,7 +12,7 @@ export class PersonService {
     private readonly personRepository: Repository<Person>
   ) {}
 
-  async findAll(personLegal?: Partial<PersonLegalContract>): Promise<Person[]> {
+  async findAll(person?: Partial<PersonLegalContract>): Promise<Person[]> {
     const queryBuilder =
       this.personRepository.createQueryBuilder("personLegal");
     const queriesParameters = getQueriesParameters();
@@ -20,7 +20,7 @@ export class PersonService {
     // queryBuilder.andWhereMultipleColumns(personLegal ?? {}, queriesParameters);
 
     const persons = await queryBuilder
-      .loadRelationIdAndMap("personLegal.personId", "personLegal.personId")
+      .loadRelationIdAndMap("person.personId", "person.personId")
       .getMany();
 
     return persons;

@@ -17,8 +17,6 @@ export class Person extends Audit implements PersonContract {
   @Column({ nullable: true })
   phoneNumber!: string;
 
-  @Column({ unique: true })
-  document!: string;
 
   @ManyToOne(() => Tenant, (tenant) => tenant.id)
   tenantId!: number;
