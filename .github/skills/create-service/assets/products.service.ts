@@ -1,0 +1,165 @@
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { In, Repository } from "typeorm";
+import { Category } from "../categories/entities/category.entity";
+import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
+import { S3FilesService } from "../common/files/s3-files.service";
+import { EntityService } from "../common/services/entity.service";
+import { ColumnQueryParameters } from "../common/utils/crud-helper.util";
+import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
+import { CreateProductDTO } from "./dto/create-product.dto";
+import { ResponseProductDTO } from "./dto/response-product.dto";
+import { UpdateProductDTO } from "./dto/update-product.dto";
+import { Product } from "./entities/product.entity";
+import { ProductFactory } from "./factories/product.factory";
+import { getQueriesParameters } from "./utils/get-queries-parameters.util";
+import { Tenant } from "@api/iam/entities/tenant.entity";
+
+@Injectable()
+export class ProductsService
+  implements
+    EntityService<ResponseProductDTO, CreateProductDTO, UpdateProductDTO>
+{
+  constructor(
+    @InjectRepository(Product) private _productRepository: Repository<Product>,
+    @InjectRepository(Tenant) private _tenantRepository: Repository<Tenant>,
+    @InjectRepository(Category)
+    private _categoryRepository: Repository<Category>,
+    @Inject(S3FilesService) private _filesService: S3FilesService
+  ) {}
+
+  private _findOneProduct(
+    key: string,
+    value: unknown
+  ): Promise<Product | null> {
+    return this._productRepository.findOne({
+      where: { [key]: value },
+      relations: ["categories"],
+    });
+  }
+
+  async findAll(
+    params: { textToSearch?: string; id?: number }
+  ): Promise<ResponseProductDTO[]> {
+    const queryBuilder = this._productRepository.createQueryBuilder("product");
+    const queriesParameters: ColumnQueryParameters<Product>[] =
+      getQueriesParameters();
+
+    queryBuilder.andWhereMultipleColumns(params, queriesParameters);
+
+    const products = await queryBuilder
+      .loadRelationIdAndMap("product.categoryIds", "product.categories")
+      .getMany();
+
+    const productsWithFiles = products.map((product) => ({
+      ...new ProductFactory().response(product),
+      image: this._filesService.getFileInfoByS3FileKey(
+        product?.s3FileKey,
+        product.name
+      ),
+    }));
+    return productsWithFiles;
+  }
+
+  async create(
+    createProduct: CreateProductDTO
+  ): Promise<CreateDefaultResponseDTO> {
+    const registeredProduct = await this._findOneProduct(
+      "code",
+      createProduct.code
+    );
+
+    if (registeredProduct) {
+      throw new HttpException(
+        HTTP_ERROR_MESSAGES.alreadyExists(),
+        HttpStatus.CONFLICT
+      );
+    }
+
+    const categories = await this._categoryRepository.findBy({
+      id: In(createProduct?.categoryIds ?? []),
+    });
+
+    const tenant = await this._tenantRepository.findOneBy({
+      id: createProduct.tenantId,
+    });
+    if (!tenant)
+      throw new HttpException(
+        HTTP_ERROR_MESSAGES.tenantNotFound(),
+        HttpStatus.NOT_FOUND
+      );
+
+    const entity = this._productRepository.create(createProduct);
+    entity.categories = categories;
+    entity.s3FileKey = await this._filesService.upload(
+      ["products"],
+      createProduct?.image?.base64File
+    );
+
+    entity.tenant = tenant;
+    const created = await this._productRepository.save(entity);
+    const response = { id: created.id };
+    return response;
+  }
+
+  async update(entity?: UpdateProductDTO): Promise<UpdateDefaultResponseDTO> {
+    const registeredProduct = await this._findOneProduct("id", entity?.id);
+
+    if (!registeredProduct)
+      throw new HttpException(
+        HTTP_ERROR_MESSAGES.notFound(),
+        HttpStatus.NOT_FOUND
+      );
+
+    const categories = await this._categoryRepository.findBy({
+      id: In(entity?.categoryIds ?? []),
+    });
+    this._productRepository.merge(registeredProduct, entity ?? {});
+    registeredProduct.categories = categories;
+
+    const resposta = await this._filesService.upload(
+      ["products"],
+      entity?.image?.base64File,
+      registeredProduct?.s3FileKey
+    );
+    registeredProduct.s3FileKey = resposta;
+
+    await this._productRepository.save(registeredProduct);
+    const response = { id: registeredProduct.id };
+
+    return response;
+  }
+
+  async delete(ids: number[]) {
+    const products = await this._productRepository.find();
+
+    ids.forEach(async (id) => {
+      const registeredProduct = products?.find((user) => user.id === id);
+      if (!registeredProduct)
+        throw new HttpException(
+          `${HTTP_ERROR_MESSAGES.notFound()} | idNotFound:${id}`,
+          HttpStatus.NOT_FOUND
+        );
+    });
+
+    await this._productRepository.softDelete({ id: In(ids) });
+    return { ids };
+  }
+
+  async hardDelete(ids: number[]) {
+    const products = await this._productRepository.find();
+
+    ids.forEach(async (id) => {
+      const registeredProduct = products?.find((user) => user.id === id);
+      if (!registeredProduct)
+        throw new HttpException(
+          HTTP_ERROR_MESSAGES.notFound(),
+          HttpStatus.NOT_FOUND
+        );
+    });
+
+    await this._productRepository.delete({ id: In(ids) });
+    return { ids };
+  }
+}
