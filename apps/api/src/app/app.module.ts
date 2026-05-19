@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { CategoriesModule } from "./categories/categories.module";
+import { AddressModule } from "./address/address.module";
 import s3FilesConfig from "./common/config/s3-files.config";
 import databaseConfig from "./core/config/database.config";
 import { DatabaseConfigContract } from "./core/contracts/database.config.contract";
@@ -19,6 +20,7 @@ import { UsersModule } from "./users/users.module";
     UsersModule,
     ProductsModule,
     CategoriesModule,
+    AddressModule,
     IamModule,
     RolesModule,
     PersonModule,

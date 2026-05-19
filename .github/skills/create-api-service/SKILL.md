@@ -1,10 +1,10 @@
 ---
-name: create-service
-description: "Use when: create service, generate NestJS service, CRUD service, DTO-based service, EntityService, TypeORM repository, tenant validation, HTTP_ERROR_MESSAGES, S3 upload, query builder filters."
-argument-hint: "create service <DomainName> (with details: entity, DTOs, relations, tenant, files)"
+name: create-api-service
+description: "Use when: create API service, generate NestJS service, CRUD service, DTO-based service, EntityService, TypeORM repository, tenant validation, HTTP_ERROR_MESSAGES, andWhereMultipleColumns query builder filters."
+argument-hint: "create api service <DomainName> (with details: entity, DTOs, relations, tenant, files)"
 ---
 
-# Create Service (NestJS)
+# Create API Service (NestJS)
 
 ## When to Use
 - Generate a new NestJS service with CRUD methods and DTOs
@@ -28,7 +28,13 @@ argument-hint: "create service <DomainName> (with details: entity, DTOs, relatio
 3. Add a private finder (if needed) for uniqueness or update checks.
 4. Implement `findAll`:
    - Use `createQueryBuilder`.
-   - Apply filters via manual `andWhere` clauses or `andWhereMultipleColumns` with `getQueriesParameters`.
+   - Prefer `andWhereMultipleColumns` with `getQueriesParameters` over manual `andWhere` chains.
+   - Example:
+     ```ts
+     const queryBuilder = this._entityRepository.createQueryBuilder("entity");
+     const queriesParameters = getQueriesParameters();
+     queryBuilder.andWhereMultipleColumns(params, queriesParameters);
+     ```
    - Load relation ids when needed.
    - Map results to response DTOs (use factory if available).
    - Add `image` or file metadata using `S3FilesService.getFileInfoByS3FileKey` when relevant.
