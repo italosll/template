@@ -5,6 +5,7 @@ export * from './lib/category.contract';
 export * from './lib/permission.contract';
 export * from './lib/role.contract';
 export * from './lib/address.contract';
+export * from './lib/service-order.contract';
 
 
 

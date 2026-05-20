@@ -14,6 +14,7 @@ import { RolesModule } from "./iam/roles/roles.module";
 import { PersonModule } from "./person/person.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
+import { ServiceOrderModule } from "./service-order/service-order.module";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersModule } from "./users/users.module";
     ProductsModule,
     CategoriesModule,
     AddressModule,
+    ServiceOrderModule,
     IamModule,
     RolesModule,
     PersonModule,
