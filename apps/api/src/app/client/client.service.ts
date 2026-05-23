@@ -4,9 +4,10 @@ import { EntityService } from "@api/common/services/entity.service";
 import { HTTP_ERROR_MESSAGES } from "@api/common/utils/http-error-messages.util";
 import { PersonLegal } from "@api/person/entities/person-legal.entity";
 import { PersonNatural } from "@api/person/entities/person-natural.entity";
+import { Person } from "@api/person/entities/person.entity";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository } from "typeorm";
+import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
+import { DataSource, In, Repository } from "typeorm";
 import { CreateClientDTO } from "./dto/create-client.dto";
 import { ResponseClientDTO } from "./dto/response-client.dto";
 import { UpdateClientDTO } from "./dto/update-client.dto";
@@ -20,10 +21,7 @@ export class ClientService
   constructor(
     @InjectRepository(Client)
     private readonly _clientRepository: Repository<Client>,
-    @InjectRepository(PersonLegal)
-    private readonly _personLegalRepository: Repository<PersonLegal>,
-    @InjectRepository(PersonNatural)
-    private readonly _personNaturalRepository: Repository<PersonNatural>
+    @InjectDataSource() private readonly _dataSource: DataSource
   ) {}
 
   async findAll(params: {
@@ -40,161 +38,253 @@ export class ClientService
   }
 
   async create(createClient: CreateClientDTO): Promise<CreateDefaultResponseDTO> {
-    const hasLegal = !!createClient.personLegalId;
-    const hasNatural = !!createClient.personNaturalId;
+    const hasLegal = !!createClient.personLegal;
+    const hasNatural = !!createClient.personNatural;
 
     if (hasLegal === hasNatural) {
       throw new HttpException(
-        "Cliente deve referenciar uma pessoa física ou uma pessoa jurídica. Não ambos",
+        "Cliente deve informar dados de pessoa fisica ou juridica. Nao ambos.",
         HttpStatus.BAD_REQUEST
       );
     }
 
-        if (!hasLegal  && !hasNatural) {
-      throw new HttpException(
-        "Cliente deve referenciar uma pessoa física ou uma pessoa jurídica. Não nenhum dos dois",
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    return this._dataSource.transaction(async (manager) => {
+      const clientRepository = manager.getRepository(Client);
+    //   const personRepository = manager.getRepository(Person);
+      const personLegalRepository = manager.getRepository(PersonLegal);
+      const personNaturalRepository = manager.getRepository(PersonNatural);
 
-    if (hasLegal) {
-      const legalPerson = await this._personLegalRepository.findOneBy({
-        id: createClient.personLegalId,
-      });
+      if (hasLegal) {
+        const personLegal = createClient.personLegal!;
+        const existingLegal = await personLegalRepository.findOne({
+          where: { document: personLegal.document },
+        });
 
-      if (!legalPerson) {
-        throw new HttpException(
-          HTTP_ERROR_MESSAGES.notFound(),
-          HttpStatus.NOT_FOUND
+        if (existingLegal) {
+          throw new HttpException(
+            HTTP_ERROR_MESSAGES.alreadyExists(),
+            HttpStatus.CONFLICT
+          );
+        }
+
+        if (!hasLegal && !hasNatural) {
+            throw new HttpException(
+                "Cliente deve informar dados da pessoa fisica ou juridica.",
+                HttpStatus.BAD_REQUEST
+            );
+        }
+
+        // const person = await personRepository.save(
+        //   personRepository.create({
+        //     name: personLegal.name,
+        //     email: personLegal.email,
+        //     phoneNumber: personLegal.phoneNumber,
+        //   })
+        // );
+
+        const legal = await personLegalRepository.save(
+          personLegalRepository.create({
+            companyRealName: personLegal.companyRealName,
+            document: personLegal.document,
+            // personId: person.id,
+          })
         );
+
+        const client = await clientRepository.save(
+          clientRepository.create({ personLegalId: legal.id })
+        );
+
+        return { id: client.id };
       }
 
-      const existingClient = await this._clientRepository.findOneBy({
-        personLegalId: createClient.personLegalId,
+      const personNatural = createClient.personNatural!;
+      const existingNatural = await personNaturalRepository.findOne({
+        where: { document: personNatural.document },
       });
 
-      if (existingClient) {
+      if (existingNatural) {
         throw new HttpException(
           HTTP_ERROR_MESSAGES.alreadyExists(),
           HttpStatus.CONFLICT
         );
       }
-    }
 
-    if (hasNatural) {
-      const naturalPerson = await this._personNaturalRepository.findOneBy({
-        id: createClient.personNaturalId,
-      });
+    //   const person = await personRepository.save(
+    //     personRepository.create({
+    //       name: personNatural.name,
+    //       email: personNatural.email,
+    //       phoneNumber: personNatural.phoneNumber,
+    //     })
+    //   );
 
-      if (!naturalPerson) {
-        throw new HttpException(
-          HTTP_ERROR_MESSAGES.notFound(),
-          HttpStatus.NOT_FOUND
-        );
-      }
+      const natural = await personNaturalRepository.save(
+        personNaturalRepository.create({
+          document: personNatural.document,
+          birthDate: personNatural.birthDate,
+        //   personId: person.id,
+        })
+      );
 
-      const existingClient = await this._clientRepository.findOneBy({
-        personNaturalId: createClient.personNaturalId,
-      });
+      const client = await clientRepository.save(
+        clientRepository.create({ personNaturalId: natural.id })
+      );
 
-      if (existingClient) {
-        throw new HttpException(
-          HTTP_ERROR_MESSAGES.alreadyExists(),
-          HttpStatus.CONFLICT
-        );
-      }
-    }
-
-    const entity = this._clientRepository.create(createClient);
-    const created = await this._clientRepository.save(entity);
-    return { id: created.id };
+      return { id: client.id };
+    });
   }
 
-  async update(updateClient?: UpdateClientDTO): Promise<UpdateDefaultResponseDTO> {
-    const registeredClient = await this._clientRepository.findOneBy({
-      id: updateClient?.id,
-    });
+  async update(updateClient: UpdateClientDTO): Promise<UpdateDefaultResponseDTO> {
 
-    if (!registeredClient) {
-      throw new HttpException(
-        HTTP_ERROR_MESSAGES.notFound(),
-        HttpStatus.NOT_FOUND
-      );
-    }
-
-    const merged = this._clientRepository.merge(
-      registeredClient,
-      updateClient ?? {}
-    );
-
-    if (updateClient?.personLegalId && !updateClient?.personNaturalId) {
-      merged.personNaturalId = undefined;
-    }
-
-    if (updateClient?.personNaturalId && !updateClient?.personLegalId) {
-      merged.personLegalId = undefined;
-    }
-
-    const hasLegal = !!merged.personLegalId;
-    const hasNatural = !!merged.personNaturalId;
+    const hasLegal = !!updateClient.personLegal;
+    const hasNatural = !!updateClient.personNatural;
 
     if (hasLegal === hasNatural) {
       throw new HttpException(
-        "Client must reference either a legal person or a natural person.",
+        "Cliente deve informar dados de pessoa fisica ou juridica. Nao ambos.",
         HttpStatus.BAD_REQUEST
       );
     }
 
-    if (hasLegal) {
-      const legalPerson = await this._personLegalRepository.findOneBy({
-        id: merged.personLegalId,
+    if (!hasLegal && !hasNatural) {
+      throw new HttpException(
+        "Cliente deve informar dados da pessoa fisica ou juridica.",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    return this._dataSource.transaction(async (manager) => {
+      const clientRepository = manager.getRepository(Client);
+      const personRepository = manager.getRepository(Person);
+      const personLegalRepository = manager.getRepository(PersonLegal);
+      const personNaturalRepository = manager.getRepository(PersonNatural);
+
+      const registeredClient = await clientRepository.findOneBy({
+        id: updateClient.id,
       });
 
-      if (!legalPerson) {
+      if (!registeredClient) {
         throw new HttpException(
           HTTP_ERROR_MESSAGES.notFound(),
           HttpStatus.NOT_FOUND
         );
       }
 
-      const existingClient = await this._clientRepository.findOneBy({
-        personLegalId: merged.personLegalId,
-      });
+      if (hasLegal) {
+        if (!registeredClient.personLegalId) {
+          throw new HttpException(
+            "Cliente nao possui pessoa juridica vinculada.",
+            HttpStatus.BAD_REQUEST
+          );
+        }
 
-      if (existingClient && existingClient.id !== registeredClient.id) {
-        throw new HttpException(
-          HTTP_ERROR_MESSAGES.alreadyExists(),
-          HttpStatus.CONFLICT
-        );
+        const personLegal = await personLegalRepository.findOneBy({
+          id: registeredClient.personLegalId,
+        });
+
+        if (!personLegal) {
+          throw new HttpException(
+            HTTP_ERROR_MESSAGES.notFound(),
+            HttpStatus.NOT_FOUND
+          );
+        }
+
+        const person = await personRepository.findOneBy({
+          id: personLegal.personId,
+        });
+
+        if (!person) {
+          throw new HttpException(
+            HTTP_ERROR_MESSAGES.notFound(),
+            HttpStatus.NOT_FOUND
+          );
+        }
+
+        const legalPayload = updateClient.personLegal!;
+        const existingLegal = await personLegalRepository.findOne({
+          where: { document: legalPayload.document },
+        });
+
+        if (existingLegal && existingLegal.id !== personLegal.id) {
+          throw new HttpException(
+            HTTP_ERROR_MESSAGES.alreadyExists(),
+            HttpStatus.CONFLICT
+          );
+        }
+
+        personRepository.merge(person, {
+          name: legalPayload.name,
+          email: legalPayload.email,
+          phoneNumber: legalPayload.phoneNumber,
+        });
+
+        personLegalRepository.merge(personLegal, {
+          companyRealName: legalPayload.companyRealName,
+          document: legalPayload.document,
+        });
+
+        await personRepository.save(person);
+        await personLegalRepository.save(personLegal);
       }
-    }
 
-    if (hasNatural) {
-      const naturalPerson = await this._personNaturalRepository.findOneBy({
-        id: merged.personNaturalId,
-      });
+      if (hasNatural) {
+        if (!registeredClient.personNaturalId) {
+          throw new HttpException(
+            "Cliente nao possui pessoa fisica vinculada.",
+            HttpStatus.BAD_REQUEST
+          );
+        }
 
-      if (!naturalPerson) {
-        throw new HttpException(
-          HTTP_ERROR_MESSAGES.notFound(),
-          HttpStatus.NOT_FOUND
-        );
+        const personNatural = await personNaturalRepository.findOneBy({
+          id: registeredClient.personNaturalId,
+        });
+
+        if (!personNatural) {
+          throw new HttpException(
+            HTTP_ERROR_MESSAGES.notFound(),
+            HttpStatus.NOT_FOUND
+          );
+        }
+
+        const person = await personRepository.findOneBy({
+          id: personNatural.personId,
+        });
+
+        if (!person) {
+          throw new HttpException(
+            HTTP_ERROR_MESSAGES.notFound(),
+            HttpStatus.NOT_FOUND
+          );
+        }
+
+        const naturalPayload = updateClient.personNatural!;
+        const existingNatural = await personNaturalRepository.findOne({
+          where: { document: naturalPayload.document },
+        });
+
+        if (existingNatural && existingNatural.id !== personNatural.id) {
+          throw new HttpException(
+            HTTP_ERROR_MESSAGES.alreadyExists(),
+            HttpStatus.CONFLICT
+          );
+        }
+
+        personRepository.merge(person, {
+          name: naturalPayload.name,
+          email: naturalPayload.email,
+          phoneNumber: naturalPayload.phoneNumber,
+        });
+
+        personNaturalRepository.merge(personNatural, {
+          document: naturalPayload.document,
+          birthDate: naturalPayload.birthDate,
+        });
+
+        await personRepository.save(person);
+        await personNaturalRepository.save(personNatural);
       }
 
-      const existingClient = await this._clientRepository.findOneBy({
-        personNaturalId: merged.personNaturalId,
-      });
-
-      if (existingClient && existingClient.id !== registeredClient.id) {
-        throw new HttpException(
-          HTTP_ERROR_MESSAGES.alreadyExists(),
-          HttpStatus.CONFLICT
-        );
-      }
-    }
-
-    await this._clientRepository.save(merged);
-    return { id: registeredClient.id };
+      return { id: registeredClient.id };
+    });
   }
 
   async delete(ids: number[]) {

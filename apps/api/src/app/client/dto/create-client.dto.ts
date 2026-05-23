@@ -1,12 +1,16 @@
-import { ClientContract } from "@interfaces/client.contract";
-import { IsNumber, IsOptional } from "class-validator";
+import { CreatePersonLegalDTO } from "@api/person/dto/create-person.legal";
+import { CreatePersonNaturalDTO } from "@api/person/dto/create-person-natural.dto";
+import { Type } from "class-transformer";
+import { IsOptional, ValidateNested } from "class-validator";
 
-export class CreateClientDTO implements Omit<ClientContract, "id"> {
+export class CreateClientDTO {
   @IsOptional()
-  @IsNumber()
-  personLegalId?: number;
+  @ValidateNested()
+  @Type(() => CreatePersonLegalDTO)
+  personLegal?: CreatePersonLegalDTO;
 
   @IsOptional()
-  @IsNumber()
-  personNaturalId?: number;
+  @ValidateNested()
+  @Type(() => CreatePersonNaturalDTO)
+  personNatural?: CreatePersonNaturalDTO;
 }
