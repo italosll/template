@@ -16,6 +16,7 @@ import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
 import { ServiceOrderModule } from "./service-order/service-order.module";
 import { ClientModule } from "./client/client.module";
+import { QuotationModule } from "./quotation/quotation.module";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ClientModule } from "./client/client.module";
     AddressModule,
     ServiceOrderModule,
     ClientModule,
+    QuotationModule,
     IamModule,
     RolesModule,
     PersonModule,
