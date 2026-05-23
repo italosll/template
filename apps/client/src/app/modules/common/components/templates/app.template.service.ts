@@ -9,6 +9,7 @@ import { getStartRoutes } from "@client/start/app-index.routes";
 import { getUsersRoutes } from "@client/users/app-index.routes";
 import { filter, map } from "rxjs";
 import { getServiceOrdersRoutes } from "../../../service-orders/app-index.routes";
+import { getClientsRoutes } from "../../../clients/app-index.routes";
 
 @Injectable()
 export class TemplateService {
@@ -41,6 +42,7 @@ export class TemplateService {
       getProductsRoutes().client.products,
       getUsersRoutes().client.users,
       getServiceOrdersRoutes().client.serviceOrders,
+      getClientsRoutes().client.clients,
     ];
     const navigationItems = routes.map(
       ({ title, path, icon }) => new NavigationItemModel(title, path, icon)
