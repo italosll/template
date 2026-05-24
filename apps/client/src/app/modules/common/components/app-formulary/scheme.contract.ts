@@ -39,10 +39,22 @@ export interface SchemeAutoComplete<T> extends SchemeBaseInput<T> {
   optionsValue?: string;
 }
 
+export interface SchemeRadioOption {
+  description: string;
+  value: unknown;
+}
+
+export interface SchemeRadio<T> extends SchemeBaseInput<T> {
+  type: "radio";
+  title?: string | null;
+  options: SchemeRadioOption[];
+}
+
 export type SchemeInputsContract<T = any> =
   | SchemeInput<T>
   | SchemeSelect<T>
   | SchemeAutoComplete<T>
+  | SchemeRadio<T>
   | SchemeId<T>;
 
 interface SchemeContract<T> {

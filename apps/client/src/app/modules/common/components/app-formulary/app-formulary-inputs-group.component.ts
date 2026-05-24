@@ -10,6 +10,7 @@ import {
   MatFormFieldModule,
 } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatRadioModule } from "@angular/material/radio";
 import { InputImageComponent } from "../app-input-file/app-input-file.component";
 import { SchemesContract } from "./scheme.contract";
 
@@ -20,6 +21,7 @@ import { SchemesContract } from "./scheme.contract";
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
+    MatRadioModule,
     InputImageComponent,
   ],
   providers: [
@@ -47,6 +49,17 @@ import { SchemesContract } from "./scheme.contract";
           grid-template-columns: repeat(12, 1fr);
         }
       }
+
+      .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .radio-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
     `,
   ],
   template: `
@@ -70,6 +83,20 @@ import { SchemesContract } from "./scheme.contract";
       }}</mat-label>
       <app-input-file [formControlName]="input.name" matInput />
     </mat-form-field>
+
+    } @if(input.type === "radio"){
+    <div [style.grid-column]="'span ' + input.width" [formGroup]="form!">
+      @if(input.title !== null && input.title !== undefined){
+      <span class="radio-title">{{ input.title }}</span>
+      }
+      <mat-radio-group class="radio-group" [formControlName]="input.name">
+        @for(option of input.options; track option.value){
+        <mat-radio-button [value]="option.value">
+          {{ option.description }}
+        </mat-radio-button>
+        }
+      </mat-radio-group>
+    </div>
 
     } }
   `,

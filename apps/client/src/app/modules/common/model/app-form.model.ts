@@ -5,11 +5,11 @@ import { FormControlsOf } from "../utils/app-form-controls-of.util";
 
 export class FormModel<DTO> {
   private _schemes: SchemesContract<DTO>;
-  private _form: FormGroup<FormControlsOf<DTO>>;
+  public readonly form: FormGroup<FormControlsOf<DTO>>;
 
   constructor(schemes: SchemesContract<DTO>) {
     this._schemes = schemes.map((s) => ({ ...s, uniqueId: this._uniqueId() }));
-    this._form = new FormularyUtils<DTO>().create(this._schemes);
+    this.form = new FormularyUtils<DTO>().create(this._schemes);
   }
 
   private _uniqueId(): string {
@@ -20,7 +20,5 @@ export class FormModel<DTO> {
     return this._schemes;
   }
 
-  public get form(): FormGroup<FormControlsOf<DTO>> {
-    return this._form;
-  }
+ 
 }

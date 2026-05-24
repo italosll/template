@@ -1,3 +1,4 @@
+import { PERSON_TYPE } from "@client/common/constants/person-type.constant";
 import { FormModel } from "@client/common/model/app-form.model";
 
 export type ClientFormValue = {
@@ -8,7 +9,10 @@ export type ClientFormValue = {
   document?: string;
   companyRealName?: string;
   birthDate?: string;
+  tipoPessoa?: string;
 };
+
+
 
 export class ClientModel extends FormModel<ClientFormValue> {
   constructor() {
@@ -19,6 +23,17 @@ export class ClientModel extends FormModel<ClientFormValue> {
           {
             type: "id",
             name: "id",
+          },
+          {
+            type:"radio",
+            name:"tipoPessoa",
+            title:"Tipo",
+            width:12,
+            initialValue:PERSON_TYPE.NATURAL,
+            options:[
+              {description:"Pessoa Física", value:PERSON_TYPE.NATURAL},
+              {description:"Pessoa Jurídica", value:PERSON_TYPE.LEGAL},
+            ]
           },
           {
             type: "text",
@@ -59,5 +74,8 @@ export class ClientModel extends FormModel<ClientFormValue> {
         ],
       },
     ]);
+
   }
+
+
 }
