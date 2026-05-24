@@ -1,30 +1,15 @@
-import { BooleanInput, coerceBooleanProperty } from "@angular/cdk/coercion";
-
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  effect,
-  ElementRef,
-  HostBinding,
   inject,
-  Input,
-  OnDestroy,
   signal,
-  viewChild,
   ViewEncapsulation,
 } from "@angular/core";
-import { ControlValueAccessor, FormBuilder, FormsModule } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { FileUtil } from "@client/common/utils/app-file.util";
-import { FileContract } from "@interfaces/file.contract";
-import { debounceTime, distinctUntilChanged, Subject, take } from "rxjs";
-import { BaseInputDirective } from "../../directives/app-base-input.directive";
-import { ActivatedRoute, Router } from "@angular/router";
+import { debounceTime, distinctUntilChanged, take } from "rxjs";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { BaseHttpService } from "@client/common/http/app-base.http.service";
 import { DataSourceService } from "@client/common/services/app-data-source.service";
@@ -38,7 +23,6 @@ import { DataSourceService } from "@client/common/services/app-data-source.servi
     FormsModule,
     MatButtonModule,
     MatIconModule,
-    MatTooltipModule,
     MatInputModule
 ],
   providers: [

@@ -10,6 +10,7 @@ export class SignUpStepImageModel extends FormModel<TenantContract> {
           {
             type: "image",
             name: "image",
+            initialValue: { base64File: "", url: "", name: "" },
             width: 12,
           },
         ],

@@ -1,35 +1,23 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  input,
   inject,
   computed,
-  effect,
 } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
-  MatDialog,
   MatDialogActions,
   MatDialogContent,
-  MatDialogModule, MatDialogRef,
+  MatDialogModule,
+  MatDialogRef,
   MatDialogTitle,
 } from "@angular/material/dialog";
-import { FormularyComponent } from "@client/common/components/app-formulary/app-formulary.component";
 import { BaseHttpService } from "@client/common/http/app-base.http.service";
-import { ActivatedRoute } from "@angular/router";
-import { FormModel } from "@client/common/model/app-form.model";
-import { firstValueFrom } from "rxjs";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { DialogRef } from "@angular/cdk/dialog";
 import { REFRESH_DATA } from "@client/common/constants/refresh-data.constant";
-import { TableComponent } from "@client/common/components/app-table/app-table.component";
 import { SelectionService } from "@client/common/services/app-selection.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  SNACKBAR_MESSAGE_ERROR_WHEN_CREATE,
   SNACKBAR_MESSAGE_ERROR_WHEN_DELETE,
-  SNACKBAR_MESSAGE_SUCCESS_WHEN_CREATE,
   SNACKBAR_MESSAGE_SUCCESS_WHEN_DELETE,
 } from "@client/common/constants/snackbar-messages.constant";
 
@@ -43,8 +31,6 @@ import {
     MatDialogContent,
     MatDialogActions,
     MatButtonModule,
-    ReactiveFormsModule,
-    FormsModule,
     MatProgressSpinnerModule
   ],
   styles:`

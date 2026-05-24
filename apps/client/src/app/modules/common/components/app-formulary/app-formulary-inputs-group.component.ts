@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  inject,
   input,
 } from "@angular/core";
-import { FormGroupDirective, ReactiveFormsModule } from "@angular/forms";
+import { FormField } from "@angular/forms/signals";
 import {
   MAT_FORM_FIELD_DEFAULT_OPTIONS,
   MatFormFieldModule,
@@ -19,7 +18,7 @@ import { SchemesContract } from "./scheme.contract";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatFormFieldModule,
-    ReactiveFormsModule,
+    FormField,
     MatInputModule,
     MatRadioModule,
     InputImageComponent,
@@ -66,30 +65,28 @@ import { SchemesContract } from "./scheme.contract";
     @for(input of inputs(); track input.name){ @if(input.type === "text"){
     <mat-form-field
       [style.grid-column]="'span ' + input.width"
-      [formGroup]="form!"
     >
       <mat-label>{{ input.label }}</mat-label>
-      <input [formControlName]="input.name" matInput />
+      <input [formField]="fieldFor(input.name)" matInput />
     </mat-form-field>
 
     } @if(input.type === "image"){
     <mat-form-field
       [style.grid-column]="'span ' + input.width"
       [style.grid-row]="'span ' + 2"
-      [formGroup]="form!"
     >
       <mat-label style="background: white; padding: 5px;">{{
         input.label
       }}</mat-label>
-      <app-input-file [formControlName]="input.name" matInput />
+      <app-input-file [formField]="fieldFor(input.name)" />
     </mat-form-field>
 
     } @if(input.type === "radio"){
-    <div [style.grid-column]="'span ' + input.width" [formGroup]="form!">
+    <div [style.grid-column]="'span ' + input.width">
       @if(input.title !== null && input.title !== undefined){
       <span class="radio-title">{{ input.title }}</span>
       }
-      <mat-radio-group class="radio-group" [formControlName]="input.name">
+      <mat-radio-group class="radio-group" [formField]="fieldFor(input.name)">
         @for(option of input.options; track option.value){
         <mat-radio-button [value]="option.value">
           {{ option.description }}
@@ -103,9 +100,11 @@ import { SchemesContract } from "./scheme.contract";
 })
 export class FormularyInputsGroupComponent {
   public inputs = input.required<SchemesContract[0]["inputs"]>();
-  private _formGroupDirective = inject(FormGroupDirective, {
-    skipSelf: true,
-    optional: true,
-  });
-  protected form = this._formGroupDirective?.form;
+  public form = input.required<unknown>();
+
+  protected fieldFor(name: string): unknown {
+    const formTree = this.form() as Record<string, unknown> | null;
+    if (!formTree) return undefined;
+    return formTree[name];
+  }
 }

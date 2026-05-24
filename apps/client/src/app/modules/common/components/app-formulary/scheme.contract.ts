@@ -1,15 +1,12 @@
-import {
-  AsyncValidatorFn,
-  FormControlOptions,
-  ValidatorFn,
-} from "@angular/forms";
+import { SchemaPath } from "@angular/forms/signals";
+
+export type SignalRule<TPath = unknown> = (path: TPath) => void;
 
 export interface SchemeBaseInput<T> {
   name: keyof T & string;
   label?: string; // case the name must be different form the title the user sees.
   width?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-  validators?: ValidatorFn | ValidatorFn[] | FormControlOptions | null;
-  asyncValidators?: AsyncValidatorFn | AsyncValidatorFn[] | null;
+  rules?: SignalRule<T>[];
   initialValue?: unknown;
 }
 
@@ -17,8 +14,7 @@ export interface SchemeId<T> {
   type: "id";
   name: keyof T & string;
   initialValue?: unknown;
-  validators?: ValidatorFn | ValidatorFn[] | FormControlOptions | null;
-  asyncValidators?: AsyncValidatorFn | AsyncValidatorFn[] | null;
+  rules?: SignalRule<T>[];
 }
 
 export interface SchemeInput<T> extends SchemeBaseInput<T> {

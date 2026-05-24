@@ -1,10 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  inject,
   ViewEncapsulation,
 } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
@@ -16,15 +14,12 @@ import { TemplatePageSignComponent } from "../components/app-template-page-sign.
 import { SignUpStepImageModel } from "../models/app-sign-up-step-image.model";
 import { SignUpStepPersonLegalModel } from "../models/app-sign-up-step-person-legal.model";
 import { SignUpStepUserModel } from "../models/app-sign-up-step-user.model";
-import { AccessService } from "../services/app-access.service";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   imports: [
     MatButtonModule,
-    ReactiveFormsModule,
-    FormsModule,
     MatCardModule,
     FormularyComponent,
     TemplatePageSignComponent,
@@ -47,30 +42,30 @@ import { AccessService } from "../services/app-access.service";
         </mat-card-header>
         <mat-card-content>
           <mat-vertical-stepper linear #stepper>
-            <mat-step [stepControl]="formStepUser">
+            <mat-step [completed]="formStepUser().valid()">
               <ng-template matStepLabel>Dados da conta</ng-template>
               <form
                 id="sign-up-form-user"
                 app-formulary
-                [formGroup]="formStepUser"
+                [form]="formStepUser"
                 [schemes]="schemesStepUser"
               ></form>
             </mat-step>
-            <mat-step [stepControl]="formStepUser">
+            <mat-step [completed]="formStepPersonLegal().valid()">
               <ng-template matStepLabel>Dados da empresa</ng-template>
               <form
                 id="sign-up-form-person-legal"
                 app-formulary
-                [formGroup]="formStepPersonLegal"
+                [form]="formStepPersonLegal"
                 [schemes]="schemesStepPersonLegal"
               ></form>
             </mat-step>
-            <mat-step [stepControl]="formStepUser">
+            <mat-step [completed]="formStepImage().valid()">
               <ng-template matStepLabel>Logo da empresa</ng-template>
               <form
                 id="sign-up-form-image"
                 app-formulary
-                [formGroup]="formStepImage"
+                [form]="formStepImage"
                 [schemes]="schemesStepImage"
               ></form>
             </mat-step>
@@ -104,7 +99,6 @@ import { AccessService } from "../services/app-access.service";
   `,
 })
 export class PageSignInComponent {
-  private _accessService = inject(AccessService);
   private _stepUserModel = new SignUpStepUserModel();
   private _stepPersonLegalModel = new SignUpStepPersonLegalModel();
   private _setpImageModel = new SignUpStepImageModel();
@@ -118,10 +112,4 @@ export class PageSignInComponent {
   protected formStepImage = this._setpImageModel.form;
 
   protected routes = getIamRoutes().client;
-
-  protected onSubmit() {
-    // this._accessService
-    //   .signIn(this.form.getRawValue() as SignInContract)
-    //   .subscribe();
-  }
 }

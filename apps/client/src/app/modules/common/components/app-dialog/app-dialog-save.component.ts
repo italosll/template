@@ -3,15 +3,15 @@ import {
   Component,
   input,
   inject,
-  computed
+  computed,
 } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { submit } from "@angular/forms/signals";
 import { MatButtonModule } from "@angular/material/button";
 import {
-  MatDialog,
   MatDialogActions,
   MatDialogContent,
-  MatDialogModule, MatDialogRef,
+  MatDialogModule,
+  MatDialogRef,
   MatDialogTitle,
 } from "@angular/material/dialog";
 import { FormularyComponent } from "@client/common/components/app-formulary/app-formulary.component";
@@ -20,7 +20,6 @@ import { ActivatedRoute } from "@angular/router";
 import { FormModel } from "@client/common/model/app-form.model";
 import { firstValueFrom } from "rxjs";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { DialogRef } from "@angular/cdk/dialog";
 import { REFRESH_DATA } from "@client/common/constants/refresh-data.constant";
 
 @Component({
@@ -34,8 +33,6 @@ import { REFRESH_DATA } from "@client/common/constants/refresh-data.constant";
     MatDialogActions,
     MatButtonModule,
     FormularyComponent,
-    ReactiveFormsModule,
-    FormsModule,
     MatProgressSpinnerModule
   ],
   styles:`
@@ -57,9 +54,9 @@ import { REFRESH_DATA } from "@client/common/constants/refresh-data.constant";
       <form
         id="form"
         app-formulary
-        [formGroup]="form()"
+        [form]="form()"
         [schemes]="schemes()"
-        (ngSubmit)="onSubmit()"
+        (submit)="onSubmit($event)"
       ></form>
     </mat-dialog-content>
     <mat-dialog-actions>
@@ -70,7 +67,7 @@ import { REFRESH_DATA } from "@client/common/constants/refresh-data.constant";
         type="submit"
         form="form"
         color="primary"
-        [disabled]="!form().valid"
+        [disabled]="form().invalid() || form().pending()"
       >
         Salvar
       </button>
@@ -82,7 +79,6 @@ export class DialogSaveComponent<EntityType> {
   private readonly _activatedRoute = inject(ActivatedRoute);
 
   private readonly _matDialogRef = inject(MatDialogRef);
-  private readonly _dialogRef = inject(DialogRef);
   protected loading = this._http.loadingFind;
   protected id = JSON?.parse(
     this._activatedRoute?.snapshot.queryParams?.["editar"] ?? null
@@ -96,12 +92,26 @@ export class DialogSaveComponent<EntityType> {
 
   constructor (){
     this._http.findById(this.id).subscribe((r)=>{
-     this.form().patchValue(r)
+     this.formModel().patchValue(r)
    });
   }
 
-  protected onSubmit() {
-    if (this.id) this._http.update(this.form().getRawValue()).subscribe().add(()=>this._matDialogRef.close(REFRESH_DATA));
-    else this._http.create(this.form().getRawValue()).subscribe().add(()=>this._matDialogRef.close(REFRESH_DATA));
+  protected onSubmit(event: Event) {
+    event.preventDefault();
+
+    submit(this.form(), async () => {
+      const payload = this.formModel().value();
+
+      try {
+        if (this.id) {
+          await firstValueFrom(this._http.update(payload));
+        } else {
+          await firstValueFrom(this._http.create(payload));
+        }
+        this._matDialogRef.close(REFRESH_DATA);
+      } catch {
+        // Errors are handled by the caller and global interceptors.
+      }
+    });
   }
 }

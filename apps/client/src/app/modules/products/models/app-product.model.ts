@@ -1,4 +1,4 @@
-import { Validators } from "@angular/forms";
+import { required } from "@angular/forms/signals";
 import { FormModel } from "@client/common/model/app-form.model";
 import { ProductContract } from "@interfaces/product.contract";
 
@@ -11,33 +11,35 @@ export class ProductModel extends FormModel<ProductContract> {
           {
             type: "id",
             name: "id",
+            initialValue: 0,
           },
           {
             type: "image",
             name: "image",
             label: "imagem",
-            validators: [],
             width: 3,
           },
           {
             type: "text",
             name: "code",
             label: "codigo",
-            validators: [Validators.required],
+            initialValue: "",
+            rules: [(path) => required(path)],
             width: 3,
           },
           {
             type: "text",
             name: "description",
             label: "descricao",
-            validators: [],
+            initialValue: "",
             width: 3,
           },
           {
             type: "text",
             name: "name",
             label: "nome",
-            validators: [Validators.required],
+            initialValue: "",
+            rules: [(path) => required(path)],
             width: 3,
           },
         ],

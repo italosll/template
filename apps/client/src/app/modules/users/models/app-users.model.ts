@@ -1,4 +1,4 @@
-import { Validators } from "@angular/forms";
+import { required } from "@angular/forms/signals";
 import { FormModel } from "@client/common/model/app-form.model";
 import { UserContract } from "@interfaces/user.contract";
 
@@ -11,12 +11,14 @@ export class UserModel extends FormModel<UserContract> {
           {
             type: "id",
             name: "id",
+            initialValue: 0,
           },
           {
             type: "text",
             name: "email",
             label: "email",
-            validators: [Validators.required],
+            initialValue: "",
+            rules: [(path) => required(path.email)],
             width: 3,
           },
         ],

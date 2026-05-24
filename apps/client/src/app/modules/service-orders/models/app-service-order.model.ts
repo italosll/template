@@ -1,4 +1,4 @@
-import { Validators } from "@angular/forms";
+import { required } from "@angular/forms/signals";
 import { FormModel } from "@client/common/model/app-form.model";
 import { ServiceOrderContract } from "@interfaces/service-order.contract";
 
@@ -11,19 +11,22 @@ export class ServiceOrderModel extends FormModel<ServiceOrderContract> {
           {
             type: "id",
             name: "id",
+            initialValue: 0,
           },
           {
             type: "text",
             name: "description",
             label: "descricao",
-            validators: [Validators.required],
+            initialValue: "",
+            rules: [(path) => required(path)],
             width: 6,
           },
           {
             type: "text",
             name: "price",
             label: "preco",
-            validators: [Validators.required],
+            initialValue: 0,
+            rules: [(path) => required(path)],
             width: 6,
           },
         ],

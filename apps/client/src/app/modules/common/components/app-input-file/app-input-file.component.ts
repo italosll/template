@@ -5,14 +5,14 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostBinding,
-  inject,
-  Input,
   OnDestroy,
-  viewChild,
   ViewEncapsulation,
+  effect,
+  inject,
+  input,
+  viewChild,
 } from "@angular/core";
-import { ControlValueAccessor, FormBuilder, FormsModule } from "@angular/forms";
+import { ControlValueAccessor } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
@@ -28,13 +28,10 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
   standalone: true,
   selector: "app-input-file",
   encapsulation: ViewEncapsulation.Emulated,
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatInputModule
-],
+  imports: [MatButtonModule, MatIconModule, MatTooltipModule, MatInputModule],
+  host: {
+    "[class.floating]": "shouldLabelFloat()",
+  },
   providers: [
     {
       provide: MatFormFieldControl,
@@ -135,8 +132,7 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
   `,
 })
 export class InputImageComponent
-  extends BaseInputDirective<FileContract>
-  implements MatFormFieldControl<FileContract>, ControlValueAccessor, OnDestroy
+  extends BaseInputDirective<FileContract> implements OnDestroy
 {
   disableAutomaticLabeling?: boolean | undefined;
   private _changeDetectorRef = inject(ChangeDetectorRef);
@@ -145,28 +141,24 @@ export class InputImageComponent
 
   controlType?: string | undefined = "app-input-image";
 
-  private _formBuilder = inject(FormBuilder);
   private _elementRef: ElementRef<HTMLElement> = inject(ElementRef);
   stateChanges = new Subject<void>();
-
-  private _placeholder = "";
 
   touched = false;
   focused = false;
 
-  private _disabled = false;
-
   autofilled?: boolean | undefined;
 
-  @Input()
-  get placeholder() {
-    return this._placeholder;
-  }
-
-  set placeholder(plh) {
-    this._placeholder = plh;
-    this.stateChanges.next();
-  }
+  private readonly _placeholderInput = input<string>("", {
+    alias: "placeholder",
+  });
+  private readonly _disabledInput = input<boolean, BooleanInput>(false, {
+    alias: "disabled",
+    transform: (value) => coerceBooleanProperty(value),
+  });
+  private readonly _userAriaDescribedByInput = input<string>("", {
+    alias: "aria-describedby",
+  });
 
   get empty() {
     // let n = this.parts.value;
@@ -174,19 +166,16 @@ export class InputImageComponent
     return true;
   }
 
-  @HostBinding("class.floating")
-  get shouldLabelFloat() {
+  protected shouldLabelFloat(): boolean {
     return this.focused || !this.empty;
   }
 
-  @Input()
-  get disabled(): boolean {
-    return this._disabled;
+  get placeholder(): string {
+    return this._placeholderInput();
   }
-  set disabled(value: BooleanInput) {
-    this._disabled = coerceBooleanProperty(value);
-    // this._disabled ? this.parts.disable() : this.parts.enable();
-    this.stateChanges.next();
+
+  get disabled(): boolean {
+    return this._disabledInput();
   }
 
   get errorState(): boolean {
@@ -194,8 +183,9 @@ export class InputImageComponent
     return false;
   }
 
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input("aria-describedby") userAriaDescribedBy!: string;
+  get userAriaDescribedBy(): string {
+    return this._userAriaDescribedByInput();
+  }
 
   ngOnDestroy() {
     this.stateChanges.complete();
@@ -209,7 +199,7 @@ export class InputImageComponent
 
     this.value = {
       base64File: base64,
-      url: null,
+      url: "",
       name: file.name,
     };
 
@@ -237,9 +227,9 @@ export class InputImageComponent
 
   protected deleteFile() {
     this.value = {
-      base64File: null,
-      url: null,
-      name: null,
+      base64File: "",
+      url: "",
+      name: "",
     };
     if (this.onChange) this.onChange(this.value);
     this._changeDetectorRef.markForCheck();
@@ -277,5 +267,17 @@ export class InputImageComponent
         inputElement.focus();
       }
     }
+  }
+
+  constructor() {
+    super();
+    effect(() => {
+      this._placeholderInput();
+      this.stateChanges.next();
+    });
+    effect(() => {
+      this._disabledInput();
+      this.stateChanges.next();
+    });
   }
 }

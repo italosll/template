@@ -1,4 +1,5 @@
-import { Validators } from "@angular/forms";
+import { pattern, required } from "@angular/forms/signals";
+import { SignalRule } from "@client/common/components/app-formulary/scheme.contract";
 import { FormModel } from "@client/common/model/app-form.model";
 import { PersonLegalContract } from "@interfaces/person.contract";
 
@@ -12,23 +13,27 @@ export class SignUpStepPersonLegalModel extends FormModel<PersonLegalContract> {
             type: "text",
             name: "name",
             label: "Nome Fantasia",
-            validators: [Validators.required],
+            initialValue: "",
+            rules: [(path) => required(path)]  as SignalRule<any>[],
             width: 12,
           },
           {
             type: "text",
             name: "companyRealName",
             label: "Razão Social",
-            validators: [Validators.required],
+            initialValue: "",
+            rules: [(path) => required(path)],
             width: 12,
           },
           {
             type: "text",
             name: "document",
             label: "CNPJ",
-            validators: [
-              Validators.required,
-              Validators.pattern(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/),
+            initialValue: "",
+            rules: [
+              (path) => required(path),
+              (path) =>
+                pattern(path.document, /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/),
             ],
             width: 12,
           },

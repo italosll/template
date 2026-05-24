@@ -1,5 +1,4 @@
 import { CommonModule } from "@angular/common";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { ActivatedRoute, RouterLink } from "@angular/router";
@@ -15,9 +14,7 @@ import { DialogsOpenerService } from "@client/common/services/app-dialogs-opener
     await TestBed.configureTestingModule( {
       imports: [
         MatButtonModule,
-        ReactiveFormsModule,
         CommonModule,
-        FormsModule,
         MatCardModule,
         FormularyComponent,
         TemplatePageSignComponent,
