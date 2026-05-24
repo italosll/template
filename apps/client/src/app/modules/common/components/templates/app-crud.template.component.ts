@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+
 import {
   ChangeDetectionStrategy,
   Component, computed,
@@ -22,7 +22,7 @@ import { SnackbarMessageInterface } from "@client/common/constants/snackbar-mess
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TableComponent, RibbonComponent,SearchBarComponent],
+  imports: [TableComponent, RibbonComponent, SearchBarComponent],
   providers: [
     DialogsOpenerService,
   ],

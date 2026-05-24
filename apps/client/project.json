@@ -75,7 +75,7 @@
       "executor": "@nx/eslint:lint"
     },
     "test": {
-    "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "options": {
         "tsConfig": "apps/client/tsconfig.spec.json",
         "config": "apps/client/vite.config.mts",

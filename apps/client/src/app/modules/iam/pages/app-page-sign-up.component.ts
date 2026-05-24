@@ -17,22 +17,21 @@ import { SignUpStepImageModel } from "../models/app-sign-up-step-image.model";
 import { SignUpStepPersonLegalModel } from "../models/app-sign-up-step-person-legal.model";
 import { SignUpStepUserModel } from "../models/app-sign-up-step-user.model";
 import { AccessService } from "../services/app-access.service";
-import { CommonModule } from "@angular/common";
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   imports: [
     MatButtonModule,
     ReactiveFormsModule,
-    CommonModule,
     FormsModule,
     MatCardModule,
     FormularyComponent,
     TemplatePageSignComponent,
     RouterLink,
     MatStepperModule,
-    MatIconModule,
-  ],
+    MatIconModule
+],
   styles: [],
   template: `
     <app-template-page-sign>

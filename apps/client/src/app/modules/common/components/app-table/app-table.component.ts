@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+
 import {SelectionModel} from '@angular/cdk/collections';
 import {
   ChangeDetectionStrategy,
@@ -22,7 +22,7 @@ import { SelectionService } from "@client/common/services/app-selection.service"
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-table",
-  imports: [CommonModule, MatCheckboxModule, FormsModule, MatTableModule,MatProgressBarModule],
+  imports: [MatCheckboxModule, FormsModule, MatTableModule, MatProgressBarModule],
   styles:`
     /* Keyframes for entering */
     @keyframes rowEnter {

@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -21,13 +21,12 @@ import { AccessService } from "../services/app-access.service";
   imports: [
     MatButtonModule,
     ReactiveFormsModule,
-    CommonModule,
     FormsModule,
     MatCardModule,
     FormularyComponent,
     TemplatePageSignComponent,
-    RouterLink,
-  ],
+    RouterLink
+],
   styles: [],
   template: `
     <app-template-page-sign>

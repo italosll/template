@@ -2,7 +2,7 @@
 const { compilerOptions } = require("../../tsconfig.base.json");
 
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: "api",
   preset: "../../jest.preset.js",
   testEnvironment: "node",

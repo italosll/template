@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -14,15 +14,14 @@ import { TemplateService } from "./app.template.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TemplateService],
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonModule,
     MatSidenavModule,
     MatIconModule,
     MatDividerModule,
     RouterModule,
-    SidenavComponent,
-  ],
+    SidenavComponent
+],
   styles: [
     `
       nav {

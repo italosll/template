@@ -11,7 +11,8 @@
       "node",
       "vitest"
     ],
-    "target": "es2022"
+    "target": "es2022",
+    "isolatedModules": true
   },
   "include": [
     "vite.config.ts",

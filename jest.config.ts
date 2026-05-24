@@ -1,7 +1,7 @@
-import { getJestProjectsAsync } from "@nx/jest";
-import { pathsToModuleNameMapper } from "ts-jest";
+const { getJestProjectsAsync } = require("@nx/jest");
+const { pathsToModuleNameMapper } = require("ts-jest");
 
-export default async () => ({
+module.exports = async () => ({
   projects: await getJestProjectsAsync(),
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: "<rootDir>/",
