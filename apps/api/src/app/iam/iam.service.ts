@@ -4,7 +4,7 @@ import { Person } from "@api/person/entities/person.entity";
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource, EntityManager, Repository } from "typeorm";
-import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
+import { CreateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/create-default-response.dto";
 import { S3FilesService } from "../common/files/s3-files.service";
 import { SignUpDTO } from "./dto/sign-up.dto";
 import { Tenant } from "./entities/tenant.entity";

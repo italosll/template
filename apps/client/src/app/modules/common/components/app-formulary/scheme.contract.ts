@@ -1,12 +1,14 @@
-import { SchemaPath } from "@angular/forms/signals";
+import {  PathKind, pattern, required, SchemaPath, SchemaPathTree } from "@angular/forms/signals";
 
-export type SignalRule<TPath = unknown> = (path: TPath) => void;
+export type DeepNonNullable<T> = T extends object
+  ? { [K in keyof T]-?: DeepNonNullable<NonNullable<T[K]>> }
+  : NonNullable<T>;
 
+export type SignalRule<T>= typeof required | typeof pattern | ((path: SchemaPath<T, any>) => void);
 export interface SchemeBaseInput<T> {
   name: keyof T & string;
   label?: string; // case the name must be different form the title the user sees.
   width?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-  rules?: SignalRule<T>[];
   initialValue?: unknown;
 }
 
@@ -14,7 +16,7 @@ export interface SchemeId<T> {
   type: "id";
   name: keyof T & string;
   initialValue?: unknown;
-  rules?: SignalRule<T>[];
+  rules?:(value:SchemaPathTree<DeepNonNullable<T>, PathKind.Root>)=> void,
 }
 
 export interface SchemeInput<T> extends SchemeBaseInput<T> {

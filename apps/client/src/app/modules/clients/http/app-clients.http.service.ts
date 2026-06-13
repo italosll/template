@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { BaseHttpService } from "@client/common/http/app-base.http.service";
 import { getClientsRoutes } from "../app-index.routes";
 import { ClientFormValue } from "../models/app-client.model";
-import { throwError } from "rxjs";
+import { map, Observable, tap, throwError } from "rxjs";
 
 type ClientPayload = {
   id?: number;
@@ -23,9 +23,25 @@ type ClientPayload = {
 };
 
 @Injectable()
-export class ClientsHttpService extends BaseHttpService<ClientPayload> {
+export class ClientsHttpService extends BaseHttpService<
+  ClientPayload,
+  ClientPayload["personLegal"] | ClientPayload["personNatural"],
+  ClientPayload,
+  ClientPayload
+> {
   constructor() {
     super(getClientsRoutes().api.clients);
+  }
+
+  override findById = (id:number|string):Observable<ClientPayload["personLegal"]|ClientPayload["personNatural"]> => {
+
+      const  fullUrl = `${this._url}?id=${id}`;
+
+      this._loadingFind.set(true);
+      return this._httpClient.get<ClientPayload[]>(fullUrl,{
+          responseType: 'json',
+          withCredentials: true
+      })?.pipe(map((data) => data?.at(0)?.personLegal ? data?.at(0)?.personLegal : data?.at(0)?.personNatural), tap(()=> this._loadingFind.set(false)));
   }
 
   override create(body: ClientFormValue) {

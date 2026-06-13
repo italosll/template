@@ -2,13 +2,20 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Signal, signal, WritableSignal } from "@angular/core";
 import { objectToQueryParams } from "../utils/app-object-to-query-params";
 import { map, Observable, tap } from "rxjs";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { DeleteDefaultResponseDTO } from "@interfaces/delete-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 
-
-export class BaseHttpService <T>{
-    private readonly _httpClient = inject(HttpClient);
-    private readonly _loadingFind = signal(false);
-    private readonly _loadingSave = signal(false);
-    private readonly _loadingDelete = signal(false);
+export class BaseHttpService <
+ResponseFindAll,
+ResponseFindById,
+RequestCreate,
+RequestUpdate
+>{
+    protected readonly _httpClient = inject(HttpClient);
+    protected readonly _loadingFind = signal(false);
+    protected readonly _loadingSave = signal(false);
+    protected readonly _loadingDelete = signal(false);
 
     public readonly loadingFind = this._loadingFind.asReadonly()
     public readonly loadingSave = this._loadingSave.asReadonly()
@@ -26,44 +33,44 @@ export class BaseHttpService <T>{
         }
 
         this._loadingFind.set(true);
-        return this._httpClient.get<T[]>(fullUrl,{
+        return this._httpClient.get<ResponseFindAll[]>(fullUrl,{
             responseType: 'json',
             withCredentials: true
         }).pipe(tap(()=> this._loadingFind.set(false)));
     }
 
-    public findById = (id:number|string):Observable<T | undefined> => {
+    public findById = (id:number|string):Observable<ResponseFindById | undefined> => {
 
         const  fullUrl = `${this._url}?id=${id}`;
 
         this._loadingFind.set(true);
-        return this._httpClient.get<T[]>(fullUrl,{
+        return this._httpClient.get<ResponseFindById[]>(fullUrl,{
             responseType: 'json',
             withCredentials: true
         })?.pipe(map((data) => data?.at(0)), tap(()=> this._loadingFind.set(false)));
     }
 
-  public findByText = (text:unknown):Observable<(T)[]> => {
+  public findByText = (text:unknown):Observable<(ResponseFindAll)[]> => {
     const  fullUrl = `${this._url}?pesquisar=${String(text)}`;
     this._loadingFind.set(true);
-    return this._httpClient.get<T[]>(fullUrl,{
+    return this._httpClient.get<ResponseFindAll[]>(fullUrl,{
       responseType: 'json',
       withCredentials: true
     }).pipe(tap(()=> this._loadingFind.set(false)));
   }
 
-    public create (body:T) {
+    public create (body:RequestCreate) {
       this._loadingSave.set(true);
-      return this._httpClient.post<T>(this._url, body).pipe(tap(()=> this._loadingSave.set(false)))
+      return this._httpClient.post<CreateDefaultResponseDTO>(this._url, body).pipe(tap(()=> this._loadingSave.set(false)))
     }
 
-    public update(body:T){
+    public update(body:RequestUpdate) {
       this._loadingSave.set(true);
-      return this._httpClient.put<T>(this._url, body).pipe(tap(()=> this._loadingSave.set(false)));
+      return this._httpClient.put<UpdateDefaultResponseDTO>(this._url, body).pipe(tap(()=> this._loadingSave.set(false)));
     }
 
     public delete(ids:number[]){
       this._loadingDelete.set(true);
-      return this._httpClient.delete<T>(`${this._url}?ids=${ids}`).pipe(tap(()=> this._loadingDelete.set(false)));
+      return this._httpClient.delete<DeleteDefaultResponseDTO >(`${this._url}?ids=${ids}`).pipe(tap(()=> this._loadingDelete.set(false)));
     }
 }

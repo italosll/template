@@ -54,7 +54,7 @@ import { REFRESH_DATA } from "@client/common/constants/refresh-data.constant";
       <form
         id="form"
         app-formulary
-        [form]="form()"
+        [form]="formModel().form"
         [schemes]="schemes()"
         (submit)="onSubmit($event)"
       ></form>
@@ -67,7 +67,7 @@ import { REFRESH_DATA } from "@client/common/constants/refresh-data.constant";
         type="submit"
         form="form"
         color="primary"
-        [disabled]="form().invalid() || form().pending()"
+        [disabled]="formModel().form().invalid() || formModel().form().pending()"
       >
         Salvar
       </button>
@@ -86,7 +86,6 @@ export class DialogSaveComponent<EntityType> {
 
   public title = input.required<string>();
   public formModel = input.required<FormModel<EntityType>>();
-  public form = computed(()=>this.formModel().form);
   public schemes = computed(()=>this.formModel().schemes);
 
 
@@ -99,9 +98,9 @@ export class DialogSaveComponent<EntityType> {
   protected onSubmit(event: Event) {
     event.preventDefault();
 
-    submit(this.form(), async () => {
+    submit(this.formModel().form, async () => {
       const payload = this.formModel().value();
-
+      console.log(payload);
       try {
         if (this.id) {
           await firstValueFrom(this._http.update(payload));
@@ -109,7 +108,8 @@ export class DialogSaveComponent<EntityType> {
           await firstValueFrom(this._http.create(payload));
         }
         this._matDialogRef.close(REFRESH_DATA);
-      } catch {
+      } catch(error) {
+        console.error(error);
         // Errors are handled by the caller and global interceptors.
       }
     });

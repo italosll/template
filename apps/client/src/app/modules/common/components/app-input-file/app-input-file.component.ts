@@ -2,17 +2,13 @@ import { BooleanInput, coerceBooleanProperty } from "@angular/cdk/coercion";
 
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
-  OnDestroy,
   ViewEncapsulation,
-  effect,
   inject,
   input,
-  viewChild,
+  model,
 } from "@angular/core";
-import { ControlValueAccessor } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
@@ -21,7 +17,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FileUtil } from "@client/common/utils/app-file.util";
 import { FileContract } from "@interfaces/file.contract";
 import { Subject } from "rxjs";
-import { BaseInputDirective } from "../../directives/app-base-input.directive";
+import { FormValueControl } from "@angular/forms/signals";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -90,9 +86,9 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
       <div
         class="cover"
         [style.background]="
-          value?.url
-            ? 'url(' + value?.url + ')'
-            : 'url(' + value?.base64File + ')'
+          value().url
+            ? 'url(' + value().url + ')'
+            : 'url(' + value().base64File + ')'
         "
       ></div>
       <li>
@@ -106,7 +102,7 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
           <mat-icon>edit</mat-icon>
         </button>
 
-        @if(value?.name){
+        @if(value().name){
 
         <button
           mat-icon-button
@@ -132,63 +128,30 @@ import { BaseInputDirective } from "../../directives/app-base-input.directive";
   `,
 })
 export class InputImageComponent
-  extends BaseInputDirective<FileContract> implements OnDestroy
+  implements  FormValueControl<FileContract>
 {
-  disableAutomaticLabeling?: boolean | undefined;
-  private _changeDetectorRef = inject(ChangeDetectorRef);
-
-  private _inputImage = viewChild<ElementRef<HTMLInputElement>>("inputImage");
-
-  controlType?: string | undefined = "app-input-image";
+  value = model({
+    base64File: "",
+    url: "",
+    name: "",
+  } as FileContract);
 
   private _elementRef: ElementRef<HTMLElement> = inject(ElementRef);
   stateChanges = new Subject<void>();
 
-  touched = false;
-  focused = false;
-
-  autofilled?: boolean | undefined;
-
-  private readonly _placeholderInput = input<string>("", {
+  public readonly placeholderInput = input<string>("", {
     alias: "placeholder",
   });
-  private readonly _disabledInput = input<boolean, BooleanInput>(false, {
+  public readonly disabledInput = input<boolean, BooleanInput>(false, {
     alias: "disabled",
     transform: (value) => coerceBooleanProperty(value),
   });
-  private readonly _userAriaDescribedByInput = input<string>("", {
+  public readonly userAriaDescribedByInput = input<string>("", {
     alias: "aria-describedby",
   });
 
-  get empty() {
-    // let n = this.parts.value;
-    // return !n.area && !n.exchange && !n.subscriber;
-    return true;
-  }
-
   protected shouldLabelFloat(): boolean {
-    return this.focused || !this.empty;
-  }
-
-  get placeholder(): string {
-    return this._placeholderInput();
-  }
-
-  get disabled(): boolean {
-    return this._disabledInput();
-  }
-
-  get errorState(): boolean {
-    // return this.parts.invalid && this.touched;
-    return false;
-  }
-
-  get userAriaDescribedBy(): string {
-    return this._userAriaDescribedByInput();
-  }
-
-  ngOnDestroy() {
-    this.stateChanges.complete();
+    return this.value().base64File !== "" || this.value().url !== "" ;
   }
 
   protected async changeInputFile(event: Event) {
@@ -197,66 +160,32 @@ export class InputImageComponent
 
     const base64 = await FileUtil.fileToBase64(file);
 
-    this.value = {
+    this.value.set( {
       base64File: base64,
       url: "",
       name: file.name,
-    };
-
-    if (this.onChange) this.onChange(this.value);
-    this._changeDetectorRef.markForCheck();
-  }
-
-  public override writeValue(obj: object): void {
-    this.value = obj;
-    this._changeDetectorRef.markForCheck();
+    });
   }
 
   protected downloadFile() {
-    if (this.value?.base64File && this.value?.name) {
+    if (this.value()?.base64File && this.value()?.name) {
       return FileUtil.base64FileDownload(
-        this.value.base64File,
-        this.value.name
+        this.value()?.base64File as string,
+        this.value()?.name as string
       );
     }
 
-    if (this.value?.url && this.value?.name) {
-      return FileUtil.urlFileDownload(this.value.url, this.value.name);
+    if (this.value()?.url && this.value()?.name) {
+      return FileUtil.urlFileDownload(this.value()?.url as string, this.value()?.name as string);
     }
   }
 
   protected deleteFile() {
-    this.value = {
+    this.value.set({
       base64File: "",
       url: "",
       name: "",
-    };
-    if (this.onChange) this.onChange(this.value);
-    this._changeDetectorRef.markForCheck();
-  }
-
-  onFocusIn(event: FocusEvent) {
-    if (!this.focused) {
-      this.focused = true;
-      this.stateChanges.next();
-    }
-  }
-
-  onFocusOut(event: FocusEvent) {
-    if (
-      !this._elementRef.nativeElement.contains(event.relatedTarget as Element)
-    ) {
-      this.touched = true;
-      this.focused = false;
-      if (this.onTouched) this.onTouched();
-      this.stateChanges.next();
-    }
-  }
-
-  setDescribedByIds(ids: string[]) {
-    // const controlElement = this._elementRef.nativeElement
-    //     .querySelector('.app-input-image')!;
-    // controlElement.setAttribute('aria-describedby', ids.join(' '));
+    });
   }
 
   onContainerClick(event: MouseEvent) {
@@ -269,15 +198,9 @@ export class InputImageComponent
     }
   }
 
-  constructor() {
-    super();
-    effect(() => {
-      this._placeholderInput();
-      this.stateChanges.next();
-    });
-    effect(() => {
-      this._disabledInput();
-      this.stateChanges.next();
-    });
+  setDescribedByIds(ids: string[]) {
+      const controlElement = this._elementRef.nativeElement
+          .querySelector('input')!;
+      controlElement.setAttribute('aria-describedby', ids.join(' '));
   }
 }

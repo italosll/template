@@ -10,10 +10,10 @@ import {
   Query,
   ValidationPipe,
 } from "@nestjs/common";
-import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
-import { DeleteDefaultResponseDTO } from "../common/dto/delete-default-response.dto";
-import { HardDeleteDefaultResponseDTO } from "../common/dto/hard-delete-default-response.dto";
-import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
+import { CreateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/create-default-response.dto";
+import { DeleteDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/delete-default-response.dto";
+import { HardDeleteDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/hard-delete-default-response.dto";
+import { UpdateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/update-default-response.dto";
 import { AddressService } from "./address.service";
 import { CreateAddressDTO } from "./dto/create-address.dto";
 import { UpdateAddressDTO } from "./dto/update-address.dto";

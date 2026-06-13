@@ -1,5 +1,5 @@
-import { CreateDefaultResponseDTO } from "../dto/create-default-response.dto";
-import { UpdateDefaultResponseDTO } from "../dto/update-default-response.dto";
+import { CreateDefaultResponseDTO } from "../../../../../../libs/interfaces/src/lib/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "../../../../../../libs/interfaces/src/lib/update-default-response.dto";
 
 export abstract class EntityService<responseDTO, CreateDTO, UpdateDTO> {
   abstract findAll(product: any): Promise<responseDTO[]>;

@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
-import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
-import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
+import { CreateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/update-default-response.dto";
 import { EntityService } from "../common/services/entity.service";
 import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
 import { CreateCategoryDTO } from "./dto/create-category.dto";

@@ -1,26 +1,39 @@
-import { Signal, WritableSignal, signal } from "@angular/core";
-import { form } from "@angular/forms/signals";
+import { EffectRef, Signal, WritableSignal, effect, signal } from "@angular/core";
+import { FieldTree, form, PathKind, SchemaPathTree } from "@angular/forms/signals";
 import {
+  DeepNonNullable,
   SchemeInputsContract,
   SchemesContract,
   SignalRule,
 } from "@client/common/components/app-formulary/scheme.contract";
 
+
+
 export class FormModel<DTO> {
   private readonly _schemes: SchemesContract<DTO>;
   private readonly _defaults: DTO;
-  private readonly _model: WritableSignal<DTO>;
-  public readonly form: ReturnType<typeof form>;
-  public readonly value: Signal<DTO>;
+  private readonly _model: WritableSignal<DeepNonNullable<DTO>>;
+  public readonly form: FieldTree<DeepNonNullable<DTO>, string | number>
+  public readonly value: Signal<DeepNonNullable<DTO>>;
 
-  constructor(schemes: SchemesContract<DTO>) {
+  constructor(
+    schemes: SchemesContract<DTO>,
+    rules?:(value:SchemaPathTree<DeepNonNullable<DTO>, PathKind.Root>)=> void,
+    effects?:((form:FieldTree<DeepNonNullable<DTO>, string | number>) => EffectRef)[]
+  ) {
     this._schemes = schemes.map((s) => ({ ...s, uniqueId: this._uniqueId() }));
     this._defaults = this._buildDefaults(this._schemes) as DTO;
-    this._model = signal<DTO>(this._defaults);
+    this._model = signal<DeepNonNullable<DTO>>(this._defaults as DeepNonNullable<DTO>);
     this.form = form(this._model, (schemaPath) => {
-      this._applyRules(schemaPath);
+        rules?.(schemaPath);
     });
     this.value = this._model.asReadonly();
+
+    if(effects?.length) {
+      effects.forEach((effectFn) => {
+        effectFn(this.form);
+      });
+    }
   }
 
   private _uniqueId(): string {
@@ -32,7 +45,7 @@ export class FormModel<DTO> {
   }
 
   public patchValue(value: Partial<DTO>) {
-    this._model.set(this._mergeDefaults(this._defaults, value) as DTO);
+    this._model.set(this._mergeDefaults(this._defaults, value) as DeepNonNullable<DTO>);
   }
 
   private _buildDefaults(schemes: SchemesContract<DTO>): Record<string, unknown> {
@@ -55,7 +68,7 @@ export class FormModel<DTO> {
     return defaults;
   }
 
-  private _buildInputsDefaults(inputs: SchemeInputsContract[]): Record<string, unknown> {
+  private _buildInputsDefaults(inputs: SchemeInputsContract<DTO>[]): Record<string, unknown> {
     const values: Record<string, unknown> = {};
 
     inputs.forEach((input) => {
@@ -67,14 +80,14 @@ export class FormModel<DTO> {
 
   private _assignInputDefaults(
     target: Record<string, unknown>,
-    inputs: SchemeInputsContract[]
+    inputs: SchemeInputsContract<DTO>[]
   ) {
     inputs.forEach((input) => {
       target[input.name] = this._resolveInitialValue(input);
     });
   }
 
-  private _resolveInitialValue(input: SchemeInputsContract): unknown {
+  private _resolveInitialValue(input: SchemeInputsContract<DTO>): unknown {
     if (input.initialValue !== undefined && input.initialValue !== null) {
       return input.initialValue;
     }
@@ -109,33 +122,6 @@ export class FormModel<DTO> {
     return "";
   }
 
-  private _applyRules(schemaPath: unknown) {
-    const rootPath = schemaPath as Record<string, unknown>;
-
-    this._schemes.forEach((scheme) => {
-      if (scheme.type === "default") {
-        this._applyInputRules(rootPath, scheme.inputs);
-      }
-
-      if (scheme.type === "group") {
-        const groupPath = rootPath[scheme.name] as Record<string, unknown>;
-        if (groupPath) {
-          this._applyInputRules(groupPath, scheme.inputs);
-        }
-      }
-    });
-  }
-
-  private _applyInputRules(
-    path: Record<string, unknown>,
-    inputs: SchemeInputsContract[]
-  ) {
-    inputs.forEach((input) => {
-      const field = path[input.name];
-      const rules = input.rules ?? [];
-      rules.forEach((rule: SignalRule) => rule(field));
-    });
-  }
 
   private _mergeDefaults(
     defaults: unknown,

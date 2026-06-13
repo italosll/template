@@ -20,7 +20,8 @@ export class DialogOpenerUtil{
         return this._router.navigate([],{
                 relativeTo: this._activatedRoute,
                 queryParamsHandling: 'merge',
-                queryParams
+                queryParams,
+                
             });
     }
 

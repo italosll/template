@@ -3,7 +3,7 @@ import {
   Component,
   input,
 } from "@angular/core";
-import { FormField } from "@angular/forms/signals";
+import { Field, FieldTree, FormField } from "@angular/forms/signals";
 import {
   MAT_FORM_FIELD_DEFAULT_OPTIONS,
   MatFormFieldModule,
@@ -11,7 +11,7 @@ import {
 import { MatInputModule } from "@angular/material/input";
 import { MatRadioModule } from "@angular/material/radio";
 import { InputImageComponent } from "../app-input-file/app-input-file.component";
-import { SchemesContract } from "./scheme.contract";
+import { DeepNonNullable, SchemesContract } from "./scheme.contract";
 
 @Component({
   selector: "app-formulary-inputs-group",
@@ -62,49 +62,52 @@ import { SchemesContract } from "./scheme.contract";
     `,
   ],
   template: `
-    @for(input of inputs(); track input.name){ @if(input.type === "text"){
-    <mat-form-field
-      [style.grid-column]="'span ' + input.width"
-    >
-      <mat-label>{{ input.label }}</mat-label>
-      <input [formField]="fieldFor(input.name)" matInput />
-    </mat-form-field>
+  @for(input of inputs(); track input.name){
+    @let field = fieldFor(input.name);
+    @if(field){
+      @if(input.type === "text"){
+      <mat-form-field
+        [style.grid-column]="'span ' + input.width"
+      >
+        <mat-label>{{ input.label }}</mat-label>
+        <input [formField]="field" matInput />
+      </mat-form-field>
 
-    } @if(input.type === "image"){
-    <mat-form-field
-      [style.grid-column]="'span ' + input.width"
-      [style.grid-row]="'span ' + 2"
-    >
-      <mat-label style="background: white; padding: 5px;">{{
-        input.label
-      }}</mat-label>
-      <app-input-file [formField]="fieldFor(input.name)" />
-    </mat-form-field>
+      } @if(input.type === "image"){
+      <mat-form-field
+        [style.grid-column]="'span ' + input.width"
+        [style.grid-row]="'span ' + '2'"
+      >
+        <mat-label style="background: white; padding: 5px;">{{
+          input.label
+        }}</mat-label>
+        <app-input-file [formField]="field" />
+      </mat-form-field>
 
-    } @if(input.type === "radio"){
-    <div [style.grid-column]="'span ' + input.width">
-      @if(input.title !== null && input.title !== undefined){
-      <span class="radio-title">{{ input.title }}</span>
-      }
-      <mat-radio-group class="radio-group" [formField]="fieldFor(input.name)">
-        @for(option of input.options; track option.value){
-        <mat-radio-button [value]="option.value">
-          {{ option.description }}
-        </mat-radio-button>
+      } @if(input.type === "radio"){
+      <div [style.grid-column]="'span ' + input.width">
+        @if(input.title !== null && input.title !== undefined){
+        <span class="radio-title">{{ input.title }}</span>
         }
-      </mat-radio-group>
-    </div>
-
-    } }
+        <mat-radio-group class="radio-group" [formField]="field">
+          @for(option of input.options; track option.value){
+          <mat-radio-button [value]="option.value">
+            {{ option.description }}
+          </mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
+        }
+      } 
+    }
   `,
 })
-export class FormularyInputsGroupComponent {
-  public inputs = input.required<SchemesContract[0]["inputs"]>();
-  public form = input.required<unknown>();
+export class FormularyInputsGroupComponent<T = any  > {
+  public inputs = input.required<SchemesContract<T>[0]["inputs"]>();
+  public form = input.required<FieldTree<DeepNonNullable<T>, string | number>>();
 
-  protected fieldFor(name: string): unknown {
+  protected fieldFor(name: string): Field<any, string | number>|undefined {
     const formTree = this.form() as Record<string, unknown> | null;
-    if (!formTree) return undefined;
-    return formTree[name];
+    return formTree![name] as Field<any, string | number> | undefined;
   }
 }

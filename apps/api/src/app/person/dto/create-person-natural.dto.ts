@@ -1,5 +1,5 @@
 import { PersonNaturalContract } from "@interfaces/person.contract";
-import { IsString } from "class-validator";
+import { IsDateString, isDateString, IsString } from "class-validator";
 
 export class CreatePersonNaturalDTO
   implements Omit<PersonNaturalContract, "id">
@@ -16,6 +16,6 @@ export class CreatePersonNaturalDTO
   @IsString()
   document!: string;
 
-  @IsString()
-  birthDate!: Date;
+  @IsDateString()
+  birthDate!: string;
 }

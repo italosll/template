@@ -1,3 +1,4 @@
+import { effect, untracked } from "@angular/core";
 import { required } from "@angular/forms/signals";
 import { FormModel } from "@client/common/model/app-form.model";
 import { UserContract } from "@interfaces/user.contract";
@@ -18,11 +19,33 @@ export class UserModel extends FormModel<UserContract> {
             name: "email",
             label: "email",
             initialValue: "",
-            rules: [(path) => required(path.email)],
             width: 3,
           },
         ],
       },
-    ]);
+    ],
+    (schemaPath) => {
+      required(schemaPath.email);
+    },
+    [
+      //---ANTES
+      // this.form.controls.id.valueChanges.pipe(takeUntilDestroyed(this._destroyRef)).subscribe((id) => {
+      //   if (id) {
+      //     this.form.controls.email.reset();
+      //   }
+      // })
+      //---AGORA
+      (form) => effect(() => {
+        form.id()
+        untracked(form.email).reset();
+      }),
+      //--- OU ainda podemos isolar essa função numa pasta e dar um nome mais semântico a ela,
+      (form)=>resetarEmailAoMudarId(form)
+    ]
+  );
   }
 }
+const resetarEmailAoMudarId = (form:any) => effect((form: any) => {
+  form.id()
+  // untracked(form.email).reset();
+})

@@ -10,7 +10,7 @@ import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Injectable()
-export class DialogsOpenerService implements  OnDestroy{
+export class DialogsOpenerService {
     private readonly _dialogs = inject(DialogsToken);
     private readonly _activatedRoute = inject(ActivatedRoute);
     private readonly _matDialog = inject(MatDialog);
@@ -19,14 +19,13 @@ export class DialogsOpenerService implements  OnDestroy{
 
     private readonly _matDialogConfig: MatDialogConfig = {
         injector: this._injector,
+        width:"1024",
+        minWidth:"1024",
+        maxWidth:"90vw",
       
     };
     constructor(){
-
-      console.log("constructor1---");
-      console.log(this._dialogs)
         this._activatedRoute.queryParams.subscribe((params)=>{
-
             this._dialogs.forEach((dialog)=>{
                 const urlParams = Object.keys(params);
                 const openDialog = dialog.keys.some((k)=>urlParams.includes(k));
@@ -48,10 +47,5 @@ export class DialogsOpenerService implements  OnDestroy{
                 }
             });
         });
-    }
-
-    public ngOnDestroy(){
-      console.log("ngOnDestroy---");
-      console.log(this._dialogs)
     }
 }

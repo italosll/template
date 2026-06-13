@@ -24,7 +24,6 @@ export class ProductModel extends FormModel<ProductContract> {
             name: "code",
             label: "codigo",
             initialValue: "",
-            rules: [(path) => required(path)],
             width: 3,
           },
           {
@@ -39,11 +38,12 @@ export class ProductModel extends FormModel<ProductContract> {
             name: "name",
             label: "nome",
             initialValue: "",
-            rules: [(path) => required(path)],
             width: 3,
           },
         ],
       },
-    ]);
+    ], (schemaPath) => {
+      required(schemaPath.name);
+    });
   }
 }

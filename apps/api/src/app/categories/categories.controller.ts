@@ -11,10 +11,10 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { AuditContract } from "../common/contracts/audit.contract";
-import { CreateDefaultResponseDTO } from "../common/dto/create-default-response.dto";
-import { DeleteDefaultResponseDTO } from "../common/dto/delete-default-response.dto";
-import { HardDeleteDefaultResponseDTO } from "../common/dto/hard-delete-default-response.dto";
-import { UpdateDefaultResponseDTO } from "../common/dto/update-default-response.dto";
+import { CreateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/create-default-response.dto";
+import { DeleteDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/delete-default-response.dto";
+import { HardDeleteDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/hard-delete-default-response.dto";
+import { UpdateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/update-default-response.dto";
 import { CategoriesService } from "./categories.service";
 import { CreateCategoryDTO } from "./dto/create-category.dto";
 import { UpdateCategoryDTO } from "./dto/update-category.dto";

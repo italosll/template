@@ -20,7 +20,7 @@ export class PersonNatural
   id!: number;
 
   @Column({ unique: true })
-  birthDate!: Date;
+  birthDate!: string;
 
   @Column({ unique: true,  type: "varchar", length: 14 })
   document!: string;

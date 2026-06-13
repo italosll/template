@@ -18,5 +18,5 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx"
   ],
-  "include": ["src/**/*.ts", "../../type.d.ts"]
+  "include": ["src/**/*.ts", "../../type.d.ts", "../../libs/interfaces/src/lib/update-default-response.dto.ts", "../../libs/interfaces/src/lib/delete-default-response.dto.ts", "../../libs/interfaces/src/lib/hard-delete-default-response.dto.ts", "../../libs/interfaces/src/lib/create-default-response.dto.ts"]
 }

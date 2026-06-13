@@ -18,7 +18,6 @@ export class ServiceOrderModel extends FormModel<ServiceOrderContract> {
             name: "description",
             label: "descricao",
             initialValue: "",
-            rules: [(path) => required(path)],
             width: 6,
           },
           {
@@ -26,11 +25,13 @@ export class ServiceOrderModel extends FormModel<ServiceOrderContract> {
             name: "price",
             label: "preco",
             initialValue: 0,
-            rules: [(path) => required(path)],
             width: 6,
           },
         ],
       },
-    ]);
+    ], (schemaPath) => {
+      required(schemaPath.description);
+      required(schemaPath.price);
+    });
   }
 }

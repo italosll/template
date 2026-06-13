@@ -4,7 +4,6 @@ import {
   Component, computed,
   DestroyRef,
   inject,
-  signal,
 } from "@angular/core";
 import { MatDialog} from "@angular/material/dialog";
 import { RibbonCategoryContract } from "@client/common/contracts/ribbon.contract";
@@ -53,14 +52,12 @@ export class CrudTemplateComponent {
 
   constructor() {
     inject(DialogsOpenerService);
-    this._fetchData()
     this._matDialog.afterOpened.pipe(takeUntilDestroyed(this._destroyRef)).subscribe((dialog)=> {
       dialog.afterClosed().pipe(takeUntilDestroyed(this._destroyRef)).subscribe((response)=>{
         if((response as typeof REFRESH_DATA)?.refresh) this._fetchData()
         if((response as SnackbarMessageInterface)?.snackbarMessage) this._snackBar.open((response as SnackbarMessageInterface)?.snackbarMessage, undefined ,{duration:3000})
       })
     })
-
   }
 
   private _fetchData(){

@@ -12,6 +12,6 @@ export interface PersonLegalContract extends PersonContract {
 }
 
 export interface PersonNaturalContract extends PersonContract {
-  birthDate: Date;
+  birthDate: string;
   document: string;
 }
