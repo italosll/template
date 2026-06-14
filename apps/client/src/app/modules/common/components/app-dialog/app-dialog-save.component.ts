@@ -100,7 +100,6 @@ export class DialogSaveComponent<EntityType> {
 
     submit(this.formModel().form, async () => {
       const payload = this.formModel().value();
-      console.log(payload);
       try {
         if (this.id) {
           await firstValueFrom(this._http.update(payload));

@@ -10,14 +10,15 @@ import {
   Query,
   ValidationPipe,
 } from "@nestjs/common";
-import { CreateDefaultResponseDTO } from "@api/common/dto/create-default-response.dto";
-import { DeleteDefaultResponseDTO } from "@api/common/dto/delete-default-response.dto";
-import { HardDeleteDefaultResponseDTO } from "@api/common/dto/hard-delete-default-response.dto";
-import { UpdateDefaultResponseDTO } from "@api/common/dto/update-default-response.dto";
+
 import { ClientService } from "./client.service";
 import { CreateClientDTO } from "./dto/create-client.dto";
 import { ResponseClientDTO } from "./dto/response-client.dto";
 import { UpdateClientDTO } from "./dto/update-client.dto";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
+import { DeleteDefaultResponseDTO } from "@interfaces/delete-default-response.dto";
+import { HardDeleteDefaultResponseDTO } from "@interfaces/hard-delete-default-response.dto";
 
 @Controller("clients")
 export class ClientController {

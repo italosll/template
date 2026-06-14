@@ -19,7 +19,7 @@ export class PersonNatural
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ unique: true })
+  @Column()
   birthDate!: string;
 
   @Column({ unique: true,  type: "varchar", length: 14 })

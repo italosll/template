@@ -4,7 +4,12 @@ import { BaseHttpService } from "@client/common/http/app-base.http.service";
 import { getProductsRoutes } from "../app-index.routes";
 
 @Injectable()
-export class ProductsHttpService extends BaseHttpService<ProductContract> {
+export class ProductsHttpService extends BaseHttpService<
+  ProductContract,
+  ProductContract,
+  ProductContract,
+  ProductContract
+> {
   constructor() {
     super(getProductsRoutes().api.products);
   }

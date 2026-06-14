@@ -1,5 +1,4 @@
 import { ALREADY_EXISTS } from "@api/common/constants/error-messages.constant";
-import { CreateDefaultResponseDTO } from "@api/common/dto/create-default-response.dto";
 import { PersonLegalContract } from "@interfaces/person.contract";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
@@ -7,6 +6,7 @@ import { DataSource, Repository } from "typeorm";
 import { PersonLegal } from "../entities/person-legal.entity";
 import { Person } from "../entities/person.entity";
 import { getQueriesParameters } from "../utils/get-queries-parameters.util";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
 
 @Injectable()
 export class PersonService {

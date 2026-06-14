@@ -20,8 +20,6 @@ export class TenantController {
 
   @Post("sign-up")
   signUp(@Body() signUpDTO: SignUpDTO) {
-      console.log("signUpDTO", signUpDTO);
-
     return this._tenantService.signUp(signUpDTO); 
   }
 }

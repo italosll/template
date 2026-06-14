@@ -41,9 +41,6 @@ export class UsersService
 
     const userFactory = new UserFactory();
     const users = decryptedUsers.map((du) => userFactory.response(du));
-
-    console.log("-------")
-    console.log(decryptedUsers);
     return users;
   }
 

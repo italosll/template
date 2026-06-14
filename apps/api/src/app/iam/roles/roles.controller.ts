@@ -11,15 +11,15 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { AuditContract } from "@api/common/contracts/audit.contract";
-import { CreateDefaultResponseDTO } from "@api/common/dto/create-default-response.dto";
-import { DeleteDefaultResponseDTO } from "@api/common/dto/delete-default-response.dto";
-import { HardDeleteDefaultResponseDTO } from "@api/common/dto/hard-delete-default-response.dto";
-import { UpdateDefaultResponseDTO } from "@api/common/dto/update-default-response.dto";
 import { RoleContract } from "@interfaces/role.contract";
 import { CreateRoleDTO } from "./dto/create-role.dto";
 import { ResponseRoleDTO } from "./dto/response-role.dto";
 import { UpdateRoleDTO } from "./dto/update-role.dto";
 import { RolesService } from "./roles.service";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
+import { DeleteDefaultResponseDTO } from "@interfaces/delete-default-response.dto";
+import { HardDeleteDefaultResponseDTO } from "@interfaces/hard-delete-default-response.dto";
 
 @Controller("roles")
 export class RolesController {

@@ -1,6 +1,4 @@
 import { AuditContract } from "@api/common/contracts/audit.contract";
-import { CreateDefaultResponseDTO } from "@api/common/dto/create-default-response.dto";
-import { UpdateDefaultResponseDTO } from "@api/common/dto/update-default-response.dto";
 import { EntityService } from "@api/common/services/entity.service";
 import { HTTP_ERROR_MESSAGES } from "@api/common/utils/http-error-messages.util";
 import { PermissionContract } from "@interfaces/permission.contract";
@@ -15,6 +13,8 @@ import { RoleFactory } from "./factories/role.factory";
 import { getAllowedPermissionKeys, toPermissionKey } from "./utils/permissions.util";
 import { ColumnQueryParameters } from "@api/common/utils/crud-helper.util";
 import { getQueriesParameters } from "./utils/get-queries-parameters.util";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 
 @Injectable()
 export class RolesService

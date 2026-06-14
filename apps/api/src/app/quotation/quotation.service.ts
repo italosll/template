@@ -1,5 +1,4 @@
-import { CreateDefaultResponseDTO } from "@api/common/dto/create-default-response.dto";
-import { UpdateDefaultResponseDTO } from "@api/common/dto/update-default-response.dto";
+
 import { EntityService } from "@api/common/services/entity.service";
 import { HTTP_ERROR_MESSAGES } from "@api/common/utils/http-error-messages.util";
 import { Product } from "@api/products/entities/product.entity";
@@ -13,6 +12,8 @@ import { Quotation } from "./entities/quotation.entity";
 import { getQueriesParameters } from "./utils/get-queries-parameters.util";
 import { Client } from "../client/entities/client.entity";
 import { ServiceOrder } from "../service-order/entities/service-order.entity";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 
 @Injectable()
 export class QuotationService

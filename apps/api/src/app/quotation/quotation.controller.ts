@@ -10,14 +10,14 @@ import {
   Query,
   ValidationPipe,
 } from "@nestjs/common";
-import { CreateDefaultResponseDTO } from "@api/common/dto/create-default-response.dto";
-import { DeleteDefaultResponseDTO } from "@api/common/dto/delete-default-response.dto";
-import { HardDeleteDefaultResponseDTO } from "@api/common/dto/hard-delete-default-response.dto";
-import { UpdateDefaultResponseDTO } from "@api/common/dto/update-default-response.dto";
 import { CreateQuotationDTO } from "./dto/create-quotation.dto";
 import { ResponseQuotationDTO } from "./dto/response-quotation.dto";
 import { UpdateQuotationDTO } from "./dto/update-quotation.dto";
 import { QuotationService } from "./quotation.service";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
+import { DeleteDefaultResponseDTO } from "@interfaces/delete-default-response.dto";
+import { HardDeleteDefaultResponseDTO } from "@interfaces/hard-delete-default-response.dto";
 
 @Controller("quotations")
 export class QuotationController {

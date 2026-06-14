@@ -75,10 +75,6 @@ export class AuthenticationService {
       throw new UnauthorizedException("Password does not match");
     }
 
-          console.log("----")
-      console.log({ user })
-
-
     return this._generateTokens(user);
   }
 
@@ -104,8 +100,6 @@ export class AuthenticationService {
   }
 
   private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
-    // console.log("----------")
-    // console.log({userId, expiresIn, payload})
     return await this._jwtService.signAsync(
       {
         sub: userId,

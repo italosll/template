@@ -31,13 +31,7 @@ export class FileUtil{
     }
 
     public static async urlFileDownload(url: string, fileName: string) {
-        
-        console.log("url: ",url);
-        console.log("fileName: ",fileName);
-
         const response = await fetch(url);
-
-        console.log("response: ",response);
 
         const blob = await response.blob();
         const a = document.createElement('a');

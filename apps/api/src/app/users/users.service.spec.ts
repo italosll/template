@@ -46,9 +46,6 @@ describe("users.service", () => {
       Promise.resolve("hashed password")
     );
 
-    console.log("####");
-    console.log(user);
-
     repository.findOne = jest.fn().mockResolvedValue(user) as any;
     repository.find = jest.fn().mockResolvedValue([user]) as any;
     repository.save.mockResolvedValue(user as any);

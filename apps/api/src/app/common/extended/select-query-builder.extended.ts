@@ -17,11 +17,12 @@ SelectQueryBuilder.prototype.andWhereMultipleColumns = function <Entity>(
 ) {
 
   if(filterObject.id){
-    const condition = `LOWER(id) LIKE LOWER(:id)`
+     const idColumn = columnNames.find(c => c.like === "id")!;
+    const condition = "raw" in idColumn ? idColumn.raw : `LOWER(${String(idColumn.where)}) LIKE LOWER(:${String(idColumn.like)})`
 
     this.andWhere(
       condition,
-      { id: `%${filterObject.id}%` }
+      { id: filterObject.id }
     )
 
     return this;
@@ -33,7 +34,11 @@ SelectQueryBuilder.prototype.andWhereMultipleColumns = function <Entity>(
 
   columnNames.forEach((column,index) => {
 
-    const condition = `LOWER(${String(column.where)}) LIKE LOWER(:${String(column.like)})`
+    const condition = "raw" in column 
+    ? column.raw 
+    : `LOWER(${String(column.where)}) LIKE LOWER(:${String(column.like)})`
+
+
     if(index === 0) {
       this.andWhere(
         condition,

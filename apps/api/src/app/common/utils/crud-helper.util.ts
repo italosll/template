@@ -1,11 +1,18 @@
 import { SelectQueryBuilder } from "typeorm";
 import { S3FilesService } from "../files/s3-files.service";
 
+type ColumnRawQuery<Entity> = {
+    raw: string;
+    like: keyof Entity
 
-export type ColumnQueryParameters<Entity> = {
+}
+
+type ColumnWhereLikeQuery<Entity> = {
     where:string,
     like: keyof Entity
 }
+
+export type ColumnQueryParameters<Entity> = ColumnRawQuery<Entity> | ColumnWhereLikeQuery<Entity>;
 
 export class CrudHelperUtil {
     // public static mountQuery<Entity>(

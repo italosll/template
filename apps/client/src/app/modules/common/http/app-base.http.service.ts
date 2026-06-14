@@ -24,7 +24,7 @@ RequestUpdate
     constructor(public _url:string){}
 
 
-    public findAll = (filters?:{[key:string]:unknown}) => {
+    public findAll (filters?:{[key:string]:unknown}){
 
         let fullUrl = this._url;
 
@@ -39,7 +39,7 @@ RequestUpdate
         }).pipe(tap(()=> this._loadingFind.set(false)));
     }
 
-    public findById = (id:number|string):Observable<ResponseFindById | undefined> => {
+    public findById(id:number|string):Observable<ResponseFindById>{
 
         const  fullUrl = `${this._url}?id=${id}`;
 
@@ -47,10 +47,10 @@ RequestUpdate
         return this._httpClient.get<ResponseFindById[]>(fullUrl,{
             responseType: 'json',
             withCredentials: true
-        })?.pipe(map((data) => data?.at(0)), tap(()=> this._loadingFind.set(false)));
+        }).pipe(map(data=>  data?.at(0) as ResponseFindById), tap(()=> this._loadingFind.set(false)));
     }
 
-  public findByText = (text:unknown):Observable<(ResponseFindAll)[]> => {
+  public findByText(text:unknown):Observable<(ResponseFindAll)[]> {
     const  fullUrl = `${this._url}?pesquisar=${String(text)}`;
     this._loadingFind.set(true);
     return this._httpClient.get<ResponseFindAll[]>(fullUrl,{

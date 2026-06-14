@@ -1,5 +1,3 @@
-import { CreateDefaultResponseDTO } from "@api/common/dto/create-default-response.dto";
-import { UpdateDefaultResponseDTO } from "@api/common/dto/update-default-response.dto";
 import { EntityService } from "@api/common/services/entity.service";
 import { HTTP_ERROR_MESSAGES } from "@api/common/utils/http-error-messages.util";
 import { PersonLegal } from "@api/person/entities/person-legal.entity";
@@ -13,6 +11,8 @@ import { ResponseClientDTO } from "./dto/response-client.dto";
 import { UpdateClientDTO } from "./dto/update-client.dto";
 import { Client } from "./entities/client.entity";
 import { getQueriesParameters } from "./utils/get-queries-parameters.util";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 
 @Injectable()
 export class ClientService
@@ -29,12 +29,58 @@ export class ClientService
     id?: number;
   }): Promise<ResponseClientDTO[]> {
     const queryBuilder = this._clientRepository.createQueryBuilder("client");
-
     const queriesParameters = getQueriesParameters();
-    queryBuilder.andWhereMultipleColumns(params, queriesParameters);
 
-    const clients = await queryBuilder.getMany();
-    return clients as ResponseClientDTO[];
+    const clients = await queryBuilder
+      .andWhereMultipleColumns(params, queriesParameters)
+      .leftJoinAndSelect("client.personNatural", "personNatural")
+      .leftJoinAndSelect("personNatural.personId", "naturalPerson")
+      .leftJoinAndSelect("client.personLegal", "personLegal")
+      .leftJoinAndSelect("personLegal.personId", "legalPerson")
+      .getMany() as (Client & { personNatural: PersonNatural & { personId: Person }; personLegal: PersonLegal & { personId: Person } })[];
+
+      console.log(clients.at(-1));
+    const mappedClients = clients.map((client) => {
+      if (client.personNatural) {
+        return {
+          id: client?.id,
+          name: client?.personNatural?.personId?.name,
+          email: client?.personNatural?.personId?.email,
+          phoneNumber: client?.personNatural?.personId?.phoneNumber,
+          document: client?.personNatural?.document,
+          personId: client?.personNatural?.personId?.id,
+          personNaturalId: client?.personNaturalId,
+          tenantId: client?.personNatural?.tenantId,
+          birthDate: client?.personNatural?.birthDate,
+          deletedAt: client?.deletedAt,
+          recoveryAt: client?.recoveredAt,
+          updatedAt: client?.updatedAt,
+          createdAt: client?.createdAt,
+        } as Omit<PersonNatural, "setRecoveredAt">;
+      }
+
+      if (client.personLegal) {
+        return {
+          id: client?.id,
+          name: client?.personLegal?.personId?.name,
+          email: client?.personLegal?.personId?.email,
+          phoneNumber: client?.personLegal?.personId?.phoneNumber,
+          document: client?.personLegal?.document,
+          companyRealName: client?.personLegal?.companyRealName,
+          personId: client?.personLegal?.personId?.id,
+          personLegalId: client?.personLegalId,
+          tenantId: client?.personLegal?.tenantId,
+          deletedAt: client?.deletedAt,
+          recoveryAt: client?.recoveredAt,
+          updatedAt: client?.updatedAt,
+          createdAt: client?.createdAt,
+        } as Omit<PersonLegal, "setRecoveredAt">;
+      }
+
+      return null;
+    });
+
+    return mappedClients as (PersonLegal | PersonNatural )[];
   }
 
   async create(createClient: CreateClientDTO): Promise<CreateDefaultResponseDTO> {
@@ -50,7 +96,7 @@ export class ClientService
 
     return this._dataSource.transaction(async (manager) => {
       const clientRepository = manager.getRepository(Client);
-    //   const personRepository = manager.getRepository(Person);
+      const personRepository = manager.getRepository(Person);
       const personLegalRepository = manager.getRepository(PersonLegal);
       const personNaturalRepository = manager.getRepository(PersonNatural);
 
@@ -74,19 +120,19 @@ export class ClientService
             );
         }
 
-        // const person = await personRepository.save(
-        //   personRepository.create({
-        //     name: personLegal.name,
-        //     email: personLegal.email,
-        //     phoneNumber: personLegal.phoneNumber,
-        //   })
-        // );
+        const person = await personRepository.save(
+          personRepository.create({
+            name: personLegal.name,
+            email: personLegal.email,
+            phoneNumber: personLegal.phoneNumber,
+          })
+        );
 
         const legal = await personLegalRepository.save(
           personLegalRepository.create({
             companyRealName: personLegal.companyRealName,
             document: personLegal.document,
-            // personId: person.id,
+            personId: person.id,
           })
         );
 
@@ -109,19 +155,19 @@ export class ClientService
         );
       }
 
-    //   const person = await personRepository.save(
-    //     personRepository.create({
-    //       name: personNatural.name,
-    //       email: personNatural.email,
-    //       phoneNumber: personNatural.phoneNumber,
-    //     })
-    //   );
+      const person = await personRepository.save(
+        personRepository.create({
+          name: personNatural.name,
+          email: personNatural.email,
+          phoneNumber: personNatural.phoneNumber,
+        })
+      );
 
       const natural = await personNaturalRepository.save(
         personNaturalRepository.create({
           document: personNatural.document,
           birthDate: personNatural.birthDate,
-        //   personId: person.id,
+          personId: person.id,
         })
       );
 
