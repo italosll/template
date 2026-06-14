@@ -1,8 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "sourceMap": true,
-    "inlineSources": true,
     "outDir": "../../dist/out-tsc",
     "types": [
       "vitest/globals",
@@ -10,9 +8,7 @@
       "vite/client",
       "node",
       "vitest"
-    ],
-    "target": "es2022",
-    "isolatedModules": true
+    ]
   },
   "include": [
     "vite.config.ts",

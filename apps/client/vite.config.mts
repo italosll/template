@@ -1,43 +1,37 @@
-/// <reference types="vitest" />
-
 import angular from "@analogjs/vite-plugin-angular";
-
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-
+import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
+import angular from "@analogjs/vite-plugin-angular";
+import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { defineConfig } from "vite";
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
-    plugins: [angular(), nxViteTsPaths()],
-    build:{
-      sourcemap:true,
+    plugins: [angular(), nxViteTsPaths(), nxCopyAssetsPlugin(["*.md"])],
+    build: {
+      sourcemap: true,
     },
-
     test: {
       sourcemap: true,
-      globals: true,
-      // environment: "jsdom",
       setupFiles: ["src/test-setup.ts"],
-      include: [
-
-        "src/**/*.spec.ts",
-        "src/**/*.test.ts",
-        "**/*.spec.ts",
-        "**/*.test.ts"
-      ],
-      reporters: ["default"],
-      // inspectBrk: true,
-      // fileParallelism: false,
-      // testTimeout:0,
-
       browser: {
         enabled: true,
-        name: 'chromium',
-        ui:true,
-
+        name: "chromium",
+        ui: true,
         headless: false, // set to true in CI
-        provider: 'playwright',
+        provider: "playwright",
+      },
+      enabled: true,
+      name: "chromium",
+      ui: true,
+      headless: false,
+      globals: true,
+      environment: "jsdom",
+      include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+      reporters: ["default"],
+      coverage: {
+        reportsDirectory: "../../coverage/apps/client",
+        provider: "v8" as const,
       },
     },
     define: {
