@@ -9,7 +9,6 @@ import { CreateServiceOrderDTO } from "./dto/create-service-order.dto";
 import { ResponseServiceOrderDTO } from "./dto/response-service-order.dto";
 import { UpdateServiceOrderDTO } from "./dto/update-service-order.dto";
 import { ServiceOrder } from "./entities/service-order.entity";
-import { ServiceOrderContract } from "@interfaces/service-order.contract";
 import { getQueriesParameters } from "./utils/get-queries-parameters.util";
 
 @Injectable()

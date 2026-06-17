@@ -16,7 +16,18 @@
     "src/**/*.test.js",
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
-    "src/**/*.spec.jsx"
+    "src/**/*.spec.jsx",
+    "vite.config.ts",
+    "vite.config.mts",
+    "vitest.config.ts",
+    "vitest.config.mts"
   ],
-  "include": ["src/**/*.ts", "../../type.d.ts", "../../libs/interfaces/src/lib/update-default-response.dto.ts", "../../libs/interfaces/src/lib/delete-default-response.dto.ts", "../../libs/interfaces/src/lib/hard-delete-default-response.dto.ts", "../../libs/interfaces/src/lib/create-default-response.dto.ts"]
+  "include": [
+    "src/**/*.ts",
+    "../../type.d.ts",
+    "../../libs/interfaces/src/lib/update-default-response.dto.ts",
+    "../../libs/interfaces/src/lib/delete-default-response.dto.ts",
+    "../../libs/interfaces/src/lib/hard-delete-default-response.dto.ts",
+    "../../libs/interfaces/src/lib/create-default-response.dto.ts"
+  ]
 }
