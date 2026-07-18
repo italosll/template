@@ -30,6 +30,8 @@ export interface SchemeSelect<T> extends SchemeBaseInput<T> {
   optionsValue?: string;
 }
 
+export type SchemeFormFieldAppearance = "fill" | "outline";
+
 export interface SchemeAutoComplete<T> extends SchemeBaseInput<T> {
   type: "autocomplete";
   /** List of option objects to choose from. */
@@ -49,6 +51,11 @@ export interface SchemeAutoComplete<T> extends SchemeBaseInput<T> {
    * When set, the panel shows a thumbnail next to each option.
    */
   imageKey?: string;
+  /**
+   * Material form-field appearance.
+   * @default "outline"
+   */
+  appearance?: SchemeFormFieldAppearance;
 }
 
 export interface SchemeRadioOption {

@@ -95,6 +95,7 @@ import { DeepNonNullable, SchemesContract } from "./scheme.contract";
         [valueKey]="input.valueKey ?? 'id'"
         [descriptionKey]="input.descriptionKey ?? 'description'"
         [imageKey]="input.imageKey"
+        [appearance]="input.appearance ?? 'outline'"
       />
 
       } @if(input.type === "radio"){

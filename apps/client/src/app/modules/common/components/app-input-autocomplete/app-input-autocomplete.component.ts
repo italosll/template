@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { FormValueControl } from "@angular/forms/signals";
 import {
-  MAT_FORM_FIELD_DEFAULT_OPTIONS,
+  MatFormFieldAppearance,
   MatFormFieldModule,
 } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -27,12 +27,6 @@ type OptionRecord = Record<string, unknown>;
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatFormFieldModule, MatInputModule, MatAutocompleteModule],
-  providers: [
-    {
-      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-      useValue: { appearance: "outline" },
-    },
-  ],
   styles: [
     `
       :host {
@@ -60,7 +54,7 @@ type OptionRecord = Record<string, unknown>;
     `,
   ],
   template: `
-    <mat-form-field>
+    <mat-form-field [appearance]="appearance()">
       @if (label()) {
         <mat-label>{{ label() }}</mat-label>
       }
@@ -101,6 +95,7 @@ export class InputAutocompleteComponent
   readonly valueKey = input<string>("id");
   readonly descriptionKey = input<string>("description");
   readonly imageKey = input<string | undefined>(undefined);
+  readonly appearance = input<MatFormFieldAppearance>("outline");
 
   protected readonly filterText = signal("");
 
