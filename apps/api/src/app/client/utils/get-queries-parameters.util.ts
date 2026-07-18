@@ -4,7 +4,15 @@ import { Client } from "../entities/client.entity";
 
 export function getQueriesParameters(): ColumnQueryParameters<Client>[] {
   return [
-    { raw: "(client.personNaturalId = :id OR client.personLegalId = :id)" , like: "id" },
+    { where: "client.id", like: "id" },
+    {
+      raw: "LOWER(naturalPerson.name) LIKE LOWER(:personNaturalId)",
+      like: "personNaturalId",
+    },
+    {
+      raw: "LOWER(legalPerson.name) LIKE LOWER(:personLegalId)",
+      like: "personLegalId",
+    },
     ...getAuditQuerys(),
   ];
 }

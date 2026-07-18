@@ -3,16 +3,17 @@ import { HTTP_ERROR_MESSAGES } from "@api/common/utils/http-error-messages.util"
 import { PersonLegal } from "@api/person/entities/person-legal.entity";
 import { PersonNatural } from "@api/person/entities/person-natural.entity";
 import { Person } from "@api/person/entities/person.entity";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { DataSource, In, Repository } from "typeorm";
 import { CreateClientDTO } from "./dto/create-client.dto";
+import { ResponseClientLookupDTO } from "./dto/response-client-lookup.dto";
 import { ResponseClientDTO } from "./dto/response-client.dto";
 import { UpdateClientDTO } from "./dto/update-client.dto";
 import { Client } from "./entities/client.entity";
 import { getQueriesParameters } from "./utils/get-queries-parameters.util";
-import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
-import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 
 @Injectable()
 export class ClientService
@@ -21,7 +22,7 @@ export class ClientService
   constructor(
     @InjectRepository(Client)
     private readonly _clientRepository: Repository<Client>,
-    @InjectDataSource() private readonly _dataSource: DataSource
+    @InjectDataSource() private readonly _dataSource: DataSource,
   ) {}
 
   async findAll(params: {
@@ -31,15 +32,18 @@ export class ClientService
     const queryBuilder = this._clientRepository.createQueryBuilder("client");
     const queriesParameters = getQueriesParameters();
 
-    const clients = await queryBuilder
+    const clients = (await queryBuilder
       .andWhereMultipleColumns(params, queriesParameters)
       .leftJoinAndSelect("client.personNatural", "personNatural")
       .leftJoinAndSelect("personNatural.personId", "naturalPerson")
       .leftJoinAndSelect("client.personLegal", "personLegal")
       .leftJoinAndSelect("personLegal.personId", "legalPerson")
-      .getMany() as (Client & { personNatural: PersonNatural & { personId: Person }; personLegal: PersonLegal & { personId: Person } })[];
+      .getMany()) as (Client & {
+      personNatural: PersonNatural & { personId: Person };
+      personLegal: PersonLegal & { personId: Person };
+    })[];
 
-      console.log(clients.at(-1));
+    console.log(clients.at(-1));
     const mappedClients = clients.map((client) => {
       if (client.personNatural) {
         return {
@@ -80,17 +84,60 @@ export class ClientService
       return null;
     });
 
-    return mappedClients as (PersonLegal | PersonNatural )[];
+    return mappedClients as (PersonLegal | PersonNatural)[];
   }
 
-  async create(createClient: CreateClientDTO): Promise<CreateDefaultResponseDTO> {
+  async lookup(): Promise<ResponseClientLookupDTO[]> {
+    const queryBuilder = this._clientRepository.createQueryBuilder("client");
+    const queriesParameters = getQueriesParameters();
+
+    const clients = (await queryBuilder
+      .leftJoinAndSelect("client.personNatural", "personNatural")
+      .leftJoinAndSelect("personNatural.personId", "naturalPerson")
+      .leftJoinAndSelect("client.personLegal", "personLegal")
+      .leftJoinAndSelect("personLegal.personId", "legalPerson")
+      .select([
+        "client.id",
+        "personNatural.id",
+        "naturalPerson.id",
+        "naturalPerson.name",
+        "personLegal.id",
+        "legalPerson.id",
+        "legalPerson.name",
+      ])
+      .getMany()) as (Client & {
+      personNatural?: PersonNatural & { personId: Person };
+      personLegal?: PersonLegal & { personId: Person };
+    })[];
+
+    return clients
+      .map((client) => {
+        const description =
+          client.personNatural?.personId?.name ??
+          client.personLegal?.personId?.name;
+
+        if (!description) {
+          return null;
+        }
+
+        return {
+          id: client.id,
+          description,
+        };
+      })
+      .filter((client): client is ResponseClientLookupDTO => client !== null);
+  }
+
+  async create(
+    createClient: CreateClientDTO,
+  ): Promise<CreateDefaultResponseDTO> {
     const hasLegal = !!createClient.personLegal;
     const hasNatural = !!createClient.personNatural;
 
     if (hasLegal === hasNatural) {
       throw new HttpException(
         "Cliente deve informar dados de pessoa fisica ou juridica. Nao ambos.",
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -109,15 +156,15 @@ export class ClientService
         if (existingLegal) {
           throw new HttpException(
             HTTP_ERROR_MESSAGES.alreadyExists(),
-            HttpStatus.CONFLICT
+            HttpStatus.CONFLICT,
           );
         }
 
         if (!hasLegal && !hasNatural) {
-            throw new HttpException(
-                "Cliente deve informar dados da pessoa fisica ou juridica.",
-                HttpStatus.BAD_REQUEST
-            );
+          throw new HttpException(
+            "Cliente deve informar dados da pessoa fisica ou juridica.",
+            HttpStatus.BAD_REQUEST,
+          );
         }
 
         const person = await personRepository.save(
@@ -125,7 +172,7 @@ export class ClientService
             name: personLegal.name,
             email: personLegal.email,
             phoneNumber: personLegal.phoneNumber,
-          })
+          }),
         );
 
         const legal = await personLegalRepository.save(
@@ -133,11 +180,11 @@ export class ClientService
             companyRealName: personLegal.companyRealName,
             document: personLegal.document,
             personId: person.id,
-          })
+          }),
         );
 
         const client = await clientRepository.save(
-          clientRepository.create({ personLegalId: legal.id })
+          clientRepository.create({ personLegalId: legal.id }),
         );
 
         return { id: client.id };
@@ -151,7 +198,7 @@ export class ClientService
       if (existingNatural) {
         throw new HttpException(
           HTTP_ERROR_MESSAGES.alreadyExists(),
-          HttpStatus.CONFLICT
+          HttpStatus.CONFLICT,
         );
       }
 
@@ -160,7 +207,7 @@ export class ClientService
           name: personNatural.name,
           email: personNatural.email,
           phoneNumber: personNatural.phoneNumber,
-        })
+        }),
       );
 
       const natural = await personNaturalRepository.save(
@@ -168,33 +215,34 @@ export class ClientService
           document: personNatural.document,
           birthDate: personNatural.birthDate,
           personId: person.id,
-        })
+        }),
       );
 
       const client = await clientRepository.save(
-        clientRepository.create({ personNaturalId: natural.id })
+        clientRepository.create({ personNaturalId: natural.id }),
       );
 
       return { id: client.id };
     });
   }
 
-  async update(updateClient: UpdateClientDTO): Promise<UpdateDefaultResponseDTO> {
-
+  async update(
+    updateClient: UpdateClientDTO,
+  ): Promise<UpdateDefaultResponseDTO> {
     const hasLegal = !!updateClient.personLegal;
     const hasNatural = !!updateClient.personNatural;
 
     if (hasLegal === hasNatural) {
       throw new HttpException(
         "Cliente deve informar dados de pessoa fisica ou juridica. Nao ambos.",
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
     if (!hasLegal && !hasNatural) {
       throw new HttpException(
         "Cliente deve informar dados da pessoa fisica ou juridica.",
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -211,7 +259,7 @@ export class ClientService
       if (!registeredClient) {
         throw new HttpException(
           HTTP_ERROR_MESSAGES.notFound(),
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -219,7 +267,7 @@ export class ClientService
         if (!registeredClient.personLegalId) {
           throw new HttpException(
             "Cliente nao possui pessoa juridica vinculada.",
-            HttpStatus.BAD_REQUEST
+            HttpStatus.BAD_REQUEST,
           );
         }
 
@@ -230,7 +278,7 @@ export class ClientService
         if (!personLegal) {
           throw new HttpException(
             HTTP_ERROR_MESSAGES.notFound(),
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
           );
         }
 
@@ -241,7 +289,7 @@ export class ClientService
         if (!person) {
           throw new HttpException(
             HTTP_ERROR_MESSAGES.notFound(),
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
           );
         }
 
@@ -253,7 +301,7 @@ export class ClientService
         if (existingLegal && existingLegal.id !== personLegal.id) {
           throw new HttpException(
             HTTP_ERROR_MESSAGES.alreadyExists(),
-            HttpStatus.CONFLICT
+            HttpStatus.CONFLICT,
           );
         }
 
@@ -276,7 +324,7 @@ export class ClientService
         if (!registeredClient.personNaturalId) {
           throw new HttpException(
             "Cliente nao possui pessoa fisica vinculada.",
-            HttpStatus.BAD_REQUEST
+            HttpStatus.BAD_REQUEST,
           );
         }
 
@@ -287,7 +335,7 @@ export class ClientService
         if (!personNatural) {
           throw new HttpException(
             HTTP_ERROR_MESSAGES.notFound(),
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
           );
         }
 
@@ -298,7 +346,7 @@ export class ClientService
         if (!person) {
           throw new HttpException(
             HTTP_ERROR_MESSAGES.notFound(),
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
           );
         }
 
@@ -310,7 +358,7 @@ export class ClientService
         if (existingNatural && existingNatural.id !== personNatural.id) {
           throw new HttpException(
             HTTP_ERROR_MESSAGES.alreadyExists(),
-            HttpStatus.CONFLICT
+            HttpStatus.CONFLICT,
           );
         }
 
@@ -341,7 +389,7 @@ export class ClientService
       if (!registeredClient)
         throw new HttpException(
           HTTP_ERROR_MESSAGES.notFound(),
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
     }
 
@@ -357,7 +405,7 @@ export class ClientService
       if (!registeredClient)
         throw new HttpException(
           HTTP_ERROR_MESSAGES.notFound(),
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
     }
 

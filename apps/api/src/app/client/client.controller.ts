@@ -11,14 +11,15 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 
-import { ClientService } from "./client.service";
-import { CreateClientDTO } from "./dto/create-client.dto";
-import { ResponseClientDTO } from "./dto/response-client.dto";
-import { UpdateClientDTO } from "./dto/update-client.dto";
 import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
-import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 import { DeleteDefaultResponseDTO } from "@interfaces/delete-default-response.dto";
 import { HardDeleteDefaultResponseDTO } from "@interfaces/hard-delete-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
+import { ClientService } from "./client.service";
+import { CreateClientDTO } from "./dto/create-client.dto";
+import { ResponseClientLookupDTO } from "./dto/response-client-lookup.dto";
+import { ResponseClientDTO } from "./dto/response-client.dto";
+import { UpdateClientDTO } from "./dto/update-client.dto";
 
 @Controller("clients")
 export class ClientController {
@@ -27,21 +28,26 @@ export class ClientController {
   @Post()
   async create(
     @Body(new ValidationPipe({ transform: true }))
-    createClientDTO: CreateClientDTO
+    createClientDTO: CreateClientDTO,
   ): Promise<CreateDefaultResponseDTO> {
     return this._clientService.create(createClientDTO);
   }
 
   @Get()
   async findAll(
-    @Query() query: { textToSearch?: string; id?: number }
+    @Query() query: { textToSearch?: string; id?: number },
   ): Promise<ResponseClientDTO[]> {
     return this._clientService.findAll(query);
   }
 
+  @Get("lookup")
+  async lookup(): Promise<ResponseClientLookupDTO[]> {
+    return this._clientService.lookup();
+  }
+
   @Put()
   async update(
-    @Body() updateClientDTO: UpdateClientDTO
+    @Body() updateClientDTO: UpdateClientDTO,
   ): Promise<UpdateDefaultResponseDTO> {
     return this._clientService.update(updateClientDTO);
   }
@@ -49,7 +55,7 @@ export class ClientController {
   @Delete()
   async delete(
     @Query("ids", new ParseArrayPipe({ items: Number, separator: "," }))
-    ids: number[]
+    ids: number[],
   ): Promise<DeleteDefaultResponseDTO> {
     return this._clientService.delete(ids);
   }
@@ -57,7 +63,7 @@ export class ClientController {
   @Delete("/hardDelete")
   async hardDelete(
     @Query("ids", new ParseArrayPipe({ items: Number, separator: "," }))
-    ids: number[]
+    ids: number[],
   ): Promise<HardDeleteDefaultResponseDTO> {
     return this._clientService.hardDelete(ids);
   }

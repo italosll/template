@@ -3,6 +3,7 @@ import { BaseHttpService } from "@client/common/http/app-base.http.service";
 import { getClientsRoutes } from "../app-index.routes";
 import { ClientFormValue } from "../models/app-client.model";
 import { map, Observable, tap, throwError } from "rxjs";
+import { ClientLookupContract } from "@interfaces/client-lookup.contract";
 import { PersonContract, PersonLegalContract, PersonNaturalContract } from "@interfaces/person.contract";
 
 type ClientPayload = {
@@ -34,6 +35,18 @@ export class ClientsHttpService extends BaseHttpService<
 > {
   constructor() {
     super(getClientsRoutes().api.clients);
+  }
+
+  lookup(): Observable<ClientLookupContract[]> {
+    const fullUrl = `${this._url}/lookup`;
+
+    this._loadingFind.set(true);
+    return this._httpClient
+      .get<ClientLookupContract[]>(fullUrl, {
+        responseType: "json",
+        withCredentials: true,
+      })
+      .pipe(tap(() => this._loadingFind.set(false)));
   }
 
   override findById(id:number|string):Observable<PersonContract & (PersonNaturalContract|PersonLegalContract)> {
