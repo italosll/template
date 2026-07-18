@@ -58,6 +58,36 @@ export interface SchemeAutoComplete<T> extends SchemeBaseInput<T> {
   appearance?: SchemeFormFieldAppearance;
 }
 
+export interface SchemeAutoCompleteMulti<T> extends SchemeBaseInput<T> {
+  type: "autocomplete-multi";
+  /** List of option objects to choose from. */
+  options: object[];
+  /**
+   * Property used as each stored form value in the array.
+   * @default "id"
+   */
+  valueKey?: string;
+  /**
+   * Property used as the visible label on chips and in the panel.
+   * @default "description"
+   */
+  descriptionKey?: string;
+  /**
+   * Optional property for an image (URL string or FileContract-like object).
+   * When set, the panel shows a thumbnail next to each option.
+   */
+  imageKey?: string;
+  /**
+   * Placeholder shown in the chip input.
+   */
+  placeholder?: string;
+  /**
+   * Material form-field appearance.
+   * @default "outline"
+   */
+  appearance?: SchemeFormFieldAppearance;
+}
+
 export interface SchemeRadioOption {
   description: string;
   value: unknown;
@@ -73,6 +103,7 @@ export type SchemeInputsContract<T = any> =
   | SchemeInput<T>
   | SchemeSelect<T>
   | SchemeAutoComplete<T>
+  | SchemeAutoCompleteMulti<T>
   | SchemeRadio<T>
   | SchemeId<T>;
 

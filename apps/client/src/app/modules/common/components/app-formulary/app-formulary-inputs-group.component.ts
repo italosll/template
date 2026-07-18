@@ -10,6 +10,7 @@ import {
 } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatRadioModule } from "@angular/material/radio";
+import { InputAutocompleteMultiComponent } from "../app-input-autocomplete/app-input-autocomplete-multi.component";
 import { InputAutocompleteComponent } from "../app-input-autocomplete/app-input-autocomplete.component";
 import { InputImageComponent } from "../app-input-file/app-input-file.component";
 import { DeepNonNullable, SchemesContract } from "./scheme.contract";
@@ -24,6 +25,7 @@ import { DeepNonNullable, SchemesContract } from "./scheme.contract";
     MatRadioModule,
     InputImageComponent,
     InputAutocompleteComponent,
+    InputAutocompleteMultiComponent,
   ],
   providers: [
     {
@@ -91,6 +93,19 @@ import { DeepNonNullable, SchemesContract } from "./scheme.contract";
         [style.grid-column]="'span ' + input.width"
         [formField]="field"
         [label]="input.label ?? ''"
+        [options]="input.options"
+        [valueKey]="input.valueKey ?? 'id'"
+        [descriptionKey]="input.descriptionKey ?? 'description'"
+        [imageKey]="input.imageKey"
+        [appearance]="input.appearance ?? 'outline'"
+      />
+
+      } @if(input.type === "autocomplete-multi"){
+      <app-input-autocomplete-multi
+        [style.grid-column]="'span ' + input.width"
+        [formField]="field"
+        [label]="input.label ?? ''"
+        [placeholder]="input.placeholder ?? ''"
         [options]="input.options"
         [valueKey]="input.valueKey ?? 'id'"
         [descriptionKey]="input.descriptionKey ?? 'description'"

@@ -159,6 +159,10 @@ export class FormModel<DTO> {
       return "";
     }
 
+    if (input.type === "autocomplete-multi") {
+      return [];
+    }
+
     return "";
   }
 
