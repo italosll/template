@@ -10,14 +10,14 @@ import {
 } from "@angular/core";
 import { FormValueControl } from "@angular/forms/signals";
 import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from "@angular/material/autocomplete";
+import {
   MatFormFieldAppearance,
   MatFormFieldModule,
 } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import {
-  MatAutocompleteModule,
-  MatAutocompleteSelectedEvent,
-} from "@angular/material/autocomplete";
 import { FileContract } from "@interfaces/file.contract";
 
 type OptionRecord = Record<string, unknown>;
@@ -45,8 +45,8 @@ type OptionRecord = Record<string, unknown>;
       }
 
       .option-image {
-        width: 2rem;
-        height: 2rem;
+        width: 3.2rem;
+        height: 3.2rem;
         border-radius: 0.25rem;
         object-fit: cover;
         flex-shrink: 0;
@@ -84,9 +84,7 @@ type OptionRecord = Record<string, unknown>;
     </mat-form-field>
   `,
 })
-export class InputAutocompleteComponent
-  implements FormValueControl<unknown>
-{
+export class InputAutocompleteComponent implements FormValueControl<unknown> {
   /** Selected option value (defaults to the option's `id`). */
   readonly value = model<unknown>("");
 
@@ -186,7 +184,11 @@ export class InputAutocompleteComponent
       return;
     }
 
-    if (this.value() === "" || this.value() === null || this.value() === undefined) {
+    if (
+      this.value() === "" ||
+      this.value() === null ||
+      this.value() === undefined
+    ) {
       this.filterText.set("");
     }
   }
