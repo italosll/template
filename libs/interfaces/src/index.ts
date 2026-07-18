@@ -8,6 +8,8 @@ export * from './lib/address.contract';
 export * from './lib/service-order.contract';
 export * from './lib/client.contract';
 export * from './lib/quotation.contract';
+export * from './lib/quotation-product.contract';
+export * from './lib/quotation-service-order.contract';
 
 
 

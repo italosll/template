@@ -1,9 +1,10 @@
+import { Tenant } from "@api/iam/entities/tenant.entity";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 import { Category } from "../categories/entities/category.entity";
-import { CreateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/create-default-response.dto";
-import { UpdateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/update-default-response.dto";
 import { S3FilesService } from "../common/files/s3-files.service";
 import { EntityService } from "../common/services/entity.service";
 import { ColumnQueryParameters } from "../common/utils/crud-helper.util";
@@ -14,7 +15,6 @@ import { UpdateProductDTO } from "./dto/update-product.dto";
 import { Product } from "./entities/product.entity";
 import { ProductFactory } from "./factories/product.factory";
 import { getQueriesParameters } from "./utils/get-queries-parameters.util";
-import { Tenant } from "@api/iam/entities/tenant.entity";
 
 @Injectable()
 export class ProductsService
@@ -26,12 +26,12 @@ export class ProductsService
     @InjectRepository(Tenant) private _tenantRepository: Repository<Tenant>,
     @InjectRepository(Category)
     private _categoryRepository: Repository<Category>,
-    @Inject(S3FilesService) private _filesService: S3FilesService
+    @Inject(S3FilesService) private _filesService: S3FilesService,
   ) {}
 
   private _findOneProduct(
     key: string,
-    value: unknown
+    value: unknown,
   ): Promise<Product | null> {
     return this._productRepository.findOne({
       where: { [key]: value },
@@ -39,12 +39,15 @@ export class ProductsService
     });
   }
 
-  async findAll(  params:{textToSearch?:string, id?:number} ): Promise<ResponseProductDTO[]> {
+  async findAll(params: {
+    textToSearch?: string;
+    id?: number;
+  }): Promise<ResponseProductDTO[]> {
     const queryBuilder = this._productRepository.createQueryBuilder("product");
     const queriesParameters: ColumnQueryParameters<Product>[] =
       getQueriesParameters();
 
-    queryBuilder.andWhereMultipleColumns( params, queriesParameters);
+    queryBuilder.andWhereMultipleColumns(params, queriesParameters);
 
     const products = await queryBuilder
       .loadRelationIdAndMap("product.categoryIds", "product.categories")
@@ -54,44 +57,45 @@ export class ProductsService
       ...new ProductFactory().response(product),
       image: this._filesService.getFileInfoByS3FileKey(
         product?.s3FileKey,
-        product.name
+        product.name,
       ),
     }));
     return productsWithFiles;
   }
 
   async create(
-    createProduct: CreateProductDTO
+    createProduct: CreateProductDTO,
   ): Promise<CreateDefaultResponseDTO> {
     const registeredProduct = await this._findOneProduct(
       "code",
-      createProduct.code
+      createProduct.code,
     );
 
     if (registeredProduct) {
       throw new HttpException(
         HTTP_ERROR_MESSAGES.alreadyExists(),
-        HttpStatus.CONFLICT
+        HttpStatus.CONFLICT,
       );
     }
 
     const categories = await this._categoryRepository.findBy({
       id: In(createProduct?.categoryIds ?? []),
     });
- 
 
-    const tenant = await this._tenantRepository.findOneBy({ id: createProduct.tenantId });
+    const tenant = await this._tenantRepository.findOneBy({
+      id: createProduct.tenantId,
+    });
     if (!tenant)
       throw new HttpException(
         HTTP_ERROR_MESSAGES.tenantNotFound(),
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
 
     const entity = this._productRepository.create(createProduct);
     entity.categories = categories;
     entity.s3FileKey = await this._filesService.upload(
       ["products"],
-      createProduct?.image?.base64File
+      createProduct?.image?.base64File,
     );
 
     entity.tenant = tenant!;
@@ -106,7 +110,7 @@ export class ProductsService
     if (!registeredProduct)
       throw new HttpException(
         HTTP_ERROR_MESSAGES.notFound(),
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
 
     const categories = await this._categoryRepository.findBy({
@@ -118,7 +122,7 @@ export class ProductsService
     const resposta = await this._filesService.upload(
       ["products"],
       entity?.image?.base64File,
-      registeredProduct?.s3FileKey
+      registeredProduct?.s3FileKey,
     );
     registeredProduct.s3FileKey = resposta;
 
@@ -136,7 +140,7 @@ export class ProductsService
       if (!registeredProduct)
         throw new HttpException(
           `${HTTP_ERROR_MESSAGES.notFound()} | idNotFound:${id}`,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
     });
 
@@ -152,7 +156,7 @@ export class ProductsService
       if (!registeredProduct)
         throw new HttpException(
           HTTP_ERROR_MESSAGES.notFound(),
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
     });
 

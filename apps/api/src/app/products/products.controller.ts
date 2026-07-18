@@ -1,4 +1,7 @@
-import { ProductContract } from "@interfaces/product.contract";
+import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dto";
+import { DeleteDefaultResponseDTO } from "@interfaces/delete-default-response.dto";
+import { HardDeleteDefaultResponseDTO } from "@interfaces/hard-delete-default-response.dto";
+import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 import {
   Body,
   Controller,
@@ -11,11 +14,6 @@ import {
   Query,
   ValidationPipe,
 } from "@nestjs/common";
-import { AuditContract } from "../common/contracts/audit.contract";
-import { CreateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/create-default-response.dto";
-import { DeleteDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/delete-default-response.dto";
-import { HardDeleteDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/hard-delete-default-response.dto";
-import { UpdateDefaultResponseDTO } from "../../../../../libs/interfaces/src/lib/update-default-response.dto";
 import { CreateProductDTO } from "./dto/create-product.dto";
 import { ResponseProductDTO } from "./dto/response-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";
@@ -24,30 +22,30 @@ import { ProductsService } from "./products.service";
 @Controller("products")
 export class ProductsController {
   constructor(
-    @Inject(ProductsService) private _productsService: ProductsService
+    @Inject(ProductsService) private _productsService: ProductsService,
   ) {}
 
   @Post()
   async create(
     @Body(new ValidationPipe({ transform: true }))
-    createProductDTO: CreateProductDTO
+    createProductDTO: CreateProductDTO,
   ): Promise<CreateDefaultResponseDTO> {
     return this._productsService.create(createProductDTO);
   }
 
   @Get()
   async findAll(
-    @Query() query:{pesquisar?:string, id:number}
+    @Query() query: { pesquisar?: string; id: number },
   ): Promise<ResponseProductDTO[]> {
     return this._productsService.findAll({
-      textToSearch:query.pesquisar,
-      id:query.id,
+      textToSearch: query.pesquisar,
+      id: query.id,
     });
   }
 
   @Put()
   async update(
-    @Body() updateProductDTO: UpdateProductDTO
+    @Body() updateProductDTO: UpdateProductDTO,
   ): Promise<UpdateDefaultResponseDTO> {
     return this._productsService.update(updateProductDTO);
   }
@@ -55,14 +53,14 @@ export class ProductsController {
   @Delete()
   async delete(
     @Query("ids", new ParseArrayPipe({ items: Number, separator: "," }))
-    ids: number[]
+    ids: number[],
   ): Promise<DeleteDefaultResponseDTO> {
     return this._productsService.delete(ids);
   }
 
   @Delete("/hardDelete")
   async hardDelete(
-    @Query("ids") ids: number[]
+    @Query("ids") ids: number[],
   ): Promise<HardDeleteDefaultResponseDTO> {
     return this._productsService.hardDelete(ids);
   }

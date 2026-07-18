@@ -1,7 +1,10 @@
+import { ResponseQuotationProductDTO } from "./response-quotation-product.dto";
+import { ResponseQuotationServiceOrderDTO } from "./response-quotation-service-order.dto";
+
 export class ResponseQuotationDTO {
   id!: number;
   clientId!: number;
-  productIds?: number[];
-  serviceOrderIds?: number[];
+  products!: ResponseQuotationProductDTO[];
+  serviceOrders!: ResponseQuotationServiceOrderDTO[];
   observation?: string;
 }
