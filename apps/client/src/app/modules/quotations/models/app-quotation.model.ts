@@ -61,7 +61,8 @@ export class QuotationModel extends FormModel<QuotationContract> {
               width: 4,
               options: productsOptions,
               valueKey: "id",
-              descriptionKey: "name",
+              descriptionKey: "description",
+              imageKey: "image",
             },
             {
               type: "text",
@@ -156,7 +157,7 @@ export class QuotationModel extends FormModel<QuotationContract> {
 
     forkJoin({
       clients: clientsHttp.findAll(),
-      products: productsHttp.findAll(),
+      products: productsHttp.lookup(),
       serviceOrders: serviceOrdersHttp.findAll(),
     }).subscribe(({ clients, products, serviceOrders }) => {
       clientsOptions.push(...(clients as object[]));
