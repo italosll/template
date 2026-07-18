@@ -107,7 +107,7 @@ export class FormModel<DTO> {
       }
     }
 
-    if (input.type === "select" || input.type === "autocomplete") {
+    if (input.type === "select") {
       const firstOption = input.options?.[0];
       if (firstOption && input.optionsValue) {
         const optionValue = (firstOption as Record<string, unknown>)[
@@ -117,6 +117,10 @@ export class FormModel<DTO> {
           return optionValue;
         }
       }
+    }
+
+    if (input.type === "autocomplete") {
+      return "";
     }
 
     return "";

@@ -10,6 +10,7 @@ import {
 } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatRadioModule } from "@angular/material/radio";
+import { InputAutocompleteComponent } from "../app-input-autocomplete/app-input-autocomplete.component";
 import { InputImageComponent } from "../app-input-file/app-input-file.component";
 import { DeepNonNullable, SchemesContract } from "./scheme.contract";
 
@@ -22,6 +23,7 @@ import { DeepNonNullable, SchemesContract } from "./scheme.contract";
     MatInputModule,
     MatRadioModule,
     InputImageComponent,
+    InputAutocompleteComponent,
   ],
   providers: [
     {
@@ -84,6 +86,17 @@ import { DeepNonNullable, SchemesContract } from "./scheme.contract";
         <app-input-file [formField]="field" />
       </mat-form-field>
 
+      } @if(input.type === "autocomplete"){
+      <app-input-autocomplete
+        [style.grid-column]="'span ' + input.width"
+        [formField]="field"
+        [label]="input.label ?? ''"
+        [options]="input.options"
+        [valueKey]="input.valueKey ?? 'id'"
+        [descriptionKey]="input.descriptionKey ?? 'description'"
+        [imageKey]="input.imageKey"
+      />
+
       } @if(input.type === "radio"){
       <div [style.grid-column]="'span ' + input.width">
         @if(input.title !== null && input.title !== undefined){
@@ -97,9 +110,9 @@ import { DeepNonNullable, SchemesContract } from "./scheme.contract";
           }
         </mat-radio-group>
       </div>
-        }
-      } 
+      }
     }
+  }
   `,
 })
 export class FormularyInputsGroupComponent<T = any  > {

@@ -32,9 +32,23 @@ export interface SchemeSelect<T> extends SchemeBaseInput<T> {
 
 export interface SchemeAutoComplete<T> extends SchemeBaseInput<T> {
   type: "autocomplete";
+  /** List of option objects to choose from. */
   options: object[];
-  optionsKey?: string;
-  optionsValue?: string;
+  /**
+   * Property used as the stored form value.
+   * @default "id"
+   */
+  valueKey?: string;
+  /**
+   * Property used as the visible label in the input and panel.
+   * @default "description"
+   */
+  descriptionKey?: string;
+  /**
+   * Optional property for an image (URL string or FileContract-like object).
+   * When set, the panel shows a thumbnail next to each option.
+   */
+  imageKey?: string;
 }
 
 export interface SchemeRadioOption {
