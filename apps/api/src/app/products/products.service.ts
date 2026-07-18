@@ -10,6 +10,7 @@ import { EntityService } from "../common/services/entity.service";
 import { ColumnQueryParameters } from "../common/utils/crud-helper.util";
 import { HTTP_ERROR_MESSAGES } from "../common/utils/http-error-messages.util";
 import { CreateProductDTO } from "./dto/create-product.dto";
+import { ResponseProductLookupDTO } from "./dto/response-product-lookup.dto";
 import { ResponseProductDTO } from "./dto/response-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";
 import { Product } from "./entities/product.entity";
@@ -61,6 +62,39 @@ export class ProductsService
       ),
     }));
     return productsWithFiles;
+  }
+
+  async lookup(params: {
+    textToSearch?: string;
+    id?: number;
+  }): Promise<ResponseProductLookupDTO[]> {
+    const queryBuilder = this._productRepository
+      .createQueryBuilder("product")
+      .select([
+        "product.id",
+        "product.name",
+        "product.sellingPrice",
+        "product.amount",
+        "product.s3FileKey",
+      ]);
+
+    const queriesParameters: ColumnQueryParameters<Product>[] =
+      getQueriesParameters();
+
+    queryBuilder.andWhereMultipleColumns(params, queriesParameters);
+
+    const products = await queryBuilder.getMany();
+
+    return products.map((product) => ({
+      id: product.id,
+      description: product.name,
+      price: product.sellingPrice,
+      amount: product.amount,
+      image: this._filesService.getFileInfoByS3FileKey(
+        product?.s3FileKey,
+        product.name,
+      ),
+    }));
   }
 
   async create(

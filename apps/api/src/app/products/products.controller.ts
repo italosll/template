@@ -15,6 +15,7 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { CreateProductDTO } from "./dto/create-product.dto";
+import { ResponseProductLookupDTO } from "./dto/response-product-lookup.dto";
 import { ResponseProductDTO } from "./dto/response-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";
 import { ProductsService } from "./products.service";
@@ -38,6 +39,16 @@ export class ProductsController {
     @Query() query: { pesquisar?: string; id: number },
   ): Promise<ResponseProductDTO[]> {
     return this._productsService.findAll({
+      textToSearch: query.pesquisar,
+      id: query.id,
+    });
+  }
+
+  @Get("lookup")
+  async lookup(
+    @Query() query: { pesquisar?: string; id?: number },
+  ): Promise<ResponseProductLookupDTO[]> {
+    return this._productsService.lookup({
       textToSearch: query.pesquisar,
       id: query.id,
     });
