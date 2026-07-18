@@ -29,9 +29,6 @@ export class ServiceOrderModel extends FormModel<ServiceOrderContract> {
           },
         ],
       },
-    ], (schemaPath) => {
-      required(schemaPath.description);
-      required(schemaPath.price);
-    });
+    ]);
   }
 }

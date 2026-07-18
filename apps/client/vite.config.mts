@@ -1,27 +1,14 @@
 import angular from "@analogjs/vite-plugin-angular";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
-import angular from "@analogjs/vite-plugin-angular";
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
-import angular from "@analogjs/vite-plugin-angular";
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
-import angular from "@analogjs/vite-plugin-angular";
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
-import angular from "@analogjs/vite-plugin-angular";
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { defineConfig } from "vite";
+import { playwright } from '@vitest/browser-playwright'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
       angular(),
       nxViteTsPaths(),
-      nxCopyAssetsPlugin(["*.md"]),
-      nxCopyAssetsPlugin(["*.md"]),
-      nxCopyAssetsPlugin(["*.md"]),
       nxCopyAssetsPlugin(["*.md"]),
     ],
     build: {
@@ -35,20 +22,15 @@ export default defineConfig(({ mode }) => {
         name: "chromium",
         ui: true,
         headless: false, // set to true in CI
-        provider: "playwright",
+        provider: playwright(),
+        instances: [
+        { 
+          browser: 'chromium' // Define your target browser here
+        },
+      ],
+        
+
       },
-      enabled: true,
-      name: "chromium",
-      ui: true,
-      headless: false,
-      enabled: true,
-      name: "chromium",
-      ui: true,
-      headless: false,
-      enabled: true,
-      name: "chromium",
-      ui: true,
-      headless: false,
       enabled: true,
       name: "chromium",
       ui: true,

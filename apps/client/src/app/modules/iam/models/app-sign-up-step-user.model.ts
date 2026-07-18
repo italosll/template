@@ -1,28 +1,16 @@
-import { FormModel } from "@client/common/model/app-form.model";
-import { UserContract } from "@interfaces/user.contract";
+import {  signal } from "@angular/core";
 
-export class SignUpStepUserModel extends FormModel<UserContract> {
+export class SignUpStepUserModel  {
   constructor() {
-    super([
+
+    const signal2 = signal([
       {
-        type: "default",
-        inputs: [
-          {
-            type: "text",
-            name: "phoneNumber",
-            label: "phoneNumber",
-            initialValue: "",
-            width: 12,
-          },
-          {
-            type: "text",
-            name: "password",
-            label: "password",
-            initialValue: "",
-            width: 12,
-          },
-        ],
-      },
-    ]);
+        type: "text",
+        name: "email",
+        label: "email",
+        value: "",
+      }
+    ])
   }
+   
 }

@@ -7,7 +7,9 @@ export class ServiceOrder extends Audit implements ServiceOrderContract {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({
+    type: "varchar",
+  })
   description!: string;
 
   @Column()

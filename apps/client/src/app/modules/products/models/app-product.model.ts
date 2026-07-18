@@ -42,8 +42,9 @@ export class ProductModel extends FormModel<ProductContract> {
           },
         ],
       },
-    ], (schemaPath) => {
-      required(schemaPath.name);
-    });
+      (path) => {
+        required(path.name);
+      },
+    ]);
   }
 }

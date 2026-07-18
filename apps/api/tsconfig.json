@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": [],
-  "types": ["jest", "node"],
+  "types": ["node"],
   "references": [
     {
       "path": "./tsconfig.app.json"

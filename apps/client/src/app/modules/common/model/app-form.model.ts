@@ -18,7 +18,7 @@ export class FormModel<DTO> {
 
   constructor(
     schemes: SchemesContract<DTO>,
-    rules?:(value:SchemaPathTree<DeepNonNullable<DTO>, PathKind.Root>)=> void,
+    rules?:((value:SchemaPathTree<DeepNonNullable<DTO>, PathKind.Root>)=> void) |null,
     effects?:((form:FieldTree<DeepNonNullable<DTO>, string | number>) => EffectRef)[]
   ) {
     this._schemes = schemes.map((s) => ({ ...s, uniqueId: this._uniqueId() }));

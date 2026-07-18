@@ -13,6 +13,7 @@ export class SignUpStepPersonLegalModel extends FormModel<PersonLegalContract> {
             name: "name",
             label: "Nome Fantasia",
             initialValue: "",
+            // rules: [(path) => required(path)]  as SignalRule<any>[],
             width: 12,
           },
           {
@@ -20,6 +21,7 @@ export class SignUpStepPersonLegalModel extends FormModel<PersonLegalContract> {
             name: "companyRealName",
             label: "Razão Social",
             initialValue: "",
+            // rules: [(path) => required(path)],
             width: 12,
           },
           {
@@ -27,12 +29,14 @@ export class SignUpStepPersonLegalModel extends FormModel<PersonLegalContract> {
             name: "document",
             label: "CNPJ",
             initialValue: "",
+            // rules: (path) => {
+            //   required(path.document);
+            // },
             width: 12,
           },
         ],
       },
-    ], (schemaPath) => {
-      required(schemaPath.document);
-    });
+    ]);
+ 
   }
 }
