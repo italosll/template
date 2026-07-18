@@ -6,6 +6,7 @@ import { getStartRoutes } from '@client/start/app-index.routes';
 import { getUsersRoutes } from '@client/users/app-index.routes';
 import { getServiceOrdersRoutes } from './modules/service-orders/app-index.routes';
 import { getClientsRoutes } from './modules/clients/app-index.routes';
+import { getQuotationsRoutes } from './modules/quotations/app-index.routes';
 
 
 export const appRoutes: Route[] = [
@@ -18,6 +19,7 @@ export const appRoutes: Route[] = [
             ...getProductsRoutes().angular,
             ...getServiceOrdersRoutes().angular,
             ...getClientsRoutes().angular,
+            ...getQuotationsRoutes().angular,
             ...getUsersRoutes().angular,
         ]
     }

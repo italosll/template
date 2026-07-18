@@ -95,6 +95,7 @@ export interface SchemeFormGroupContract<T> extends SchemeContract<T> {
 export interface SchemeArrayContract<T> extends SchemeContract<T> {
   type: "array";
   name: string;
+  label?: string;
   uniqueId?: string;
 }
 

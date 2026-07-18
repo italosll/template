@@ -41,8 +41,7 @@ import { firstValueFrom } from "rxjs";
           <form
             id="login-form"
             app-formulary
-            [form]="form"
-            [schemes]="schemes"
+            [formModel]="formModel"
             (submit)="onSubmit($event)"
           ></form>
         </mat-card-content>
@@ -52,7 +51,7 @@ import { firstValueFrom } from "rxjs";
             color="primary"
             type="submit"
             form="login-form"
-            [disabled]="form().invalid() || form().pending()"
+            [disabled]="formModel.form().invalid() || formModel.form().pending()"
           >
             Entrar
           </button>
@@ -63,19 +62,15 @@ import { firstValueFrom } from "rxjs";
 })
 export class PageSignInComponent {
   private _accessService = inject(AccessService);
-  private _model = new SignInModel();
-  protected schemes = this._model.schemes;
-  protected form = this._model.form;
+  protected formModel = new SignInModel();
   protected routes = getIamRoutes().client;
 
   protected onSubmit(event: Event) {
     event.preventDefault();
-    submit(this.form, async () => {
+    submit(this.formModel.form, async () => {
       await firstValueFrom(
-        this._accessService.signIn(this._model.value() as SignInContract)
+        this._accessService.signIn(this.formModel.value() as SignInContract)
       );
     });
   }
-
-  constructor() {}
 }

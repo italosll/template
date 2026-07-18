@@ -3,7 +3,6 @@ import {
   Component,
   input,
   inject,
-  computed,
 } from "@angular/core";
 import { submit } from "@angular/forms/signals";
 import { MatButtonModule } from "@angular/material/button";
@@ -54,8 +53,7 @@ import { REFRESH_DATA } from "@client/common/constants/refresh-data.constant";
       <form
         id="form"
         app-formulary
-        [form]="formModel().form"
-        [schemes]="schemes()"
+        [formModel]="formModel()"
         (submit)="onSubmit($event)"
       ></form>
     </mat-dialog-content>
@@ -86,8 +84,6 @@ export class DialogSaveComponent<EntityType> {
 
   public title = input.required<string>();
   public formModel = input.required<FormModel<EntityType>>();
-  public schemes = computed(()=>this.formModel().schemes);
-
 
   constructor (){
     this._http.findById(this.id).subscribe((r)=>{

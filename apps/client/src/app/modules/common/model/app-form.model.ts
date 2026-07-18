@@ -48,6 +48,42 @@ export class FormModel<DTO> {
     this._model.set(this._mergeDefaults(this._defaults, value) as DeepNonNullable<DTO>);
   }
 
+  public addArrayItem(arrayName: string): void {
+    const scheme = this._schemes.find(
+      (item) => item.type === "array" && item.name === arrayName,
+    );
+    if (!scheme || scheme.type !== "array") {
+      return;
+    }
+
+    const itemDefaults = this._buildInputsDefaults(scheme.inputs);
+    this._model.update((current) => {
+      const record = current as Record<string, unknown>;
+      const existing = Array.isArray(record[arrayName])
+        ? (record[arrayName] as unknown[])
+        : [];
+
+      return {
+        ...current,
+        [arrayName]: [...existing, itemDefaults],
+      } as DeepNonNullable<DTO>;
+    });
+  }
+
+  public removeArrayItem(arrayName: string, index: number): void {
+    this._model.update((current) => {
+      const record = current as Record<string, unknown>;
+      const existing = Array.isArray(record[arrayName])
+        ? (record[arrayName] as unknown[])
+        : [];
+
+      return {
+        ...current,
+        [arrayName]: existing.filter((_, itemIndex) => itemIndex !== index),
+      } as DeepNonNullable<DTO>;
+    });
+  }
+
   private _buildDefaults(schemes: SchemesContract<DTO>): Record<string, unknown> {
     const defaults: Record<string, unknown> = {};
 

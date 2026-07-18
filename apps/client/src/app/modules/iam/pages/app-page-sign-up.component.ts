@@ -42,31 +42,28 @@ import { SignUpStepUserModel } from "../models/app-sign-up-step-user.model";
         </mat-card-header>
         <mat-card-content>
           <mat-vertical-stepper linear #stepper>
-            <mat-step [completed]="formStepUser().valid()">
+            <mat-step [completed]="formStepUser.form().valid()">
               <ng-template matStepLabel>Dados da conta</ng-template>
               <form
                 id="sign-up-form-user"
                 app-formulary
-                [form]="formStepUser"
-                [schemes]="schemesStepUser"
+                [formModel]="formStepUser"
               ></form>
             </mat-step>
-            <mat-step [completed]="formStepPersonLegal().valid()">
+            <mat-step [completed]="formStepPersonLegal.form().valid()">
               <ng-template matStepLabel>Dados da empresa</ng-template>
               <form
                 id="sign-up-form-person-legal"
                 app-formulary
-                [form]="formStepPersonLegal"
-                [schemes]="schemesStepPersonLegal"
+                [formModel]="formStepPersonLegal"
               ></form>
             </mat-step>
-            <mat-step [completed]="formStepImage().valid()">
+            <mat-step [completed]="formStepImage.form().valid()">
               <ng-template matStepLabel>Logo da empresa</ng-template>
               <form
                 id="sign-up-form-image"
                 app-formulary
-                [form]="formStepImage"
-                [schemes]="schemesStepImage"
+                [formModel]="formStepImage"
               ></form>
             </mat-step>
           </mat-vertical-stepper>
@@ -99,17 +96,9 @@ import { SignUpStepUserModel } from "../models/app-sign-up-step-user.model";
   `,
 })
 export class PageSignInComponent {
-  private _stepUserModel = new SignUpStepUserModel();
-  private _stepPersonLegalModel = new SignUpStepPersonLegalModel();
-  private _setpImageModel = new SignUpStepImageModel();
-
-  protected schemesStepUser = this._stepUserModel.schemes;
-  protected schemesStepPersonLegal = this._stepPersonLegalModel.schemes;
-  protected schemesStepImage = this._setpImageModel.schemes;
-
-  protected formStepUser = this._stepUserModel.form;
-  protected formStepPersonLegal = this._stepPersonLegalModel.form;
-  protected formStepImage = this._setpImageModel.form;
+  protected formStepUser = new SignUpStepUserModel();
+  protected formStepPersonLegal = new SignUpStepPersonLegalModel();
+  protected formStepImage = new SignUpStepImageModel();
 
   protected routes = getIamRoutes().client;
 }
