@@ -16,6 +16,7 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { CreateServiceOrderDTO } from "./dto/create-service-order.dto";
+import { ResponseServiceOrderLookupDTO } from "./dto/response-service-order-lookup.dto";
 import { ResponseServiceOrderDTO } from "./dto/response-service-order.dto";
 import { UpdateServiceOrderDTO } from "./dto/update-service-order.dto";
 import { ServiceOrderService } from "./service-order.service";
@@ -40,6 +41,16 @@ export class ServiceOrderController {
     @Query() query: Partial<ServiceOrderContract>,
   ): Promise<ResponseServiceOrderDTO[]> {
     return this._serviceOrderService.findAll(query);
+  }
+
+  @Get("lookup")
+  async lookup(
+    @Query() query: { pesquisar?: string; id?: number },
+  ): Promise<ResponseServiceOrderLookupDTO[]> {
+    return this._serviceOrderService.lookup({
+      textToSearch: query.pesquisar,
+      id: query.id,
+    });
   }
 
   @Put()
