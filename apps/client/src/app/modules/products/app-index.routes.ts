@@ -63,6 +63,13 @@ export function getProductsRoutes() {
           new TableColumnModel("Código", "code", "string"),
           new TableColumnModel("Nome", "name", "string"),
           new TableColumnModel("Descrição", "description", "string"),
+          new TableColumnModel("Custo", "cost", "money"),
+          new TableColumnModel("Preço de venda", "sellingPrice", "money"),
+          new TableColumnModel(
+            "Desconto máximo %",
+            "maxDiscountPercentage",
+            "numberFloat",
+          ),
           new TableColumnModel("Imagem", "image", "image"),
         ]),
         provideRibbon([
