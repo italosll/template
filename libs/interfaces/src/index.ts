@@ -6,6 +6,10 @@ export * from './lib/lookup.contract';
 export * from './lib/category.contract';
 export * from './lib/permission.contract';
 export * from './lib/role.contract';
+export * from './lib/assign-role.contract';
+export * from './lib/assign-permission.contract';
+export * from './lib/user-role-assignment.contract';
+export * from './lib/user-permission-assignment.contract';
 export * from './lib/address.contract';
 export * from './lib/service-order.contract';
 export * from './lib/service-order-lookup.contract';
@@ -14,6 +18,3 @@ export * from './lib/client-lookup.contract';
 export * from './lib/quotation.contract';
 export * from './lib/quotation-product.contract';
 export * from './lib/quotation-service-order.contract';
-
-
-

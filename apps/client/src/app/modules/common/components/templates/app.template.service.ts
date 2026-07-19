@@ -1,16 +1,16 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
-import { TemplateComponent } from "./app.template.component";
 
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
+import { getAuthorizationRoutes } from "@client/authorization/app-index.routes";
 import { NavigationItemModel } from "@client/common/model/app-navigation-item";
 import { getProductsRoutes } from "@client/products/app-index.routes";
 import { getStartRoutes } from "@client/start/app-index.routes";
 import { getUsersRoutes } from "@client/users/app-index.routes";
 import { filter, map } from "rxjs";
-import { getServiceOrdersRoutes } from "../../../service-orders/app-index.routes";
 import { getClientsRoutes } from "../../../clients/app-index.routes";
 import { getQuotationsRoutes } from "../../../quotations/app-index.routes";
+import { getServiceOrdersRoutes } from "../../../service-orders/app-index.routes";
 
 @Injectable()
 export class TemplateService {
@@ -45,6 +45,9 @@ export class TemplateService {
       getServiceOrdersRoutes().client.serviceOrders,
       getClientsRoutes().client.clients,
       getQuotationsRoutes().client.quotations,
+      getAuthorizationRoutes().client.roles,
+      getAuthorizationRoutes().client.permissions,
+      getAuthorizationRoutes().client.assignments,
     ];
     const navigationItems = routes.map(
       ({ title, path, icon }) => new NavigationItemModel(title, path, icon)

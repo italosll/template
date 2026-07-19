@@ -31,6 +31,7 @@
       "@client/start/*": ["apps/client/src/app/modules/start/*"],
       "@client/theme": ["apps/client/src/theme.scss"],
       "@client/users/*": ["apps/client/src/app/modules/users/*"],
+      "@client/authorization/*": ["apps/client/src/app/modules/authorization/*"],
       "@interfaces/*": ["libs/interfaces/src/lib/*"]
     }
   },
