@@ -4,8 +4,7 @@ import { AuditContract } from "@api/common/contracts/audit.contract";
 export class ResponseRoleDTO implements RoleContract, AuditContract {
   public id!: number;
   public name!: string;
-  public permissions!: RoleContract["permissions"];
-  public tenantId!: number;
+  public permissionIds!: number[];
 
   public createdAt!: Date;
   public updatedAt!: Date;

@@ -19,6 +19,8 @@ import { ResponseProductLookupDTO } from "./dto/response-product-lookup.dto";
 import { ResponseProductDTO } from "./dto/response-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";
 import { ProductsService } from "./products.service";
+import { Permissions } from "@api/iam/authorization/decorators/permissions.decorator";
+import { PERMISSION_CODES } from "@api/iam/permissions/permissions.constant";
 
 @Controller("products")
 export class ProductsController {
@@ -27,6 +29,7 @@ export class ProductsController {
   ) {}
 
   @Post()
+  @Permissions(PERMISSION_CODES.PRODUCT_CREATE)
   async create(
     @Body(new ValidationPipe({ transform: true }))
     createProductDTO: CreateProductDTO,
@@ -35,6 +38,7 @@ export class ProductsController {
   }
 
   @Get()
+  @Permissions(PERMISSION_CODES.PRODUCT_READ)
   async findAll(
     @Query() query: { pesquisar?: string; id: number },
   ): Promise<ResponseProductDTO[]> {
@@ -45,6 +49,7 @@ export class ProductsController {
   }
 
   @Get("lookup")
+  @Permissions(PERMISSION_CODES.PRODUCT_READ)
   async lookup(
     @Query() query: { pesquisar?: string; id?: number },
   ): Promise<ResponseProductLookupDTO[]> {
@@ -55,6 +60,7 @@ export class ProductsController {
   }
 
   @Put()
+  @Permissions(PERMISSION_CODES.PRODUCT_UPDATE)
   async update(
     @Body() updateProductDTO: UpdateProductDTO,
   ): Promise<UpdateDefaultResponseDTO> {
@@ -62,6 +68,7 @@ export class ProductsController {
   }
 
   @Delete()
+  @Permissions(PERMISSION_CODES.PRODUCT_DELETE)
   async delete(
     @Query("ids", new ParseArrayPipe({ items: Number, separator: "," }))
     ids: number[],
@@ -70,6 +77,7 @@ export class ProductsController {
   }
 
   @Delete("/hardDelete")
+  @Permissions(PERMISSION_CODES.PRODUCT_DELETE)
   async hardDelete(
     @Query("ids") ids: number[],
   ): Promise<HardDeleteDefaultResponseDTO> {

@@ -20,12 +20,15 @@ import { CreateDefaultResponseDTO } from "@interfaces/create-default-response.dt
 import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dto";
 import { DeleteDefaultResponseDTO } from "@interfaces/delete-default-response.dto";
 import { HardDeleteDefaultResponseDTO } from "@interfaces/hard-delete-default-response.dto";
+import { Permissions } from "@api/iam/authorization/decorators/permissions.decorator";
+import { PERMISSION_CODES } from "@api/iam/permissions/permissions.constant";
 
 @Controller("roles")
 export class RolesController {
   constructor(@Inject(RolesService) private _rolesService: RolesService) {}
 
   @Post()
+  @Permissions(PERMISSION_CODES.ROLE_CREATE)
   async create(
     @Body(new ValidationPipe({ transform: true }))
     createRoleDTO: CreateRoleDTO
@@ -34,6 +37,7 @@ export class RolesController {
   }
 
   @Get()
+  @Permissions(PERMISSION_CODES.ROLE_READ)
   async findAll(
     @Query() query: Partial<RoleContract & AuditContract>
   ): Promise<ResponseRoleDTO[]> {
@@ -41,6 +45,7 @@ export class RolesController {
   }
 
   @Put()
+  @Permissions(PERMISSION_CODES.ROLE_UPDATE)
   async update(
     @Body(new ValidationPipe({ transform: true }))
     updateRoleDTO: UpdateRoleDTO
@@ -49,6 +54,7 @@ export class RolesController {
   }
 
   @Delete()
+  @Permissions(PERMISSION_CODES.ROLE_DELETE)
   async delete(
     @Query("ids", new ParseArrayPipe({ items: Number, separator: "," }))
     ids: number[]
@@ -57,6 +63,7 @@ export class RolesController {
   }
 
   @Delete("/hardDelete")
+  @Permissions(PERMISSION_CODES.ROLE_DELETE)
   async hardDelete(
     @Query("ids", new ParseArrayPipe({ items: Number, separator: "," }))
     ids: number[]

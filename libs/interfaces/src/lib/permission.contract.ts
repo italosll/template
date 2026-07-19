@@ -1,4 +1,5 @@
 export interface PermissionContract {
-  resource: string;
-  action: string;
+  id: number;
+  code: string;
+  description?: string;
 }

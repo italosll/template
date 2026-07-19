@@ -7,10 +7,14 @@ import { AppService } from "./app.service";
 import { CategoriesModule } from "./categories/categories.module";
 import { AddressModule } from "./address/address.module";
 import s3FilesConfig from "./common/config/s3-files.config";
+import redisConfig from "./common/config/redis.config";
 import databaseConfig from "./core/config/database.config";
 import { DatabaseConfigContract } from "./core/contracts/database.config.contract";
 import { IamModule } from "./iam/iam.module";
 import { RolesModule } from "./iam/roles/roles.module";
+import { PermissionsModule } from "./iam/permissions/permissions.module";
+import { AuthorizationModule } from "./iam/authorization/authorization.module";
+import { CacheModule } from "./common/cache/cache.module";
 import { PersonModule } from "./person/person.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
@@ -20,19 +24,9 @@ import { QuotationModule } from "./quotation/quotation.module";
 
 @Module({
   imports: [
-    UsersModule,
-    ProductsModule,
-    CategoriesModule,
-    AddressModule,
-    ServiceOrderModule,
-    ClientModule,
-    QuotationModule,
-    IamModule,
-    RolesModule,
-    PersonModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, s3FilesConfig],
+      load: [databaseConfig, s3FilesConfig, redisConfig],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -52,6 +46,19 @@ import { QuotationModule } from "./quotation/quotation.module";
         };
       },
     }),
+    CacheModule,
+    UsersModule,
+    ProductsModule,
+    CategoriesModule,
+    AddressModule,
+    ServiceOrderModule,
+    ClientModule,
+    QuotationModule,
+    IamModule,
+    PermissionsModule,
+    AuthorizationModule,
+    RolesModule,
+    PersonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

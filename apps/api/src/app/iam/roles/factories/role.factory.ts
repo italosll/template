@@ -4,6 +4,7 @@ import { plainToInstance } from "class-transformer";
 import { CreateRoleDTO } from "../dto/create-role.dto";
 import { ResponseRoleDTO } from "../dto/response-role.dto";
 import { UpdateRoleDTO } from "../dto/update-role.dto";
+import { Role } from "../entities/role.entity";
 
 export class RoleFactory
   implements FactoryContract<CreateRoleDTO, UpdateRoleDTO, ResponseRoleDTO>
@@ -11,11 +12,7 @@ export class RoleFactory
   private _fakeData: Partial<CreateRoleDTO | UpdateRoleDTO | ResponseRoleDTO> = {
     id: 1,
     name: "Admin",
-    permissions: [
-      { resource: "product", action: "read" },
-      { resource: "user", action: "read" },
-    ],
-    tenantId: 1,
+    permissionIds: [1, 2],
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: new Date(),
@@ -50,5 +47,17 @@ export class RoleFactory
       ResponseRoleDTO,
       setFakeData ? { ...this._fakeData, ...params } : params
     );
+  }
+
+  public fromEntity(role: Role): ResponseRoleDTO {
+    return this.response({
+      id: role.id,
+      name: role.name,
+      permissionIds: role.permissions?.map((p) => p.id) ?? [],
+      createdAt: role.createdAt,
+      updatedAt: role.updatedAt,
+      deletedAt: role.deletedAt,
+      recoveredAt: role.recoveredAt,
+    });
   }
 }

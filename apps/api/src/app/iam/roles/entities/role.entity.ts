@@ -1,20 +1,30 @@
-import { RoleContract } from "@interfaces/role.contract";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Permission } from "@api/iam/permissions/entities/permission.entity";
 import { Audit } from "@api/common/utils/audit.util";
-import { PermissionContract } from "@interfaces/permission.contract";
-import { Tenant } from "@api/iam/entities/tenant.entity";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { RoleContract } from "@interfaces/role.contract";
 
 @Entity()
-export class Role extends Audit implements RoleContract {
+export class Role extends Audit implements Omit<RoleContract, "permissionIds"> {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ unique: true })
   name!: string;
 
-  @Column({ type: "json" })
-  permissions!: PermissionContract[];
-
-  @ManyToOne(() => Tenant, (tenant) => tenant.id)
-  tenantId!: number;
+  @ManyToMany(() => Permission, (permission) => permission.roles, {
+    cascade: false,
+    eager: false,
+  })
+  @JoinTable({
+    name: "role_permissions",
+    joinColumn: { name: "roleId", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "permissionId", referencedColumnName: "id" },
+  })
+  permissions!: Permission[];
 }

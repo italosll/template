@@ -1,7 +1,5 @@
-import { PermissionDTO } from "@api/iam/permissions/permission.dto";
 import { RoleContract } from "@interfaces/role.contract";
-import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateRoleDTO implements Omit<RoleContract, "id"> {
   @IsNotEmpty()
@@ -9,10 +7,7 @@ export class CreateRoleDTO implements Omit<RoleContract, "id"> {
   public name!: string;
 
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => PermissionDTO)
-  public permissions!: PermissionDTO[];
-
-  @IsNumber()
-  public tenantId!: number;
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  public permissionIds!: number[];
 }
