@@ -17,6 +17,7 @@ export const PERMISSION_CODES = {
   ROLE_UPDATE: "role.update",
   ROLE_DELETE: "role.delete",
   PERMISSION_MANAGE: "permission.manage",
+  AUDIT_READ: "audit.read",
 } as const;
 
 export type PermissionCode =

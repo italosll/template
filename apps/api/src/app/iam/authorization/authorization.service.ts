@@ -5,7 +5,9 @@ import {
   PERMISSIONS_CACHE_TTL_SECONDS,
   permissionsCacheKey,
   permissionsCacheUserPattern,
+  superAdminCacheKey,
 } from "./authorization.constants";
+import { SYSTEM_ROLES } from "@api/iam/roles/role-bootstrap.service";
 
 @Injectable()
 export class AuthorizationService {
@@ -71,6 +73,59 @@ export class AuthorizationService {
     }
 
     return new Set(codes);
+  }
+
+  /**
+   * Checks whether the user holds the GLOBAL SuperAdmin role.
+   * Uses Redis cache; falls back to DB on miss and populates the cache.
+   */
+  async isSuperAdmin(userId: number): Promise<boolean> {
+    const cacheKey = superAdminCacheKey(userId);
+
+    try {
+      const cached = await this._cacheService.get(cacheKey);
+      if (cached !== null) {
+        return cached === "1";
+      }
+    } catch (error) {
+      this._logger.warn(
+        `Cache read failed for ${cacheKey}, falling back to database`,
+        error instanceof Error ? error.stack : undefined
+      );
+    }
+
+    const isSuperAdmin = await this._authorizationRepository.hasGlobalRoleByName(
+      userId,
+      SYSTEM_ROLES.SUPER_ADMIN
+    );
+
+    try {
+      await this._cacheService.set(
+        cacheKey,
+        isSuperAdmin ? "1" : "0",
+        PERMISSIONS_CACHE_TTL_SECONDS
+      );
+    } catch (error) {
+      this._logger.warn(
+        `Cache write failed for ${cacheKey}`,
+        error instanceof Error ? error.stack : undefined
+      );
+    }
+
+    return isSuperAdmin;
+  }
+
+  /** Invalidate the cached SuperAdmin flag for a user. */
+  async invalidateSuperAdminCache(userId: number): Promise<void> {
+    const key = superAdminCacheKey(userId);
+    try {
+      await this._cacheService.delete(key);
+    } catch (error) {
+      this._logger.warn(
+        `Failed to invalidate cache key ${key}`,
+        error instanceof Error ? error.stack : undefined
+      );
+    }
   }
 
   /** Invalidate a specific user+tenant cache entry. */

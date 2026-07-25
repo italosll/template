@@ -146,6 +146,8 @@ export class AssignmentsService {
     tenantId: number | null
   ): Promise<void> {
     if (tenantId === null) {
+      // GLOBAL assignments may change SuperAdmin membership.
+      await this._authorizationService.invalidateSuperAdminCache(userId);
       await this._authorizationService.invalidateUserCache(userId);
       return;
     }

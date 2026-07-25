@@ -12,3 +12,8 @@ export function permissionsCacheUserPattern(userId: number): string {
 
 /** Default TTL for cached permission sets (1 hour). */
 export const PERMISSIONS_CACHE_TTL_SECONDS = 60 * 60;
+
+/** Cache key for the SuperAdmin (GLOBAL role) flag of a user. */
+export function superAdminCacheKey(userId: number): string {
+  return `superadmin|userId=${userId}`;
+}

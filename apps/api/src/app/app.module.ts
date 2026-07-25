@@ -21,6 +21,7 @@ import { UsersModule } from "./users/users.module";
 import { ServiceOrderModule } from "./service-order/service-order.module";
 import { ClientModule } from "./client/client.module";
 import { QuotationModule } from "./quotation/quotation.module";
+import { AuditModule } from "./audit/audit.module";
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { QuotationModule } from "./quotation/quotation.module";
     AuthorizationModule,
     RolesModule,
     PersonModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [AppService],

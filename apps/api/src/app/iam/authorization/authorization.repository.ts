@@ -46,6 +46,25 @@ export class AuthorizationRepository {
     ];
   }
 
+  /**
+   * Checks whether the user has a GLOBAL (tenantId IS NULL) assignment
+   * of a role with the given name.
+   */
+  async hasGlobalRoleByName(
+    userId: number,
+    roleName: string
+  ): Promise<boolean> {
+    const count = await this._userRoleAssignmentRepository
+      .createQueryBuilder("assignment")
+      .innerJoin("assignment.role", "role")
+      .where("assignment.userId = :userId", { userId })
+      .andWhere("assignment.tenantId IS NULL")
+      .andWhere("role.name = :roleName", { roleName })
+      .getCount();
+
+    return count > 0;
+  }
+
   async findUserIdsByRoleId(roleId: number): Promise<number[]> {
     const assignments = await this._userRoleAssignmentRepository.find({
       where: { roleId },
