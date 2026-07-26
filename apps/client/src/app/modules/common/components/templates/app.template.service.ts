@@ -1,9 +1,11 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
-import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
+import { NavigationEnd, Router } from "@angular/router";
 
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
+import { getAuditRoutes } from "@client/audit/app-index.routes";
 import { getAuthorizationRoutes } from "@client/authorization/app-index.routes";
 import { NavigationItemModel } from "@client/common/model/app-navigation-item";
+import { PermissionsService } from "@client/common/services/app-permissions.service";
 import { getProductsRoutes } from "@client/products/app-index.routes";
 import { getStartRoutes } from "@client/start/app-index.routes";
 import { getUsersRoutes } from "@client/users/app-index.routes";
@@ -15,7 +17,7 @@ import { getServiceOrdersRoutes } from "../../../service-orders/app-index.routes
 @Injectable()
 export class TemplateService {
   private _router = inject(Router);
-  private _activatedRoute = inject(ActivatedRoute);
+  private _permissions = inject(PermissionsService);
 
   private _navigationItems = signal<NavigationItemModel[]>([]);
   private _currentActiveUrl$ = this._router.events.pipe(
@@ -26,12 +28,26 @@ export class TemplateService {
 
   private _currentAtiveUrl = toSignal(this._currentActiveUrl$);
 
-  public navigationItems = computed(() =>
-    this._navigationItems().map((item) => {
-      item.active = !!this._currentAtiveUrl()?.includes(item.path);
-      return item;
-    })
-  );
+  public navigationItems = computed(() => {
+    const permissionsLoaded = this._permissions.loaded();
+    const permissions = this._permissions.permissions();
+
+    return this._navigationItems()
+      .filter((item) => {
+        if (!item.permission) {
+          return true;
+        }
+        if (!permissionsLoaded) {
+          return false;
+        }
+        return permissions.includes(item.permission);
+      })
+      .map((item) => {
+        item.active = !!this._currentAtiveUrl()?.includes(item.path);
+        return item;
+      });
+  });
+
   public companyRectangularLogo = computed(
     () =>
       "https://imagenes.elpais.com/resizer/v2/Y3W6QUFBBZLLTALRW6NBRPZ2RA.jpg?auth=d68f18251117888479d8fdc3210796bc86d9d3f41719da72c2877bcafc3504ea&width=1200"
@@ -39,19 +55,61 @@ export class TemplateService {
 
   constructor() {
     const routes = [
-      getStartRoutes().client.start,
-      getProductsRoutes().client.products,
-      getUsersRoutes().client.users,
-      getServiceOrdersRoutes().client.serviceOrders,
-      getClientsRoutes().client.clients,
-      getQuotationsRoutes().client.quotations,
-      getAuthorizationRoutes().client.roles,
-      getAuthorizationRoutes().client.permissions,
-      getAuthorizationRoutes().client.assignments,
+      {
+        ...getStartRoutes().client.start,
+        permission: undefined as string | undefined,
+      },
+      {
+        ...getProductsRoutes().client.products,
+        permission: undefined as string | undefined,
+      },
+      {
+        ...getUsersRoutes().client.users,
+        permission: undefined as string | undefined,
+      },
+      {
+        ...getServiceOrdersRoutes().client.serviceOrders,
+        permission: undefined as string | undefined,
+      },
+      {
+        ...getClientsRoutes().client.clients,
+        permission: undefined as string | undefined,
+      },
+      {
+        ...getQuotationsRoutes().client.quotations,
+        permission: undefined as string | undefined,
+      },
+      {
+        ...getAuthorizationRoutes().client.roles,
+        permission: undefined as string | undefined,
+      },
+      {
+        ...getAuthorizationRoutes().client.permissions,
+        permission: undefined as string | undefined,
+      },
+      {
+        ...getAuthorizationRoutes().client.assignments,
+        permission: undefined as string | undefined,
+      },
+      {
+        ...getAuditRoutes().client.audits,
+      },
     ];
+
     const navigationItems = routes.map(
-      ({ title, path, icon }) => new NavigationItemModel(title, path, icon)
+      ({ title, path, icon, permission }) =>
+        new NavigationItemModel(
+          title,
+          path,
+          icon,
+          false,
+          true,
+          true,
+          permission
+        )
     );
     this._navigationItems.set(navigationItems);
+
+    this._permissions.load().subscribe();
   }
 }

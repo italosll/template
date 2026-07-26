@@ -49,6 +49,7 @@ import { TemplateService } from "../templates/app.template.service";
   template: `
     @for(navigationItem of navigationItems(); track navigationItem.path ){
 
+    @if (navigationItem.visible && navigationItem.enabled) {
     <a
       mat-button
       routerLinkActive="active"
@@ -59,6 +60,7 @@ import { TemplateService } from "../templates/app.template.service";
         {{ navigationItem.title }}
       </span>
     </a>
+    }
     }
 
     <button

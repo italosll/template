@@ -8,7 +8,7 @@ import {
 import { PermissionsService } from "./permissions.service";
 import { CreatePermissionDto } from "./dto/create-permission.dto";
 import { Permissions } from "@api/iam/authorization/decorators/permissions.decorator";
-import { PERMISSION_CODES } from "./permissions.constant";
+import { PERMISSION_CODES } from "@interfaces/permission-code.contract";
 
 @Controller("permissions")
 export class PermissionsController {

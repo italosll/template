@@ -32,6 +32,7 @@
       "@client/theme": ["apps/client/src/theme.scss"],
       "@client/users/*": ["apps/client/src/app/modules/users/*"],
       "@client/authorization/*": ["apps/client/src/app/modules/authorization/*"],
+      "@client/audit/*": ["apps/client/src/app/modules/audit/*"],
       "@interfaces/*": ["libs/interfaces/src/lib/*"]
     }
   },

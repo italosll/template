@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 import { Permission } from "./entities/permission.entity";
-import { ALL_PERMISSION_CODES } from "./permissions.constant";
+import { ALL_PERMISSION_CODES } from "@interfaces/permission-code.contract";
 import { CreatePermissionDto } from "./dto/create-permission.dto";
 import { HTTP_ERROR_MESSAGES } from "@api/common/utils/http-error-messages.util";
 import { ConflictException, NotFoundException } from "@nestjs/common";

@@ -5,6 +5,7 @@ export * from './lib/product-lookup.contract';
 export * from './lib/lookup.contract';
 export * from './lib/category.contract';
 export * from './lib/permission.contract';
+export * from './lib/permission-code.contract';
 export * from './lib/role.contract';
 export * from './lib/assign-role.contract';
 export * from './lib/assign-permission.contract';

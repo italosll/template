@@ -21,7 +21,7 @@ import { UpdateDefaultResponseDTO } from "@interfaces/update-default-response.dt
 import { DeleteDefaultResponseDTO } from "@interfaces/delete-default-response.dto";
 import { HardDeleteDefaultResponseDTO } from "@interfaces/hard-delete-default-response.dto";
 import { Permissions } from "@api/iam/authorization/decorators/permissions.decorator";
-import { PERMISSION_CODES } from "@api/iam/permissions/permissions.constant";
+import { PERMISSION_CODES } from "@interfaces/permission-code.contract";
 
 @Controller("roles")
 export class RolesController {

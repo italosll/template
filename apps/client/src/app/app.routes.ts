@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { getAuditRoutes } from '@client/audit/app-index.routes';
 import { TemplateComponent } from '@client/common/components/templates/app.template.component';
 import { getIamRoutes } from '@client/iam/app-index.routes';
 import { getProductsRoutes } from '@client/products/app-index.routes';
@@ -23,6 +24,7 @@ export const appRoutes: Route[] = [
             ...getQuotationsRoutes().angular,
             ...getUsersRoutes().angular,
             ...getAuthorizationRoutes().angular,
+            ...getAuditRoutes().angular,
         ]
     }
 ];

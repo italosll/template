@@ -3,7 +3,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Role } from "@api/iam/roles/entities/role.entity";
 import { PermissionsService } from "@api/iam/permissions/permissions.service";
-import { ALL_PERMISSION_CODES, PERMISSION_CODES } from "@api/iam/permissions/permissions.constant";
+import {
+  ALL_PERMISSION_CODES,
+  PERMISSION_CODES,
+} from "@interfaces/permission-code.contract";
 
 export const SYSTEM_ROLES = {
   SUPER_ADMIN: "SuperAdmin",
@@ -46,6 +49,7 @@ export class RoleBootstrapService implements OnModuleInit {
       PERMISSION_CODES.ROLE_READ,
       PERMISSION_CODES.ROLE_UPDATE,
       PERMISSION_CODES.ROLE_DELETE,
+      PERMISSION_CODES.AUDIT_READ,
     ];
     const adminPermissions =
       await this._permissionsService.findByCodes(adminCodes);

@@ -1,5 +1,5 @@
 /**
- * Catalog of permission codes used across the platform.
+ * Catalog of permission codes shared across the platform (API and client).
  * Format: `{resource}.{action}` (e.g. `product.create`).
  */
 export const PERMISSION_CODES = {

@@ -71,10 +71,15 @@ export class AuditService {
   async findByFilters(query: QueryAuditDTO): Promise<AuditLog[]> {
     const page = query.page ?? 1;
     const limit = query.limit ?? DEFAULT_PAGE_SIZE;
+    const tenantId = query.tenantId;
+
+    if (tenantId == null) {
+      return [];
+    }
 
     const qb = this._auditLogRepository
       .createQueryBuilder("audit")
-      .where("audit.tenantId = :tenantId", { tenantId: query.tenantId })
+      .where("audit.tenantId = :tenantId", { tenantId })
       .orderBy("audit.createdAt", "DESC")
       .skip((page - 1) * limit)
       .take(limit);

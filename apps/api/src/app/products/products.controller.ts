@@ -20,7 +20,7 @@ import { ResponseProductDTO } from "./dto/response-product.dto";
 import { UpdateProductDTO } from "./dto/update-product.dto";
 import { ProductsService } from "./products.service";
 import { Permissions } from "@api/iam/authorization/decorators/permissions.decorator";
-import { PERMISSION_CODES } from "@api/iam/permissions/permissions.constant";
+import { PERMISSION_CODES } from "@interfaces/permission-code.contract";
 
 @Controller("products")
 export class ProductsController {

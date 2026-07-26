@@ -10,9 +10,11 @@ import {
 } from "class-validator";
 
 export class QueryAuditDTO {
+  /** Defaults to the authenticated user's tenant when omitted. */
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  public tenantId!: number;
+  public tenantId?: number;
 
   @IsOptional()
   @Type(() => Number)

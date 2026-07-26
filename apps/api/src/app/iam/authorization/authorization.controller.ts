@@ -7,13 +7,18 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  Req,
+  UnauthorizedException,
   ValidationPipe,
 } from "@nestjs/common";
+import { REQUEST_USER_KEY } from "@api/iam/iam.constants";
+import { ActiveUserContract } from "@interfaces/active-user.contract";
+import { Request } from "express";
 import { AssignmentsService } from "./assignments.service";
 import { AssignRoleDto } from "./dto/assign-role.dto";
 import { AssignPermissionDto } from "./dto/assign-permission.dto";
 import { Permissions } from "./decorators/permissions.decorator";
-import { PERMISSION_CODES } from "@api/iam/permissions/permissions.constant";
+import { PERMISSION_CODES } from "@interfaces/permission-code.contract";
 import { AuthorizationService } from "./authorization.service";
 
 @Controller("authorization")
@@ -22,6 +27,30 @@ export class AuthorizationController {
     private readonly _assignmentsService: AssignmentsService,
     private readonly _authorizationService: AuthorizationService
   ) {}
+
+  /** Current authenticated user's session context and effective permissions. */
+  @Get("me")
+  async getMe(@Req() request: Request) {
+    const user = (request as unknown as Record<string, unknown>)[
+      REQUEST_USER_KEY
+    ] as ActiveUserContract | undefined;
+    if (!user?.sub || user.tenantId == null) {
+      throw new UnauthorizedException();
+    }
+
+    const permissions =
+      await this._authorizationService.getEffectivePermissions(
+        user.sub,
+        user.tenantId
+      );
+
+    return {
+      userId: user.sub,
+      tenantId: user.tenantId,
+      email: user.email,
+      permissions: [...permissions],
+    };
+  }
 
   @Post("roles")
   @Permissions(PERMISSION_CODES.PERMISSION_MANAGE)
